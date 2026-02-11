@@ -1,5 +1,11 @@
 package agentquery
 
+// SearchProvider abstracts full-text search over a data source.
+// Implementations may search the filesystem, a database, or a remote API.
+type SearchProvider interface {
+	Search(pattern string, opts SearchOptions) ([]SearchResult, error)
+}
+
 // FieldAccessor extracts a field value from a domain item.
 // The accessor returns any because field values are heterogeneous
 // (strings, ints, slices, etc.) and ultimately serialized to JSON.

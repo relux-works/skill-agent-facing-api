@@ -1,6 +1,7 @@
 package agentquery
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 )
@@ -10,26 +11,28 @@ import (
 // All fields, presets, operations, and defaults are registered on the Schema
 // before the first query.
 type Schema[T any] struct {
-	fields        map[string]FieldAccessor[T]    // registered field accessors
-	fieldOrder    []string                       // field names in registration order
-	presets       map[string][]string            // named field bundles
-	defaultFields []string                       // fields used when no projection specified
-	operations    map[string]OperationHandler[T] // registered operation handlers
-	loader        func() ([]T, error)            // lazy data loader
-	dataDir       string                         // root data directory for search
-	extensions    []string                       // file extensions for search
+	fields         map[string]FieldAccessor[T]    // registered field accessors
+	fieldOrder     []string                       // field names in registration order
+	presets        map[string][]string            // named field bundles
+	defaultFields  []string                       // fields used when no projection specified
+	operations     map[string]OperationHandler[T] // registered operation handlers
+	loader         func() ([]T, error)            // lazy data loader
+	searchProvider SearchProvider                 // pluggable search backend
 }
 
 // schemaConfig holds configuration set via functional options.
 type schemaConfig struct {
-	dataDir    string
-	extensions []string
+	dataDir        string
+	extensions     []string
+	searchProvider SearchProvider
 }
 
 // Option configures a Schema during construction.
 type Option func(*schemaConfig)
 
 // WithDataDir sets the root data directory used by Search.
+// If no SearchProvider is explicitly set, a FileSystemSearchProvider is created
+// using this directory and the configured extensions.
 func WithDataDir(dir string) Option {
 	return func(c *schemaConfig) {
 		c.dataDir = dir
@@ -44,6 +47,15 @@ func WithExtensions(exts ...string) Option {
 	}
 }
 
+// WithSearchProvider sets an explicit SearchProvider, overriding any
+// dataDir/extensions configuration. Use this to plug in non-filesystem
+// search backends.
+func WithSearchProvider(sp SearchProvider) Option {
+	return func(c *schemaConfig) {
+		c.searchProvider = sp
+	}
+}
+
 // NewSchema creates a new empty Schema for the given domain type.
 // Options configure search-related settings (data directory, file extensions).
 // Default extensions: [".md"].
@@ -54,12 +66,22 @@ func NewSchema[T any](opts ...Option) *Schema[T] {
 	for _, opt := range opts {
 		opt(cfg)
 	}
+
+	// Resolve search provider: explicit provider wins, otherwise auto-create
+	// a FileSystemSearchProvider from dataDir/extensions if dataDir is set.
+	sp := cfg.searchProvider
+	if sp == nil && cfg.dataDir != "" {
+		sp = &FileSystemSearchProvider{
+			DataDir:    cfg.dataDir,
+			Extensions: cfg.extensions,
+		}
+	}
+
 	s := &Schema[T]{
-		fields:     make(map[string]FieldAccessor[T]),
-		presets:    make(map[string][]string),
-		operations: make(map[string]OperationHandler[T]),
-		dataDir:    cfg.dataDir,
-		extensions: cfg.extensions,
+		fields:         make(map[string]FieldAccessor[T]),
+		presets:        make(map[string][]string),
+		operations:     make(map[string]OperationHandler[T]),
+		searchProvider: sp,
 	}
 
 	// Register built-in "schema" introspection operation.
@@ -118,16 +140,22 @@ func (s *Schema[T]) ResolveField(name string) ([]string, error) {
 	return nil, fmt.Errorf("unknown field: %s", name)
 }
 
-// Search performs a recursive full-text regex search within the schema's data directory.
-// It delegates to the package-level Search function, passing the schema's dataDir and extensions.
+// Search performs a full-text regex search using the schema's SearchProvider.
+// Returns an error if no search provider is configured.
 func (s *Schema[T]) Search(pattern string, opts SearchOptions) ([]SearchResult, error) {
-	return Search(s.dataDir, pattern, s.extensions, opts)
+	if s.searchProvider == nil {
+		return nil, &Error{Code: ErrInternal, Message: "no search provider configured"}
+	}
+	return s.searchProvider.Search(pattern, opts)
 }
 
 // SearchJSON performs a search and returns the results as indented JSON bytes.
-// It delegates to the package-level SearchJSON function.
 func (s *Schema[T]) SearchJSON(pattern string, opts SearchOptions) ([]byte, error) {
-	return SearchJSON(s.dataDir, pattern, s.extensions, opts)
+	results, err := s.Search(pattern, opts)
+	if err != nil {
+		return nil, err
+	}
+	return json.MarshalIndent(results, "", "  ")
 }
 
 // introspect returns the full schema contract as a JSON-serializable map.

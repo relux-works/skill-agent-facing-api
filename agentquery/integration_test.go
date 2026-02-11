@@ -693,3 +693,97 @@ func TestIntegration_NotFound_ReturnsErrorMap(t *testing.T) {
 		t.Errorf("error message = %q, want 'not found'", msg)
 	}
 }
+
+// --- SearchProvider interface tests ---
+
+// mockSearchProvider returns canned results for testing.
+type mockSearchProvider struct {
+	results []SearchResult
+	err     error
+}
+
+func (m *mockSearchProvider) Search(pattern string, opts SearchOptions) ([]SearchResult, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+	return m.results, nil
+}
+
+func TestIntegration_WithSearchProvider(t *testing.T) {
+	mock := &mockSearchProvider{
+		results: []SearchResult{
+			{Source: Source{Path: "mock.md", Line: 1}, Content: "mock result", IsMatch: true},
+		},
+	}
+
+	s := NewSchema[*project](WithSearchProvider(mock))
+	s.Field("id", func(p *project) any { return p.ID })
+
+	results, err := s.Search("anything", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Source.Path != "mock.md" {
+		t.Errorf("path = %s, want mock.md", results[0].Source.Path)
+	}
+}
+
+func TestIntegration_SearchProviderOverridesDataDir(t *testing.T) {
+	// Even with WithDataDir, WithSearchProvider should win
+	mock := &mockSearchProvider{
+		results: []SearchResult{
+			{Source: Source{Path: "custom.md", Line: 5}, Content: "custom", IsMatch: true},
+		},
+	}
+
+	dir := setupIntegrationDataDir(t)
+	s := NewSchema[*project](
+		WithDataDir(dir),
+		WithSearchProvider(mock),
+	)
+
+	results, err := s.Search("anything", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(results) != 1 || results[0].Source.Path != "custom.md" {
+		t.Errorf("expected mock result, got %v", results)
+	}
+}
+
+func TestIntegration_NoSearchProvider(t *testing.T) {
+	// Schema with no dataDir and no provider — Search should error
+	s := NewSchema[*project]()
+
+	_, err := s.Search("test", SearchOptions{})
+	if err == nil {
+		t.Fatal("expected error when no search provider")
+	}
+	e, ok := err.(*Error)
+	if !ok {
+		t.Fatalf("expected *Error, got %T", err)
+	}
+	if e.Code != ErrInternal {
+		t.Errorf("code = %s, want INTERNAL_ERROR", e.Code)
+	}
+}
+
+func TestIntegration_SearchJSON_WithProvider(t *testing.T) {
+	mock := &mockSearchProvider{
+		results: []SearchResult{
+			{Source: Source{Path: "x.md", Line: 1}, Content: "hello", IsMatch: true},
+		},
+	}
+
+	s := NewSchema[*project](WithSearchProvider(mock))
+	data, err := s.SearchJSON("anything", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !json.Valid(data) {
+		t.Fatalf("invalid JSON: %s", string(data))
+	}
+}

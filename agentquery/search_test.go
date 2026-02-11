@@ -435,3 +435,119 @@ func TestSearchJSON_InvalidRegex(t *testing.T) {
 		t.Errorf("expected ErrParse, got %s", e.Code)
 	}
 }
+
+// --- Tests for extracted public functions ---
+
+func TestCompilePattern_Valid(t *testing.T) {
+	re, err := CompilePattern("Status.*done", false)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !re.MatchString("Status: done") {
+		t.Error("expected match")
+	}
+	if re.MatchString("status: done") {
+		t.Error("should be case-sensitive")
+	}
+}
+
+func TestCompilePattern_CaseInsensitive(t *testing.T) {
+	re, err := CompilePattern("status", true)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !re.MatchString("Status: done") {
+		t.Error("expected case-insensitive match")
+	}
+}
+
+func TestCompilePattern_InvalidRegex(t *testing.T) {
+	_, err := CompilePattern("[bad", false)
+	if err == nil {
+		t.Fatal("expected error for invalid regex")
+	}
+	e, ok := err.(*Error)
+	if !ok {
+		t.Fatalf("expected *Error, got %T", err)
+	}
+	if e.Code != ErrParse {
+		t.Errorf("expected ErrParse, got %s", e.Code)
+	}
+}
+
+func TestMatchLines_NoMatch(t *testing.T) {
+	lines := []string{"hello", "world"}
+	re, _ := CompilePattern("xyz", false)
+	results := MatchLines(lines, "test.md", re, 0)
+	if results != nil {
+		t.Errorf("expected nil for no matches, got %d results", len(results))
+	}
+}
+
+func TestMatchLines_ExactMatch(t *testing.T) {
+	lines := []string{"Status: done", "Title: Fix login bug", "Priority: high"}
+	re, _ := CompilePattern("Title", false)
+	results := MatchLines(lines, "test.md", re, 0)
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Source.Path != "test.md" {
+		t.Errorf("path = %s, want test.md", results[0].Source.Path)
+	}
+	if results[0].Source.Line != 2 {
+		t.Errorf("line = %d, want 2", results[0].Source.Line)
+	}
+	if !results[0].IsMatch {
+		t.Error("expected IsMatch=true")
+	}
+}
+
+func TestMatchLines_WithContext(t *testing.T) {
+	lines := []string{"line1", "line2", "match", "line4", "line5"}
+	re, _ := CompilePattern("match", false)
+	results := MatchLines(lines, "f.md", re, 1)
+
+	if len(results) != 3 {
+		t.Fatalf("expected 3 results (match + 2 context), got %d", len(results))
+	}
+	if results[0].Source.Line != 2 || results[0].IsMatch {
+		t.Error("line 2 should be context")
+	}
+	if results[1].Source.Line != 3 || !results[1].IsMatch {
+		t.Error("line 3 should be match")
+	}
+	if results[2].Source.Line != 4 || results[2].IsMatch {
+		t.Error("line 4 should be context")
+	}
+}
+
+func TestMatchLines_OverlappingContext(t *testing.T) {
+	lines := []string{"a", "match1", "b", "match2", "c"}
+	re, _ := CompilePattern("match", false)
+	results := MatchLines(lines, "f.md", re, 1)
+
+	// Windows: [1-3] and [3-5] → all 5 lines, no dupes
+	if len(results) != 5 {
+		t.Fatalf("expected 5 results, got %d", len(results))
+	}
+	if !results[1].IsMatch || !results[3].IsMatch {
+		t.Error("match lines should have IsMatch=true")
+	}
+}
+
+func TestFileSystemSearchProvider(t *testing.T) {
+	dir := setupTestDir(t)
+	p := &FileSystemSearchProvider{DataDir: dir, Extensions: []string{".md"}}
+
+	results, err := p.Search("Fix login", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Source.Path != "task.md" {
+		t.Errorf("path = %s, want task.md", results[0].Source.Path)
+	}
+}

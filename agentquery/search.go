@@ -10,6 +10,84 @@ import (
 	"strings"
 )
 
+// CompilePattern compiles a regex pattern, optionally with case-insensitive matching.
+// Returns *Error{Code: ErrParse} for invalid regex patterns.
+func CompilePattern(pattern string, caseInsensitive bool) (*regexp.Regexp, error) {
+	if caseInsensitive {
+		pattern = "(?i)" + pattern
+	}
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, &Error{
+			Code:    ErrParse,
+			Message: fmt.Sprintf("invalid regex: %s", err),
+			Details: map[string]any{"pattern": pattern},
+		}
+	}
+	return re, nil
+}
+
+// MatchLines scans lines for regex matches and returns SearchResult entries.
+// sourcePath is used in Source.Path of each result (typically a relative path).
+// When contextLines > 0, surrounding lines are included with IsMatch=false.
+func MatchLines(lines []string, sourcePath string, re *regexp.Regexp, contextLines int) []SearchResult {
+	// Find 1-indexed matching line numbers.
+	matchSet := make(map[int]bool)
+	var matchNums []int
+	for i, line := range lines {
+		if re.MatchString(line) {
+			num := i + 1
+			matchSet[num] = true
+			matchNums = append(matchNums, num)
+		}
+	}
+
+	if len(matchNums) == 0 {
+		return nil
+	}
+
+	// No context — return exact matches only.
+	if contextLines <= 0 {
+		results := make([]SearchResult, len(matchNums))
+		for i, num := range matchNums {
+			results[i] = SearchResult{
+				Source:  Source{Path: sourcePath, Line: num},
+				Content: lines[num-1],
+				IsMatch: true,
+			}
+		}
+		return results
+	}
+
+	// With context — expand window around each match, mark context vs match.
+	include := make(map[int]bool)
+	for _, num := range matchNums {
+		start := num - contextLines
+		if start < 1 {
+			start = 1
+		}
+		end := num + contextLines
+		if end > len(lines) {
+			end = len(lines)
+		}
+		for n := start; n <= end; n++ {
+			include[n] = true
+		}
+	}
+
+	var results []SearchResult
+	for n := 1; n <= len(lines); n++ {
+		if include[n] {
+			results = append(results, SearchResult{
+				Source:  Source{Path: sourcePath, Line: n},
+				Content: lines[n-1],
+				IsMatch: matchSet[n],
+			})
+		}
+	}
+	return results
+}
+
 // Search performs a recursive full-text regex search within dataDir.
 // It walks the directory tree, filters by extensions (e.g. []string{".md"}),
 // and returns matching lines along with optional context lines.
@@ -22,17 +100,9 @@ import (
 // Returns *Error{Code: ErrParse} for invalid regex patterns.
 // Returns an empty (non-nil) slice when no matches are found.
 func Search(dataDir string, pattern string, extensions []string, opts SearchOptions) ([]SearchResult, error) {
-	if opts.CaseInsensitive {
-		pattern = "(?i)" + pattern
-	}
-
-	re, err := regexp.Compile(pattern)
+	re, err := CompilePattern(pattern, opts.CaseInsensitive)
 	if err != nil {
-		return nil, &Error{
-			Code:    ErrParse,
-			Message: fmt.Sprintf("invalid regex: %s", err),
-			Details: map[string]any{"pattern": pattern},
-		}
+		return nil, err
 	}
 
 	// Build extension set for O(1) lookup.
@@ -89,6 +159,17 @@ func SearchJSON(dataDir string, pattern string, extensions []string, opts Search
 	return json.MarshalIndent(results, "", "  ")
 }
 
+// FileSystemSearchProvider implements SearchProvider by walking a directory tree.
+type FileSystemSearchProvider struct {
+	DataDir    string
+	Extensions []string
+}
+
+// Search walks the filesystem and returns matching lines.
+func (p *FileSystemSearchProvider) Search(pattern string, opts SearchOptions) ([]SearchResult, error) {
+	return Search(p.DataDir, pattern, p.Extensions, opts)
+}
+
 // searchFile scans a single file for regex matches and returns SearchResult entries.
 // When contextLines > 0, surrounding lines are included with IsMatch=false.
 func searchFile(path, relPath string, re *regexp.Regexp, contextLines int) []SearchResult {
@@ -104,59 +185,5 @@ func searchFile(path, relPath string, re *regexp.Regexp, contextLines int) []Sea
 		lines = append(lines, scanner.Text())
 	}
 
-	// Find 1-indexed matching line numbers.
-	matchSet := make(map[int]bool)
-	var matchNums []int
-	for i, line := range lines {
-		if re.MatchString(line) {
-			num := i + 1
-			matchSet[num] = true
-			matchNums = append(matchNums, num)
-		}
-	}
-
-	if len(matchNums) == 0 {
-		return nil
-	}
-
-	// No context — return exact matches only.
-	if contextLines <= 0 {
-		results := make([]SearchResult, len(matchNums))
-		for i, num := range matchNums {
-			results[i] = SearchResult{
-				Source:  Source{Path: relPath, Line: num},
-				Content: lines[num-1],
-				IsMatch: true,
-			}
-		}
-		return results
-	}
-
-	// With context — expand window around each match, mark context vs match.
-	include := make(map[int]bool)
-	for _, num := range matchNums {
-		start := num - contextLines
-		if start < 1 {
-			start = 1
-		}
-		end := num + contextLines
-		if end > len(lines) {
-			end = len(lines)
-		}
-		for n := start; n <= end; n++ {
-			include[n] = true
-		}
-	}
-
-	var results []SearchResult
-	for n := 1; n <= len(lines); n++ {
-		if include[n] {
-			results = append(results, SearchResult{
-				Source:  Source{Path: relPath, Line: n},
-				Content: lines[n-1],
-				IsMatch: matchSet[n],
-			})
-		}
-	}
-	return results
+	return MatchLines(lines, relPath, re, contextLines)
 }

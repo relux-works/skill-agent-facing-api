@@ -266,6 +266,21 @@ Target: **30-50% token reduction** on reads vs CLI text output, **50%+ reduction
 
 ---
 
+## Assets
+
+Reference implementations and pattern catalogs in `assets/`:
+
+| File | What | Use for |
+|------|------|---------|
+| [`dsl-parser.go`](assets/dsl-parser.go) | Tokenizer + recursive descent parser + AST | Copy and adapt: operations, fields, presets |
+| [`field-selector.go`](assets/field-selector.go) | Field projection with presets and lazy evaluation | Copy and adapt: valid fields, presets, `Apply()` |
+| [`scoped-grep.go`](assets/scoped-grep.go) | Scoped regex search with file filters and context | Copy and adapt: file extensions, data directory |
+| [`query-patterns.md`](assets/query-patterns.md) | Query catalog: inputs, expected JSON, anti-patterns | Reference for designing your operations |
+
+All Go files are self-contained, domain-agnostic, with `// ADAPT THIS` markers at customization points.
+
+---
+
 ## References
 
 - [Real-world comparison: MCP vs DSL vs Grep](references/comparison-example.md) — measured on a 346-element task board, covers 5 workflows with exact token counts

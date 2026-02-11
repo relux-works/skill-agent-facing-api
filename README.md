@@ -58,6 +58,10 @@ ln -s ~/src/skill-agent-facing-api ~/.codex/skills/agent-facing-api
 | File | Description |
 |------|-------------|
 | `SKILL.md` | Full pattern specification — DSL design, grep scoping, implementation guide |
+| `assets/dsl-parser.go` | Reference implementation: tokenizer + recursive descent parser + AST |
+| `assets/field-selector.go` | Reference implementation: field projection with presets |
+| `assets/scoped-grep.go` | Reference implementation: scoped regex search with context lines |
+| `assets/query-patterns.md` | Query catalog: inputs, expected JSON, anti-patterns |
 | `references/comparison-example.md` | Real-world token measurement: MCP vs DSL vs Grep on a 346-element task board |
 
 ## License

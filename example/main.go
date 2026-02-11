@@ -6,6 +6,7 @@
 //
 // Usage:
 //
+//	./taskdemo q 'schema()'
 //	./taskdemo q 'summary()'
 //	./taskdemo q 'get(task-1) { overview }'
 //	./taskdemo q 'list(status=done) { minimal }'

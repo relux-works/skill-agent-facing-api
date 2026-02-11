@@ -12,3 +12,9 @@ Working dir: /Users/aagrigore1/.agents/skills/agent-facing-api
 [16:12:31.013] [INFO] command.ExecuteMsg received: cmd="agents" args=""
 [16:12:31.013] [INFO] executeCommand: cmd="agents" args=""
 [16:12:31.013] [INFO] [CMD] /agents → opening agents screen
+[17:53:43.396] [INFO] Saving config and closing session
+
+=== SESSION END ===
+Duration: 1h45m7s
+Total actions: 9
+=====================================

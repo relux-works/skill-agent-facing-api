@@ -1,0 +1,21 @@
+=====================================
+=== SESSION START: 2026-02-11_18-02-21 ===
+Time: 2026-02-11T18:02:21+03:00
+Working dir: /Users/aagrigore1/src/skill-agent-facing-api
+=====================================
+
+[18:02:21.111] [INFO] task-board-tui version 0.2.0-10-g4d703ec (commit 4d703ec)
+[18:02:21.111] [INFO] Config loaded, refresh interval: 10s
+[18:02:36.724] [INFO] [ACTION] command_palette: opened
+[18:02:38.040] [DEBUG] [KEY] down
+[18:02:38.356] [DEBUG] [KEY] down
+[18:02:38.684] [DEBUG] [KEY] down
+[18:02:40.685] [DEBUG] [KEY] down
+[18:02:40.860] [DEBUG] [KEY] down
+[18:02:41.040] [DEBUG] [KEY] down
+[18:02:41.309] [DEBUG] [KEY] down
+[18:02:41.719] [DEBUG] [KEY] down
+[18:02:42.043] [DEBUG] [KEY] enter
+[18:02:42.045] [INFO] command.ExecuteMsg received: cmd="collapse" args=""
+[18:02:42.045] [INFO] executeCommand: cmd="collapse" args=""
+[18:02:42.045] [INFO] [CMD] /collapse → collapsing all

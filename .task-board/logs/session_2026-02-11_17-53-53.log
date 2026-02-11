@@ -1,0 +1,17 @@
+=====================================
+=== SESSION START: 2026-02-11_17-53-53 ===
+Time: 2026-02-11T17:53:53+03:00
+Working dir: /Users/aagrigore1/.agents/skills/agent-facing-api
+=====================================
+
+[17:53:53.080] [INFO] task-board-tui version 0.2.0-10-g4d703ec (commit 4d703ec)
+[17:53:53.081] [INFO] Config loaded, refresh interval: 10s
+[17:53:57.207] [DEBUG] dialog key: "esc", selection: 0
+[17:54:00.719] [DEBUG] dialog key: "right", selection: 0
+[17:54:01.019] [DEBUG] dialog key: "enter", selection: 1
+[17:54:01.019] [INFO] Saving config and closing session
+
+=== SESSION END ===
+Duration: 8s
+Total actions: 6
+=====================================

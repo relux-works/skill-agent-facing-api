@@ -1,6 +1,9 @@
 package agentquery
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 // Schema is the central type for defining a query-able domain.
 // It is generic on T, the domain item type (e.g. *board.Element).
@@ -51,13 +54,22 @@ func NewSchema[T any](opts ...Option) *Schema[T] {
 	for _, opt := range opts {
 		opt(cfg)
 	}
-	return &Schema[T]{
+	s := &Schema[T]{
 		fields:     make(map[string]FieldAccessor[T]),
 		presets:    make(map[string][]string),
 		operations: make(map[string]OperationHandler[T]),
 		dataDir:    cfg.dataDir,
 		extensions: cfg.extensions,
 	}
+
+	// Register built-in "schema" introspection operation.
+	// The handler is a closure over s — it reads operations/fields/presets/defaults
+	// at execution time, so all user-registered entries are visible.
+	s.operations["schema"] = func(ctx OperationContext[T]) (any, error) {
+		return s.introspect(), nil
+	}
+
+	return s
 }
 
 // Field registers a named field with its accessor function.
@@ -116,6 +128,41 @@ func (s *Schema[T]) Search(pattern string, opts SearchOptions) ([]SearchResult, 
 // It delegates to the package-level SearchJSON function.
 func (s *Schema[T]) SearchJSON(pattern string, opts SearchOptions) ([]byte, error) {
 	return SearchJSON(s.dataDir, pattern, s.extensions, opts)
+}
+
+// introspect returns the full schema contract as a JSON-serializable map.
+// It lists all operations (sorted), fields (in registration order),
+// presets (with expanded field lists), and default fields.
+func (s *Schema[T]) introspect() map[string]any {
+	// Collect operation names and sort them for deterministic output.
+	ops := make([]string, 0, len(s.operations))
+	for name := range s.operations {
+		ops = append(ops, name)
+	}
+	sort.Strings(ops)
+
+	// Fields in registration order.
+	fields := make([]string, len(s.fieldOrder))
+	copy(fields, s.fieldOrder)
+
+	// Presets: map name -> expanded field list (copy each slice).
+	presets := make(map[string][]string, len(s.presets))
+	for name, pf := range s.presets {
+		cp := make([]string, len(pf))
+		copy(cp, pf)
+		presets[name] = cp
+	}
+
+	// Default fields (copy).
+	defaults := make([]string, len(s.defaultFields))
+	copy(defaults, s.defaultFields)
+
+	return map[string]any{
+		"operations":    ops,
+		"fields":        fields,
+		"presets":       presets,
+		"defaultFields": defaults,
+	}
 }
 
 // parserConfig builds a ParserConfig from the schema's registered operations and fields.

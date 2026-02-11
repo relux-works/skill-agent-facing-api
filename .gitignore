@@ -11,3 +11,6 @@ Thumbs.db
 
 # Temp
 .temp/
+
+# Task board logs
+.task-board/logs/

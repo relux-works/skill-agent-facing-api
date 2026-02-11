@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/agentquery/agentquery"
+	"github.com/ivalx1s/skill-agent-facing-api/agentquery"
 	"github.com/spf13/cobra"
 )
 

@@ -1,4 +1,4 @@
-module github.com/agentquery/agentquery
+module github.com/ivalx1s/skill-agent-facing-api/agentquery
 
 go 1.21
 

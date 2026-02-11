@@ -14,3 +14,6 @@ Thumbs.db
 
 # Task board logs
 .task-board/logs/
+
+# Go
+coverage.out

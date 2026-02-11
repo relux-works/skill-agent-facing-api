@@ -20,8 +20,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/agentquery/agentquery"
-	"github.com/agentquery/agentquery/cobraext"
+	"github.com/ivalx1s/skill-agent-facing-api/agentquery"
+	"github.com/ivalx1s/skill-agent-facing-api/agentquery/cobraext"
 	"github.com/spf13/cobra"
 )
 

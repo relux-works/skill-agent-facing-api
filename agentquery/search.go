@@ -1,0 +1,162 @@
+package agentquery
+
+import (
+	"bufio"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+)
+
+// Search performs a recursive full-text regex search within dataDir.
+// It walks the directory tree, filters by extensions (e.g. []string{".md"}),
+// and returns matching lines along with optional context lines.
+//
+// If extensions is empty, all files are searched.
+// If opts.FileGlob is set, only files matching the glob pattern are searched.
+// If opts.CaseInsensitive is true, the pattern is compiled with (?i).
+// If opts.ContextLines > 0, surrounding lines are included with IsMatch=false.
+//
+// Returns *Error{Code: ErrParse} for invalid regex patterns.
+// Returns an empty (non-nil) slice when no matches are found.
+func Search(dataDir string, pattern string, extensions []string, opts SearchOptions) ([]SearchResult, error) {
+	if opts.CaseInsensitive {
+		pattern = "(?i)" + pattern
+	}
+
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, &Error{
+			Code:    ErrParse,
+			Message: fmt.Sprintf("invalid regex: %s", err),
+			Details: map[string]any{"pattern": pattern},
+		}
+	}
+
+	// Build extension set for O(1) lookup.
+	extSet := make(map[string]bool, len(extensions))
+	for _, ext := range extensions {
+		// Normalize: accept both ".md" and "md".
+		if !strings.HasPrefix(ext, ".") {
+			ext = "." + ext
+		}
+		extSet[ext] = true
+	}
+
+	var results []SearchResult
+
+	err = filepath.WalkDir(dataDir, func(path string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return nil
+		}
+
+		// Filter by extensions if any are specified.
+		if len(extSet) > 0 {
+			ext := filepath.Ext(d.Name())
+			if !extSet[ext] {
+				return nil
+			}
+		}
+
+		// Apply file glob filter on filename.
+		if opts.FileGlob != "" {
+			matched, _ := filepath.Match(opts.FileGlob, d.Name())
+			if !matched {
+				return nil
+			}
+		}
+
+		relPath, _ := filepath.Rel(dataDir, path)
+		fileResults := searchFile(path, relPath, re, opts.ContextLines)
+		results = append(results, fileResults...)
+		return nil
+	})
+
+	if results == nil {
+		results = []SearchResult{}
+	}
+	return results, err
+}
+
+// SearchJSON performs a search and returns the results as indented JSON bytes.
+func SearchJSON(dataDir string, pattern string, extensions []string, opts SearchOptions) ([]byte, error) {
+	results, err := Search(dataDir, pattern, extensions, opts)
+	if err != nil {
+		return nil, err
+	}
+	return json.MarshalIndent(results, "", "  ")
+}
+
+// searchFile scans a single file for regex matches and returns SearchResult entries.
+// When contextLines > 0, surrounding lines are included with IsMatch=false.
+func searchFile(path, relPath string, re *regexp.Regexp, contextLines int) []SearchResult {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil
+	}
+	defer f.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	// Find 1-indexed matching line numbers.
+	matchSet := make(map[int]bool)
+	var matchNums []int
+	for i, line := range lines {
+		if re.MatchString(line) {
+			num := i + 1
+			matchSet[num] = true
+			matchNums = append(matchNums, num)
+		}
+	}
+
+	if len(matchNums) == 0 {
+		return nil
+	}
+
+	// No context — return exact matches only.
+	if contextLines <= 0 {
+		results := make([]SearchResult, len(matchNums))
+		for i, num := range matchNums {
+			results[i] = SearchResult{
+				Source:  Source{Path: relPath, Line: num},
+				Content: lines[num-1],
+				IsMatch: true,
+			}
+		}
+		return results
+	}
+
+	// With context — expand window around each match, mark context vs match.
+	include := make(map[int]bool)
+	for _, num := range matchNums {
+		start := num - contextLines
+		if start < 1 {
+			start = 1
+		}
+		end := num + contextLines
+		if end > len(lines) {
+			end = len(lines)
+		}
+		for n := start; n <= end; n++ {
+			include[n] = true
+		}
+	}
+
+	var results []SearchResult
+	for n := 1; n <= len(lines); n++ {
+		if include[n] {
+			results = append(results, SearchResult{
+				Source:  Source{Path: relPath, Line: n},
+				Content: lines[n-1],
+				IsMatch: matchSet[n],
+			})
+		}
+	}
+	return results
+}

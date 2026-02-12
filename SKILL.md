@@ -107,6 +107,60 @@ mytool q 'summary()'
 # → {"epics":5,"stories":12,"tasks":48,"done":31,"in_progress":10,"blocked":2}
 ```
 
+### Output Modes
+
+The DSL supports two output modes:
+
+| Mode | Flag | Format | Use case |
+|------|------|--------|----------|
+| **HumanReadable** (default) | `--format json` | Standard JSON | Human inspection, piping to `jq` |
+| **LLMReadable** | `--format compact` | Tabular text | Agent consumption — fewer tokens |
+
+Configure the default at schema construction:
+
+```go
+schema := agentquery.NewSchema[Task](
+    agentquery.WithOutputMode(agentquery.LLMReadable),
+)
+```
+
+Override per-invocation with `--format`:
+
+```bash
+# Force compact output regardless of schema default
+mytool q 'list(status=todo) { overview }' --format compact
+
+# Force JSON even if schema defaults to compact
+mytool q 'list()' --format json
+```
+
+**Compact format examples:**
+
+List queries produce CSV-style output (header + rows):
+```
+id,name,status,assignee
+task-1,Auth service refactor,in-progress,alice
+task-2,Dashboard performance,todo,bob
+```
+
+Single-element queries produce key:value pairs:
+```
+id:task-1
+name:Auth service refactor
+status:in-progress
+```
+
+Search results are grouped by file:
+```
+README.md
+  3: matching line
+  4  context line
+other.md
+  12: another match
+```
+
+**When to use which:** If your tool is exclusively consumed by agents, set `LLMReadable` as the schema default. If humans also inspect output, keep `HumanReadable` as default and let agents pass `--format compact` when they want savings.
+
 ### Token Budget
 
 Typical per-query costs (input + output + ~80 tok framing):
@@ -198,6 +252,7 @@ Need data from the tool?
 | Grep for structured queries | Unreliable, returns raw file content, can return 10K+ tokens | DSL for anything with known fields |
 | CLI `--json` flag on every command | Still returns all fields, verbose JSON | Dedicated DSL with projection |
 | Human-formatted output to agents | ANSI codes, alignment padding, box drawing = wasted tokens | JSON-only DSL layer |
+| JSON output to LLM agents | JSON keys repeated per item, quoting overhead | Use `LLMReadable` mode — tabular format with schema-once header |
 
 ---
 

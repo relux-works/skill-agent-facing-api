@@ -936,3 +936,388 @@ func TestQuery_OperationOverwrite(t *testing.T) {
 		t.Errorf("result = %v, want v2 (operation should be overwritten)", result)
 	}
 }
+
+// --- LLMReadable output mode tests ---
+
+// newLLMQuerySchema creates a Schema with LLMReadable output mode.
+func newLLMQuerySchema() *Schema[*testItem] {
+	s := NewSchema[*testItem](WithOutputMode(LLMReadable))
+	s.Field("id", func(item *testItem) any { return item.ID })
+	s.Field("name", func(item *testItem) any { return item.Name })
+	s.Field("status", func(item *testItem) any { return item.Status })
+	s.Field("score", func(item *testItem) any { return item.Score })
+	s.Field("tags", func(item *testItem) any { return item.Tags })
+
+	s.Preset("minimal", "id", "status")
+	s.Preset("default", "id", "name", "status")
+	s.Preset("full", "id", "name", "status", "score", "tags")
+
+	s.DefaultFields("id", "name", "status")
+
+	items := testData()
+	s.SetLoader(func() ([]*testItem, error) {
+		return items, nil
+	})
+
+	s.Operation("list", func(ctx OperationContext[*testItem]) (any, error) {
+		data, err := ctx.Items()
+		if err != nil {
+			return nil, err
+		}
+		var out []map[string]any
+		for _, item := range data {
+			out = append(out, ctx.Selector.Apply(item))
+		}
+		return out, nil
+	})
+
+	s.Operation("get", func(ctx OperationContext[*testItem]) (any, error) {
+		if len(ctx.Statement.Args) == 0 {
+			return nil, &Error{Code: ErrValidation, Message: "get requires an ID argument"}
+		}
+		targetID := ctx.Statement.Args[0].Value
+		data, err := ctx.Items()
+		if err != nil {
+			return nil, err
+		}
+		for _, item := range data {
+			if item.ID == targetID {
+				return ctx.Selector.Apply(item), nil
+			}
+		}
+		return nil, &Error{
+			Code:    ErrNotFound,
+			Message: "item not found: " + targetID,
+			Details: map[string]any{"id": targetID},
+		}
+	})
+
+	s.Operation("count", func(ctx OperationContext[*testItem]) (any, error) {
+		data, err := ctx.Items()
+		if err != nil {
+			return nil, err
+		}
+		return map[string]any{"count": len(data)}, nil
+	})
+
+	s.Operation("fail", func(ctx OperationContext[*testItem]) (any, error) {
+		return nil, &Error{Code: ErrInternal, Message: "intentional failure"}
+	})
+
+	return s
+}
+
+func TestQueryJSON_LLMReadable_List(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	data, err := s.QueryJSON("list() { id status }")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+
+	// Header + 3 data rows
+	if len(lines) != 4 {
+		t.Fatalf("expected 4 lines, got %d:\n%s", len(lines), out)
+	}
+	if lines[0] != "id,status" {
+		t.Errorf("header = %q, want %q", lines[0], "id,status")
+	}
+	if lines[1] != "T1,open" {
+		t.Errorf("row 1 = %q, want %q", lines[1], "T1,open")
+	}
+	if lines[2] != "T2,closed" {
+		t.Errorf("row 2 = %q, want %q", lines[2], "T2,closed")
+	}
+	if lines[3] != "T3,open" {
+		t.Errorf("row 3 = %q, want %q", lines[3], "T3,open")
+	}
+
+	// Should NOT be valid JSON (it's tabular).
+	if json.Valid(data) {
+		t.Error("LLMReadable list output should not be valid JSON")
+	}
+}
+
+func TestQueryJSON_LLMReadable_Get(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	data, err := s.QueryJSON("get(T1) { id name }")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+
+	if len(lines) != 2 {
+		t.Fatalf("expected 2 lines, got %d:\n%s", len(lines), out)
+	}
+	if lines[0] != "id:T1" {
+		t.Errorf("line 0 = %q, want %q", lines[0], "id:T1")
+	}
+	if lines[1] != "name:alpha" {
+		t.Errorf("line 1 = %q, want %q", lines[1], "name:alpha")
+	}
+}
+
+func TestQueryJSON_LLMReadable_Count(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	// count() returns map[string]any{"count": 3} — the "count" field is not
+	// a schema-registered field, so field order comes from the map keys.
+	data, err := s.QueryJSON("count()")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+
+	if len(lines) != 1 {
+		t.Fatalf("expected 1 line, got %d:\n%s", len(lines), out)
+	}
+	if lines[0] != "count:3" {
+		t.Errorf("line = %q, want %q", lines[0], "count:3")
+	}
+}
+
+func TestQueryJSON_LLMReadable_DefaultFields(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	// No explicit projection — uses default fields (id, name, status).
+	data, err := s.QueryJSON("get(T2)")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+
+	if len(lines) != 3 {
+		t.Fatalf("expected 3 lines (id, name, status), got %d:\n%s", len(lines), out)
+	}
+	if lines[0] != "id:T2" {
+		t.Errorf("line 0 = %q, want %q", lines[0], "id:T2")
+	}
+	if lines[1] != "name:beta" {
+		t.Errorf("line 1 = %q, want %q", lines[1], "name:beta")
+	}
+	if lines[2] != "status:closed" {
+		t.Errorf("line 2 = %q, want %q", lines[2], "status:closed")
+	}
+}
+
+func TestQueryJSON_LLMReadable_PresetExpansion(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	data, err := s.QueryJSON("list() { minimal }")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+
+	// minimal = id, status
+	if lines[0] != "id,status" {
+		t.Errorf("header = %q, want %q", lines[0], "id,status")
+	}
+}
+
+func TestQueryJSON_LLMReadable_ErrorFallsBackToJSON(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	// A failing operation produces an error map — should fall back to JSON.
+	data, err := s.QueryJSON("fail()")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !json.Valid(data) {
+		t.Fatalf("error result should be valid JSON, got: %s", string(data))
+	}
+
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("failed to unmarshal: %v", err)
+	}
+	if _, hasError := m["error"]; !hasError {
+		t.Error("expected 'error' key in JSON output")
+	}
+}
+
+func TestQueryJSON_LLMReadable_Batch(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	data, err := s.QueryJSON("get(T1) { id }; list() { id status }")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	// Batch: two parts separated by a blank line.
+	parts := strings.Split(out, "\n\n")
+	if len(parts) != 2 {
+		t.Fatalf("expected 2 parts separated by blank line, got %d:\n%s", len(parts), out)
+	}
+
+	// First part: get(T1) { id } — single object.
+	part1Lines := strings.Split(strings.TrimRight(parts[0], "\n"), "\n")
+	if len(part1Lines) != 1 {
+		t.Fatalf("part 1: expected 1 line, got %d: %v", len(part1Lines), part1Lines)
+	}
+	if part1Lines[0] != "id:T1" {
+		t.Errorf("part 1 line = %q, want %q", part1Lines[0], "id:T1")
+	}
+
+	// Second part: list() { id status } — tabular.
+	part2Lines := strings.Split(strings.TrimRight(parts[1], "\n"), "\n")
+	if len(part2Lines) != 4 {
+		t.Fatalf("part 2: expected 4 lines, got %d: %v", len(part2Lines), part2Lines)
+	}
+	if part2Lines[0] != "id,status" {
+		t.Errorf("part 2 header = %q, want %q", part2Lines[0], "id,status")
+	}
+}
+
+func TestQueryJSON_LLMReadable_BatchWithError(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	data, err := s.QueryJSON("get(T1) { id }; fail(); list() { id }")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	// Three parts separated by blank lines.
+	parts := strings.Split(out, "\n\n")
+	if len(parts) != 3 {
+		t.Fatalf("expected 3 parts, got %d:\n%s", len(parts), out)
+	}
+
+	// Middle part (fail()) should be valid JSON with error key.
+	if !json.Valid([]byte(parts[1])) {
+		t.Fatalf("error part should be valid JSON, got: %s", parts[1])
+	}
+}
+
+func TestQueryJSON_HumanReadable_StillJSON(t *testing.T) {
+	// Verify that the default mode (HumanReadable) still produces JSON.
+	s := newQuerySchema() // default mode = HumanReadable
+
+	data, err := s.QueryJSON("list() { id status }")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !json.Valid(data) {
+		t.Fatalf("HumanReadable QueryJSON should produce valid JSON, got: %s", string(data))
+	}
+}
+
+func TestQueryJSON_LLMReadable_ParseError(t *testing.T) {
+	s := newLLMQuerySchema()
+
+	_, err := s.QueryJSON("")
+	if err == nil {
+		t.Fatal("expected error for empty query, got nil")
+	}
+}
+
+func TestOutputMode_Getter(t *testing.T) {
+	s1 := NewSchema[*testItem]()
+	if s1.OutputMode() != HumanReadable {
+		t.Errorf("default OutputMode = %v, want HumanReadable", s1.OutputMode())
+	}
+
+	s2 := NewSchema[*testItem](WithOutputMode(LLMReadable))
+	if s2.OutputMode() != LLMReadable {
+		t.Errorf("OutputMode = %v, want LLMReadable", s2.OutputMode())
+	}
+}
+
+// --- ApplyValues tests ---
+
+func TestApplyValues_Basic(t *testing.T) {
+	s := newTestSchema()
+	item := &testItem{
+		ID:     "TASK-42",
+		Name:   "implement feature",
+		Status: "development",
+		Score:  95,
+		Tags:   []string{"go", "generics"},
+	}
+
+	sel, err := s.newSelector([]string{"id", "name", "score"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	values := sel.ApplyValues(item)
+	if len(values) != 3 {
+		t.Fatalf("expected 3 values, got %d", len(values))
+	}
+	if values[0] != "TASK-42" {
+		t.Errorf("values[0] = %v, want TASK-42", values[0])
+	}
+	if values[1] != "implement feature" {
+		t.Errorf("values[1] = %v, want 'implement feature'", values[1])
+	}
+	if values[2] != 95 {
+		t.Errorf("values[2] = %v, want 95", values[2])
+	}
+}
+
+func TestApplyValues_MatchesFieldsOrder(t *testing.T) {
+	s := newTestSchema()
+	item := &testItem{ID: "T1", Name: "alpha", Status: "open"}
+
+	sel, err := s.newSelector([]string{"status", "id"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	fields := sel.Fields()
+	values := sel.ApplyValues(item)
+
+	if len(values) != len(fields) {
+		t.Fatalf("values length %d != fields length %d", len(values), len(fields))
+	}
+
+	// Values should match field order: status first, then id.
+	if fields[0] != "status" || values[0] != "open" {
+		t.Errorf("field[0]=%q val[0]=%v, want status=open", fields[0], values[0])
+	}
+	if fields[1] != "id" || values[1] != "T1" {
+		t.Errorf("field[1]=%q val[1]=%v, want id=T1", fields[1], values[1])
+	}
+}
+
+func TestApplyValues_NilSliceField(t *testing.T) {
+	s := newTestSchema()
+	item := &testItem{ID: "T1", Tags: nil}
+
+	sel, err := s.newSelector([]string{"id", "tags"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	values := sel.ApplyValues(item)
+	if len(values) != 2 {
+		t.Fatalf("expected 2 values, got %d", len(values))
+	}
+	if values[0] != "T1" {
+		t.Errorf("values[0] = %v, want T1", values[0])
+	}
+	// The accessor returns []string(nil) which is a typed nil.
+	tags, ok := values[1].([]string)
+	if !ok {
+		t.Fatalf("values[1] type = %T, want []string", values[1])
+	}
+	if tags != nil {
+		t.Errorf("values[1] = %v, want nil", values[1])
+	}
+}

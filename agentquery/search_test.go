@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -533,6 +534,195 @@ func TestMatchLines_OverlappingContext(t *testing.T) {
 	}
 	if !results[1].IsMatch || !results[3].IsMatch {
 		t.Error("match lines should have IsMatch=true")
+	}
+}
+
+// --- FormatSearchCompact tests ---
+
+func TestFormatSearchCompact_Empty(t *testing.T) {
+	out := FormatSearchCompact(nil)
+	if len(out) != 0 {
+		t.Errorf("expected empty output for nil results, got %q", string(out))
+	}
+
+	out = FormatSearchCompact([]SearchResult{})
+	if len(out) != 0 {
+		t.Errorf("expected empty output for empty results, got %q", string(out))
+	}
+}
+
+func TestFormatSearchCompact_SingleFile(t *testing.T) {
+	results := []SearchResult{
+		{Source: Source{Path: "task.md", Line: 1}, Content: "Status: done", IsMatch: true},
+		{Source: Source{Path: "task.md", Line: 2}, Content: "Title: Fix login bug", IsMatch: true},
+	}
+
+	out := string(FormatSearchCompact(results))
+	expected := "task.md\n  1: Status: done\n  2: Title: Fix login bug\n"
+	if out != expected {
+		t.Errorf("unexpected output:\ngot:  %q\nwant: %q", out, expected)
+	}
+}
+
+func TestFormatSearchCompact_MultipleFiles(t *testing.T) {
+	results := []SearchResult{
+		{Source: Source{Path: "README.md", Line: 3}, Content: "matching line", IsMatch: true},
+		{Source: Source{Path: "README.md", Line: 4}, Content: "context line", IsMatch: false},
+		{Source: Source{Path: "other.md", Line: 12}, Content: "another match", IsMatch: true},
+	}
+
+	out := string(FormatSearchCompact(results))
+	expected := "README.md\n  3: matching line\n  4  context line\n\nother.md\n  12: another match\n"
+	if out != expected {
+		t.Errorf("unexpected output:\ngot:  %q\nwant: %q", out, expected)
+	}
+}
+
+func TestFormatSearchCompact_MatchVsContext(t *testing.T) {
+	results := []SearchResult{
+		{Source: Source{Path: "f.md", Line: 1}, Content: "before", IsMatch: false},
+		{Source: Source{Path: "f.md", Line: 2}, Content: "match", IsMatch: true},
+		{Source: Source{Path: "f.md", Line: 3}, Content: "after", IsMatch: false},
+	}
+
+	out := string(FormatSearchCompact(results))
+
+	// Match line uses ":"
+	if !strings.Contains(out, "  2: match\n") {
+		t.Errorf("expected match line with colon separator, got:\n%s", out)
+	}
+
+	// Context lines use space (no colon)
+	if !strings.Contains(out, "  1  before\n") {
+		t.Errorf("expected context line with space separator, got:\n%s", out)
+	}
+	if !strings.Contains(out, "  3  after\n") {
+		t.Errorf("expected context line with space separator, got:\n%s", out)
+	}
+}
+
+func TestFormatSearchCompact_GroupOrder(t *testing.T) {
+	// Results interleaved from different files — should be grouped by first appearance.
+	results := []SearchResult{
+		{Source: Source{Path: "b.md", Line: 1}, Content: "first b", IsMatch: true},
+		{Source: Source{Path: "a.md", Line: 5}, Content: "first a", IsMatch: true},
+		{Source: Source{Path: "b.md", Line: 3}, Content: "second b", IsMatch: true},
+	}
+
+	out := string(FormatSearchCompact(results))
+
+	// b.md should come before a.md (first appearance order)
+	bIdx := strings.Index(out, "b.md")
+	aIdx := strings.Index(out, "a.md")
+	if bIdx >= aIdx {
+		t.Errorf("expected b.md before a.md in output:\n%s", out)
+	}
+
+	// b.md group should have both results
+	expected := "b.md\n  1: first b\n  3: second b\n\na.md\n  5: first a\n"
+	if out != expected {
+		t.Errorf("unexpected output:\ngot:  %q\nwant: %q", out, expected)
+	}
+}
+
+// --- Schema.SearchJSON with LLMReadable mode ---
+
+func TestSchemaSearchJSON_LLMReadable(t *testing.T) {
+	dir := setupTestDir(t)
+
+	s := NewSchema[struct{}](
+		WithDataDir(dir),
+		WithExtensions(".md"),
+		WithOutputMode(LLMReadable),
+	)
+
+	data, err := s.SearchJSON("Fix login", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+
+	// Should NOT be JSON
+	if json.Valid(data) && strings.HasPrefix(strings.TrimSpace(out), "[") {
+		t.Error("LLMReadable output should not be JSON array")
+	}
+
+	// Should contain file path header and match line
+	if !strings.Contains(out, "task.md") {
+		t.Errorf("expected file path header, got:\n%s", out)
+	}
+	if !strings.Contains(out, "2: Title: Fix login bug") {
+		t.Errorf("expected match line, got:\n%s", out)
+	}
+}
+
+func TestSchemaSearchJSON_HumanReadable(t *testing.T) {
+	dir := setupTestDir(t)
+
+	s := NewSchema[struct{}](
+		WithDataDir(dir),
+		WithExtensions(".md"),
+		// Default HumanReadable — no WithOutputMode
+	)
+
+	data, err := s.SearchJSON("Fix login", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !json.Valid(data) {
+		t.Fatalf("HumanReadable output should be valid JSON: %s", string(data))
+	}
+
+	var results []SearchResult
+	if err := json.Unmarshal(data, &results); err != nil {
+		t.Fatalf("failed to unmarshal: %v", err)
+	}
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+}
+
+func TestSchemaSearchJSONWithMode_OverridesDefault(t *testing.T) {
+	dir := setupTestDir(t)
+
+	// Schema defaults to HumanReadable, but we override with LLMReadable
+	s := NewSchema[struct{}](
+		WithDataDir(dir),
+		WithExtensions(".md"),
+	)
+
+	data, err := s.SearchJSONWithMode("Fix login", SearchOptions{}, LLMReadable)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := string(data)
+	if !strings.Contains(out, "task.md") {
+		t.Errorf("expected compact format with file header, got:\n%s", out)
+	}
+	if !strings.Contains(out, "2: Title: Fix login bug") {
+		t.Errorf("expected compact match line, got:\n%s", out)
+	}
+}
+
+func TestSchemaSearchJSON_LLMReadable_Empty(t *testing.T) {
+	dir := setupTestDir(t)
+
+	s := NewSchema[struct{}](
+		WithDataDir(dir),
+		WithExtensions(".md"),
+		WithOutputMode(LLMReadable),
+	)
+
+	data, err := s.SearchJSON("nonexistent_xyz_pattern", SearchOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(data) != 0 {
+		t.Errorf("expected empty output for no results in LLMReadable mode, got %q", string(data))
 	}
 }
 

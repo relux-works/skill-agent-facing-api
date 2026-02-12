@@ -60,6 +60,11 @@ func dataDir() string {
 }
 
 func main() {
+	// For LLM-optimized compact output, use:
+	//   agentquery.NewSchema[Task](
+	//       agentquery.WithOutputMode(agentquery.LLMReadable),
+	//       ...
+	//   )
 	schema := agentquery.NewSchema[Task](
 		agentquery.WithDataDir(dataDir()),
 		agentquery.WithExtensions(".md"),

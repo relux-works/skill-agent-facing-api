@@ -24,6 +24,20 @@ func (fs *FieldSelector[T]) Apply(item T) map[string]any {
 	return result
 }
 
+// ApplyValues extracts selected field values from a domain item in field order.
+// Returns a slice of values matching the order of Fields().
+// This is more efficient than Apply() for tabular output since it avoids
+// creating a map per item.
+func (fs *FieldSelector[T]) ApplyValues(item T) []any {
+	values := make([]any, len(fs.ordered))
+	for i, name := range fs.ordered {
+		if accessor, ok := fs.accessors[name]; ok {
+			values[i] = accessor(item)
+		}
+	}
+	return values
+}
+
 // Include reports whether the named field is in the current selection.
 func (fs *FieldSelector[T]) Include(field string) bool {
 	return fs.fields[field]

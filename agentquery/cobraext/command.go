@@ -5,21 +5,45 @@ package cobraext
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ivalx1s/skill-agent-facing-api/agentquery"
 	"github.com/spf13/cobra"
 )
 
+// parseOutputMode converts a string flag value to an OutputMode.
+// "compact" and "llm" map to LLMReadable; everything else (including "") maps to HumanReadable.
+func parseOutputMode(s string) agentquery.OutputMode {
+	switch strings.ToLower(s) {
+	case "compact", "llm":
+		return agentquery.LLMReadable
+	default:
+		return agentquery.HumanReadable
+	}
+}
+
+// resolveMode returns the effective OutputMode for a command invocation.
+// If the --format flag was explicitly set, it takes precedence; otherwise the schema default is used.
+func resolveMode[T any](format string, flagChanged bool, schema *agentquery.Schema[T]) agentquery.OutputMode {
+	if flagChanged {
+		return parseOutputMode(format)
+	}
+	return schema.OutputMode()
+}
+
 // QueryCommand creates a "q" subcommand that parses and executes a DSL query
 // against the given schema. The query string is taken from positional args.
-// Output is JSON written to stdout.
+// Output is written to stdout. Use --format to override the schema's default output mode.
 func QueryCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
-	return &cobra.Command{
+	var format string
+
+	cmd := &cobra.Command{
 		Use:   "q <query>",
 		Short: "Execute a structured DSL query",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			data, err := schema.QueryJSON(args[0])
+			mode := resolveMode(format, cmd.Flags().Changed("format"), schema)
+			data, err := schema.QueryJSONWithMode(args[0], mode)
 			if err != nil {
 				return err
 			}
@@ -27,15 +51,19 @@ func QueryCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
 			return err
 		},
 	}
+
+	cmd.Flags().StringVar(&format, "format", "", `Output format: "json" or "compact" (default: schema setting)`)
+	return cmd
 }
 
 // SearchCommand creates a "grep" subcommand that performs a full-text regex
-// search within the schema's data directory. Supports --file, -i, and -C flags.
+// search within the schema's data directory. Supports --file, -i, -C, and --format flags.
 func SearchCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
 	var (
 		fileGlob        string
 		caseInsensitive bool
 		contextLines    int
+		format          string
 	)
 
 	cmd := &cobra.Command{
@@ -48,7 +76,8 @@ func SearchCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
 				CaseInsensitive: caseInsensitive,
 				ContextLines:    contextLines,
 			}
-			data, err := schema.SearchJSON(args[0], opts)
+			mode := resolveMode(format, cmd.Flags().Changed("format"), schema)
+			data, err := schema.SearchJSONWithMode(args[0], opts, mode)
 			if err != nil {
 				return err
 			}
@@ -60,6 +89,7 @@ func SearchCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
 	cmd.Flags().StringVar(&fileGlob, "file", "", "Glob pattern to filter files (e.g. \"*.md\")")
 	cmd.Flags().BoolVarP(&caseInsensitive, "ignore-case", "i", false, "Case-insensitive search")
 	cmd.Flags().IntVarP(&contextLines, "context", "C", 0, "Number of context lines around matches")
+	cmd.Flags().StringVar(&format, "format", "", `Output format: "json" or "compact" (default: schema setting)`)
 
 	return cmd
 }

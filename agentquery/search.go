@@ -2,6 +2,7 @@ package agentquery
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -168,6 +169,52 @@ type FileSystemSearchProvider struct {
 // Search walks the filesystem and returns matching lines.
 func (p *FileSystemSearchProvider) Search(pattern string, opts SearchOptions) ([]SearchResult, error) {
 	return Search(p.DataDir, pattern, p.Extensions, opts)
+}
+
+// FormatSearchCompact formats search results in a compact grouped-by-file format.
+// Match lines use ":" separator, context lines use " " (space).
+// File path appears as a header line with no indentation, followed by indented lines.
+// Blank line separates file groups. Returns empty []byte for empty results.
+func FormatSearchCompact(results []SearchResult) []byte {
+	if len(results) == 0 {
+		return []byte{}
+	}
+
+	// Group results by file path, preserving order of first appearance.
+	type fileGroup struct {
+		path    string
+		results []SearchResult
+	}
+	var groups []fileGroup
+	groupIdx := make(map[string]int)
+
+	for _, r := range results {
+		idx, exists := groupIdx[r.Source.Path]
+		if !exists {
+			idx = len(groups)
+			groupIdx[r.Source.Path] = idx
+			groups = append(groups, fileGroup{path: r.Source.Path})
+		}
+		groups[idx].results = append(groups[idx].results, r)
+	}
+
+	var buf bytes.Buffer
+	for i, g := range groups {
+		if i > 0 {
+			buf.WriteByte('\n')
+		}
+		buf.WriteString(g.path)
+		buf.WriteByte('\n')
+		for _, r := range g.results {
+			if r.IsMatch {
+				fmt.Fprintf(&buf, "  %d: %s\n", r.Source.Line, r.Content)
+			} else {
+				fmt.Fprintf(&buf, "  %d  %s\n", r.Source.Line, r.Content)
+			}
+		}
+	}
+
+	return buf.Bytes()
 }
 
 // searchFile scans a single file for regex matches and returns SearchResult entries.

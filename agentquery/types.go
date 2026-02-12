@@ -1,5 +1,17 @@
 package agentquery
 
+// OutputMode controls how query and search results are serialized.
+// HumanReadable (default) produces standard JSON.
+// LLMReadable produces a compact tabular format optimized for LLM token efficiency.
+type OutputMode int
+
+const (
+	// HumanReadable outputs standard JSON (default).
+	HumanReadable OutputMode = iota
+	// LLMReadable outputs compact tabular format: schema-once header + CSV-style rows.
+	LLMReadable
+)
+
 // SearchProvider abstracts full-text search over a data source.
 // Implementations may search the filesystem, a database, or a remote API.
 type SearchProvider interface {

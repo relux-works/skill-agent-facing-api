@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/ivalx1s/skill-agent-facing-api/agentquery"
@@ -202,5 +203,196 @@ func TestAddCommands(t *testing.T) {
 	}
 	if !names["grep <pattern>"] {
 		t.Error("expected 'grep' command to be added")
+	}
+}
+
+// --- --format flag tests ---
+
+func TestQueryCommand_FormatFlagAccepted(t *testing.T) {
+	s := newTestSchema(t)
+	cmd := QueryCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{"get(T1) { id name }", "--format", "json"})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// With --format=json, output should be valid JSON
+	if !json.Valid(buf.Bytes()) {
+		t.Fatalf("expected valid JSON output, got: %s", buf.String())
+	}
+}
+
+func TestQueryCommand_DefaultNoFlagUsesSchemaMode(t *testing.T) {
+	s := newTestSchema(t)
+	cmd := QueryCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{"get(T1) { id name }"})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Default schema mode is HumanReadable, so output should be valid JSON
+	if !json.Valid(buf.Bytes()) {
+		t.Fatalf("expected valid JSON output with default mode, got: %s", buf.String())
+	}
+}
+
+func TestSearchCommand_FormatCompactProducesNonJSON(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "test.md"), []byte("Hello World\nFoo bar"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	s := agentquery.NewSchema[*testItem](
+		agentquery.WithDataDir(dir),
+		agentquery.WithExtensions(".md"),
+	)
+
+	cmd := SearchCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{"Hello", "--format", "compact"})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := strings.TrimSpace(buf.String())
+
+	// Compact output should NOT be a JSON array
+	if strings.HasPrefix(out, "[") {
+		t.Error("compact format should not produce JSON array")
+	}
+
+	// Should contain file header and match line
+	if !strings.Contains(out, "test.md") {
+		t.Errorf("expected file header 'test.md' in output, got:\n%s", out)
+	}
+	if !strings.Contains(out, "1: Hello World") {
+		t.Errorf("expected match line '1: Hello World' in output, got:\n%s", out)
+	}
+}
+
+func TestSearchCommand_FormatLLMAlias(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "test.md"), []byte("Hello World"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	s := agentquery.NewSchema[*testItem](
+		agentquery.WithDataDir(dir),
+		agentquery.WithExtensions(".md"),
+	)
+
+	cmd := SearchCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{"Hello", "--format", "llm"})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := strings.TrimSpace(buf.String())
+	// "llm" is an alias for "compact" — should produce the same non-JSON output
+	if strings.HasPrefix(out, "[") {
+		t.Error("--format=llm should produce compact (non-JSON) output")
+	}
+	if !strings.Contains(out, "test.md") {
+		t.Errorf("expected file header, got:\n%s", out)
+	}
+}
+
+func TestSearchCommand_DefaultNoFlagUsesSchemaMode(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "test.md"), []byte("Hello World"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Schema set to LLMReadable — command without --format should use schema default
+	s := agentquery.NewSchema[*testItem](
+		agentquery.WithDataDir(dir),
+		agentquery.WithExtensions(".md"),
+		agentquery.WithOutputMode(agentquery.LLMReadable),
+	)
+
+	cmd := SearchCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{"Hello"})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	out := strings.TrimSpace(buf.String())
+	// Should be compact because schema defaults to LLMReadable
+	if strings.HasPrefix(out, "[") {
+		t.Error("expected compact output from LLMReadable schema default")
+	}
+	if !strings.Contains(out, "test.md") {
+		t.Errorf("expected file header, got:\n%s", out)
+	}
+}
+
+func TestSearchCommand_FormatJsonOverridesLLMSchema(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "test.md"), []byte("Hello World"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Schema defaults to LLMReadable, but --format=json should override
+	s := agentquery.NewSchema[*testItem](
+		agentquery.WithDataDir(dir),
+		agentquery.WithExtensions(".md"),
+		agentquery.WithOutputMode(agentquery.LLMReadable),
+	)
+
+	cmd := SearchCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{"Hello", "--format", "json"})
+
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !json.Valid(buf.Bytes()) {
+		t.Fatalf("--format=json should produce valid JSON, got: %s", buf.String())
+	}
+}
+
+func TestParseOutputMode(t *testing.T) {
+	tests := []struct {
+		input string
+		want  agentquery.OutputMode
+	}{
+		{"compact", agentquery.LLMReadable},
+		{"COMPACT", agentquery.LLMReadable},
+		{"Compact", agentquery.LLMReadable},
+		{"llm", agentquery.LLMReadable},
+		{"LLM", agentquery.LLMReadable},
+		{"json", agentquery.HumanReadable},
+		{"JSON", agentquery.HumanReadable},
+		{"", agentquery.HumanReadable},
+		{"anything", agentquery.HumanReadable},
+	}
+
+	for _, tt := range tests {
+		got := parseOutputMode(tt.input)
+		if got != tt.want {
+			t.Errorf("parseOutputMode(%q) = %v, want %v", tt.input, got, tt.want)
+		}
 	}
 }

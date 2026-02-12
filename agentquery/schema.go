@@ -17,8 +17,7 @@ type Schema[T any] struct {
 	defaultFields  []string                       // fields used when no projection specified
 	operations     map[string]OperationHandler[T] // registered operation handlers
 	loader         func() ([]T, error)            // lazy data loader
-	searchProvider SearchProvider                 // pluggable search backend
-	outputMode     OutputMode                     // HumanReadable (default) or LLMReadable
+	searchProvider SearchProvider // pluggable search backend
 }
 
 // schemaConfig holds configuration set via functional options.
@@ -26,7 +25,6 @@ type schemaConfig struct {
 	dataDir        string
 	extensions     []string
 	searchProvider SearchProvider
-	outputMode     OutputMode
 }
 
 // Option configures a Schema during construction.
@@ -58,15 +56,6 @@ func WithSearchProvider(sp SearchProvider) Option {
 	}
 }
 
-// WithOutputMode sets the serialization mode for query and search results.
-// HumanReadable (default) produces standard JSON.
-// LLMReadable produces compact tabular output optimized for LLM token efficiency.
-func WithOutputMode(mode OutputMode) Option {
-	return func(c *schemaConfig) {
-		c.outputMode = mode
-	}
-}
-
 // NewSchema creates a new empty Schema for the given domain type.
 // Options configure search-related settings (data directory, file extensions).
 // Default extensions: [".md"].
@@ -93,7 +82,6 @@ func NewSchema[T any](opts ...Option) *Schema[T] {
 		presets:        make(map[string][]string),
 		operations:     make(map[string]OperationHandler[T]),
 		searchProvider: sp,
-		outputMode:     cfg.outputMode,
 	}
 
 	// Register built-in "schema" introspection operation.
@@ -138,11 +126,6 @@ func (s *Schema[T]) SetLoader(fn func() ([]T, error)) {
 	s.loader = fn
 }
 
-// OutputMode returns the schema's configured output mode.
-func (s *Schema[T]) OutputMode() OutputMode {
-	return s.outputMode
-}
-
 // ResolveField implements the FieldResolver interface.
 // If name matches a preset, it returns the expanded field list.
 // If name matches a registered field, it returns []string{name}.
@@ -166,11 +149,13 @@ func (s *Schema[T]) Search(pattern string, opts SearchOptions) ([]SearchResult, 
 	return s.searchProvider.Search(pattern, opts)
 }
 
-// SearchJSON performs a search and returns the results serialized according to
-// the schema's configured output mode. HumanReadable produces indented JSON;
-// LLMReadable produces compact grouped-by-file text.
+// SearchJSON performs a search and returns the results as indented JSON bytes.
 func (s *Schema[T]) SearchJSON(pattern string, opts SearchOptions) ([]byte, error) {
-	return s.SearchJSONWithMode(pattern, opts, s.outputMode)
+	results, err := s.Search(pattern, opts)
+	if err != nil {
+		return nil, err
+	}
+	return json.MarshalIndent(results, "", "  ")
 }
 
 // SearchJSONWithMode performs a search and serializes with the specified output mode,

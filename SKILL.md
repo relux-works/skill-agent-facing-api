@@ -109,30 +109,25 @@ mytool q 'summary()'
 
 ### Output Modes
 
-The DSL supports two output modes:
+The `--format` flag is **required** on CLI commands — the caller explicitly chooses the output format:
 
-| Mode | Flag | Format | Use case |
+| Flag | Mode | Format | Use case |
 |------|------|--------|----------|
-| **HumanReadable** (default) | `--format json` | Standard JSON | Human inspection, piping to `jq` |
-| **LLMReadable** | `--format compact` | Tabular text | Agent consumption — fewer tokens |
+| `--format json` | `HumanReadable` | Standard JSON | Human inspection, TUI apps, piping to `jq` |
+| `--format compact` | `LLMReadable` | Tabular text | Agent consumption — fewer tokens |
+| `--format llm` | `LLMReadable` | (alias for compact) | Same as above |
 
-Configure the default at schema construction:
-
-```go
-schema := agentquery.NewSchema[Task](
-    agentquery.WithOutputMode(agentquery.LLMReadable),
-)
-```
-
-Override per-invocation with `--format`:
+Format is a **transport concern**, not a schema setting. The same CLI tool serves different consumers:
 
 ```bash
-# Force compact output regardless of schema default
+# Agent calls with compact format
 mytool q 'list(status=todo) { overview }' --format compact
 
-# Force JSON even if schema defaults to compact
+# TUI app or human calls with JSON
 mytool q 'list()' --format json
 ```
+
+Programmatically, use `QueryJSONWithMode()` / `SearchJSONWithMode()` to specify format per-call. `QueryJSON()` / `SearchJSON()` always return JSON.
 
 **Compact format examples:**
 
@@ -158,8 +153,6 @@ README.md
 other.md
   12: another match
 ```
-
-**When to use which:** If your tool is exclusively consumed by agents, set `LLMReadable` as the schema default. If humans also inspect output, keep `HumanReadable` as default and let agents pass `--format compact` when they want savings.
 
 ### Token Budget
 
@@ -252,7 +245,7 @@ Need data from the tool?
 | Grep for structured queries | Unreliable, returns raw file content, can return 10K+ tokens | DSL for anything with known fields |
 | CLI `--json` flag on every command | Still returns all fields, verbose JSON | Dedicated DSL with projection |
 | Human-formatted output to agents | ANSI codes, alignment padding, box drawing = wasted tokens | JSON-only DSL layer |
-| JSON output to LLM agents | JSON keys repeated per item, quoting overhead | Use `LLMReadable` mode — tabular format with schema-once header |
+| JSON output to LLM agents | JSON keys repeated per item, quoting overhead | Use `--format compact` — tabular format with schema-once header |
 
 ---
 

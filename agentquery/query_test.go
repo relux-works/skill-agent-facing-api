@@ -939,9 +939,9 @@ func TestQuery_OperationOverwrite(t *testing.T) {
 
 // --- LLMReadable output mode tests ---
 
-// newLLMQuerySchema creates a Schema with LLMReadable output mode.
+// newLLMQuerySchema creates a Schema for testing LLMReadable output via QueryJSONWithMode.
 func newLLMQuerySchema() *Schema[*testItem] {
-	s := NewSchema[*testItem](WithOutputMode(LLMReadable))
+	s := NewSchema[*testItem]()
 	s.Field("id", func(item *testItem) any { return item.ID })
 	s.Field("name", func(item *testItem) any { return item.Name })
 	s.Field("status", func(item *testItem) any { return item.Status })
@@ -1007,10 +1007,10 @@ func newLLMQuerySchema() *Schema[*testItem] {
 	return s
 }
 
-func TestQueryJSON_LLMReadable_List(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_List(t *testing.T) {
 	s := newLLMQuerySchema()
 
-	data, err := s.QueryJSON("list() { id status }")
+	data, err := s.QueryJSONWithMode("list() { id status }", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1041,10 +1041,10 @@ func TestQueryJSON_LLMReadable_List(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_Get(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_Get(t *testing.T) {
 	s := newLLMQuerySchema()
 
-	data, err := s.QueryJSON("get(T1) { id name }")
+	data, err := s.QueryJSONWithMode("get(T1) { id name }", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1063,12 +1063,12 @@ func TestQueryJSON_LLMReadable_Get(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_Count(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_Count(t *testing.T) {
 	s := newLLMQuerySchema()
 
 	// count() returns map[string]any{"count": 3} — the "count" field is not
 	// a schema-registered field, so field order comes from the map keys.
-	data, err := s.QueryJSON("count()")
+	data, err := s.QueryJSONWithMode("count()", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1084,11 +1084,11 @@ func TestQueryJSON_LLMReadable_Count(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_DefaultFields(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_DefaultFields(t *testing.T) {
 	s := newLLMQuerySchema()
 
 	// No explicit projection — uses default fields (id, name, status).
-	data, err := s.QueryJSON("get(T2)")
+	data, err := s.QueryJSONWithMode("get(T2)", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1110,10 +1110,10 @@ func TestQueryJSON_LLMReadable_DefaultFields(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_PresetExpansion(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_PresetExpansion(t *testing.T) {
 	s := newLLMQuerySchema()
 
-	data, err := s.QueryJSON("list() { minimal }")
+	data, err := s.QueryJSONWithMode("list() { minimal }", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1127,11 +1127,11 @@ func TestQueryJSON_LLMReadable_PresetExpansion(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_ErrorFallsBackToJSON(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_ErrorFallsBackToJSON(t *testing.T) {
 	s := newLLMQuerySchema()
 
 	// A failing operation produces an error map — should fall back to JSON.
-	data, err := s.QueryJSON("fail()")
+	data, err := s.QueryJSONWithMode("fail()", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1149,10 +1149,10 @@ func TestQueryJSON_LLMReadable_ErrorFallsBackToJSON(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_Batch(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_Batch(t *testing.T) {
 	s := newLLMQuerySchema()
 
-	data, err := s.QueryJSON("get(T1) { id }; list() { id status }")
+	data, err := s.QueryJSONWithMode("get(T1) { id }; list() { id status }", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1183,10 +1183,10 @@ func TestQueryJSON_LLMReadable_Batch(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_BatchWithError(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_BatchWithError(t *testing.T) {
 	s := newLLMQuerySchema()
 
-	data, err := s.QueryJSON("get(T1) { id }; fail(); list() { id }")
+	data, err := s.QueryJSONWithMode("get(T1) { id }; fail(); list() { id }", LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -1218,24 +1218,12 @@ func TestQueryJSON_HumanReadable_StillJSON(t *testing.T) {
 	}
 }
 
-func TestQueryJSON_LLMReadable_ParseError(t *testing.T) {
+func TestQueryJSONWithMode_LLMReadable_ParseError(t *testing.T) {
 	s := newLLMQuerySchema()
 
-	_, err := s.QueryJSON("")
+	_, err := s.QueryJSONWithMode("", LLMReadable)
 	if err == nil {
 		t.Fatal("expected error for empty query, got nil")
-	}
-}
-
-func TestOutputMode_Getter(t *testing.T) {
-	s1 := NewSchema[*testItem]()
-	if s1.OutputMode() != HumanReadable {
-		t.Errorf("default OutputMode = %v, want HumanReadable", s1.OutputMode())
-	}
-
-	s2 := NewSchema[*testItem](WithOutputMode(LLMReadable))
-	if s2.OutputMode() != LLMReadable {
-		t.Errorf("OutputMode = %v, want LLMReadable", s2.OutputMode())
 	}
 }
 

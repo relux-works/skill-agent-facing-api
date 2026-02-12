@@ -28,14 +28,14 @@ See [references/comparison-example.md](references/comparison-example.md) for a d
 
 ## Output Modes
 
-The library supports two output modes via `OutputMode`:
+The `--format` flag (required on CLI commands) controls output serialization:
 
-| Mode | Format | Token cost |
-|------|--------|------------|
-| `HumanReadable` (default) | Standard JSON | Baseline |
-| `LLMReadable` | Compact tabular text | ~30-50% fewer tokens |
+| `--format` | Mode | Format | Token cost |
+|------------|------|--------|------------|
+| `json` | `HumanReadable` | Standard JSON | Baseline |
+| `compact` / `llm` | `LLMReadable` | Compact tabular text | ~30-50% fewer tokens |
 
-Set the default at schema creation with `WithOutputMode(agentquery.LLMReadable)`, or override per-call with the `--format` CLI flag (`json` or `compact`).
+Format is a **caller decision** (transport concern), not a schema setting. The same CLI tool serves different consumers — agents pass `--format compact`, TUI apps and humans pass `--format json`.
 
 **Compact output examples:**
 

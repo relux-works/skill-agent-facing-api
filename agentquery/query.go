@@ -39,19 +39,13 @@ func (s *Schema[T]) Query(input string) (any, error) {
 	return results, nil
 }
 
-// QueryJSON is a convenience method that executes the query and serializes
-// the result. In HumanReadable mode (default) it produces JSON.
-// In LLMReadable mode it produces compact tabular output.
+// QueryJSON is a convenience method that executes the query and marshals
+// the result to JSON bytes.
 func (s *Schema[T]) QueryJSON(input string) ([]byte, error) {
 	result, err := s.Query(input)
 	if err != nil {
 		return nil, err
 	}
-
-	if s.outputMode == LLMReadable {
-		return s.formatLLMReadable(input, result)
-	}
-
 	return json.Marshal(result)
 }
 

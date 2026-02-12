@@ -627,16 +627,15 @@ func TestFormatSearchCompact_GroupOrder(t *testing.T) {
 
 // --- Schema.SearchJSON with LLMReadable mode ---
 
-func TestSchemaSearchJSON_LLMReadable(t *testing.T) {
+func TestSchemaSearchJSONWithMode_LLMReadable(t *testing.T) {
 	dir := setupTestDir(t)
 
 	s := NewSchema[struct{}](
 		WithDataDir(dir),
 		WithExtensions(".md"),
-		WithOutputMode(LLMReadable),
 	)
 
-	data, err := s.SearchJSON("Fix login", SearchOptions{})
+	data, err := s.SearchJSONWithMode("Fix login", SearchOptions{}, LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -663,7 +662,7 @@ func TestSchemaSearchJSON_HumanReadable(t *testing.T) {
 	s := NewSchema[struct{}](
 		WithDataDir(dir),
 		WithExtensions(".md"),
-		// Default HumanReadable — no WithOutputMode
+		// Default: JSON output
 	)
 
 	data, err := s.SearchJSON("Fix login", SearchOptions{})
@@ -707,16 +706,15 @@ func TestSchemaSearchJSONWithMode_OverridesDefault(t *testing.T) {
 	}
 }
 
-func TestSchemaSearchJSON_LLMReadable_Empty(t *testing.T) {
+func TestSchemaSearchJSONWithMode_LLMReadable_Empty(t *testing.T) {
 	dir := setupTestDir(t)
 
 	s := NewSchema[struct{}](
 		WithDataDir(dir),
 		WithExtensions(".md"),
-		WithOutputMode(LLMReadable),
 	)
 
-	data, err := s.SearchJSON("nonexistent_xyz_pattern", SearchOptions{})
+	data, err := s.SearchJSONWithMode("nonexistent_xyz_pattern", SearchOptions{}, LLMReadable)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

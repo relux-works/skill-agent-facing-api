@@ -26,12 +26,12 @@ cd agentquery && go test ./cobraext/...
 # Build the example CLI
 cd example && go build -o taskdemo .
 
-# Run the example
-./example/taskdemo q 'schema()'
-./example/taskdemo q 'summary()'
-./example/taskdemo grep "TODO"
+# Run the example (--format is required: "json" or "compact"/"llm")
+./example/taskdemo q 'schema()' --format json
+./example/taskdemo q 'summary()' --format json
+./example/taskdemo grep "TODO" --format json
 
-# Compact output (LLMReadable mode)
+# Compact output for LLM agents
 ./example/taskdemo q 'list() { overview }' --format compact
 ./example/taskdemo q 'get(task-1) { overview }' --format compact
 ./example/taskdemo grep "TODO" --format compact
@@ -45,11 +45,11 @@ No linter is configured. No CI/CD pipeline exists.
 
 The core is a generic `Schema[T]` type parameterized on the domain item type. Users register fields, presets, operations, and a data loader on the schema, then call `Query()` or `Search()`.
 
-**Data flow:** Input string → `Parse()` (tokenizer + recursive descent) → `Query` AST → `Schema.executeStatement()` → `OperationHandler` receives `OperationContext` with parsed statement, `FieldSelector`, and lazy item loader → returns JSON-serializable result → serialized via `OutputMode` (JSON or compact tabular).
+**Data flow:** Input string → `Parse()` (tokenizer + recursive descent) → `Query` AST → `Schema.executeStatement()` → `OperationHandler` receives `OperationContext` with parsed statement, `FieldSelector`, and lazy item loader → returns JSON-serializable result → serialized as JSON (default) or compact tabular (via `--format compact` or `*WithMode()` API).
 
 Key files in `agentquery/`:
 
-- **`schema.go`** — Central `Schema[T]` type. Registers fields, presets, operations, loader. Builds `ParserConfig`. Has a built-in `schema` introspection operation. Configurable `OutputMode` via `WithOutputMode()`. Methods `QueryJSONWithMode()` and `SearchJSONWithMode()` for per-call mode override.
+- **`schema.go`** — Central `Schema[T]` type. Registers fields, presets, operations, loader. Builds `ParserConfig`. Has a built-in `schema` introspection operation. `QueryJSONWithMode()` and `SearchJSONWithMode()` for caller-specified output format.
 - **`parser.go`** — Tokenizer + recursive descent parser. Grammar: `operation(params) { fields }` with `;` batching. Validates operations and resolves fields (including preset expansion) at parse time via `ParserConfig`.
 - **`selector.go`** — `FieldSelector[T]` applies field projection to domain items. Created internally by Schema from parsed field lists. Lazy — only calls accessors for selected fields. `ApplyValues()` returns ordered values without keys (used by compact formatter).
 - **`query.go`** — `Schema.Query()` and `QueryJSON()`. Executes parsed statements, handles batching (single result unwrapped, multiple → `[]any`). Per-statement errors don't abort the batch. `formatLLMReadable()` handles compact output for single and batch queries.
@@ -58,7 +58,7 @@ Key files in `agentquery/`:
 - **`ast.go`** — AST types: `Query`, `Statement`, `Arg`.
 - **`types.go`** — Shared types: `FieldAccessor[T]`, `OperationHandler[T]`, `OperationContext[T]`, `SearchResult`, `SearchOptions`, `OutputMode` (`HumanReadable`, `LLMReadable`).
 - **`error.go`** — `ParseError` (syntax) and `Error` (runtime, with code/message/details).
-- **`cobraext/command.go`** — Cobra command factories (`QueryCommand`, `SearchCommand`, `AddCommands`). Isolated sub-package so non-Cobra users don't import it. `--format` flag on both commands (`json`, `compact`/`llm`) with schema default fallback.
+- **`cobraext/command.go`** — Cobra command factories (`QueryCommand`, `SearchCommand`, `AddCommands`). Isolated sub-package so non-Cobra users don't import it. `--format` flag on both commands (`json` default, `compact`/`llm` for token-efficient output).
 
 ### Example (`example/`)
 
@@ -88,4 +88,4 @@ Identifiers: letters, digits, underscore, hyphen. Values can also be quoted stri
 - **Lazy item loading**: `OperationContext.Items` is a `func() ([]T, error)` — only called if the operation needs the dataset.
 - **Batch error isolation**: In a batch query `a(); b(); c()`, if `b()` fails, `a()` and `c()` still return results. The error is inlined as `{"error": {"message": "..."}}`.
 - **cobraext is optional**: The Cobra integration lives in a sub-package. Core library has zero dependencies beyond stdlib.
-- **OutputMode as schema-level default with per-call override**: `WithOutputMode()` sets the serialization mode at construction. `QueryJSONWithMode()` / `SearchJSONWithMode()` override per call. The `--format` CLI flag overrides the schema default only when explicitly set. This lets agent-only tools default to compact while still allowing JSON when needed.
+- **Output format is a transport concern, not a schema concern**: Schema stays format-agnostic. `QueryJSON()` / `SearchJSON()` always produce JSON. `QueryJSONWithMode()` / `SearchJSONWithMode()` accept an explicit `OutputMode` for callers that need compact output. The `--format` CLI flag (`json` default, `compact`/`llm`) puts the format decision where it belongs — at the call site. Same CLI tool serves humans (JSON), TUI apps (JSON), and LLM agents (`--format compact`).

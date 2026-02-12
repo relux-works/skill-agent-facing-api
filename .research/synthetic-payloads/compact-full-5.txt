@@ -1,0 +1,6 @@
+id,name,status,assignee,description,priority,created,updated
+TASK-0001,Implement metrics dashboard endpoint,in-progress,heidi,The our caching layer has issues when token expiration. We should rewrite it to improve reliability.,critical,2025-11-24,2025-11-27
+TASK-0002,Extract input sanitization filters,open,rosa,The the worker pool has issues when failover events. We should decouple it to support horizontal scaling.,critical,2025-04-22,2025-04-29
+TASK-0003,Remove background job scheduler,review,ivan,The the ORM layer has issues when concurrent writes. We should extend it to meet SLA requirements.,critical,2026-01-24,2026-02-12
+TASK-0004,Review input sanitization filters,review,bob,"As discussed in standup, rewrite the config loader. concurrent writes is blocking support horizontal scaling.",medium,2025-07-03,2025-07-30
+TASK-0005,Restructure notification service integration,open,heidi,the worker pool needs attention: concurrent writes causes times out under load. Plan: rewrite and support horizontal scaling.,low,2025-10-23,2025-10-29

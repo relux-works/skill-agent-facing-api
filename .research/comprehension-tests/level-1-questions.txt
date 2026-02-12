@@ -1,0 +1,12 @@
+## Questions (Level 1 — 5 fields)
+
+Q1 [direct-lookup]: What is the status of T-006?
+Q2 [direct-lookup]: Who is assigned to T-009?
+Q3 [filtering]: How many items have status "in-progress"?
+Q4 [filtering]: List all item IDs with status "done".
+Q5 [cross-reference]: Which items are assigned to alice? List their names.
+Q6 [aggregation]: What percentage of all items are in "todo" status?
+Q7 [aggregation]: How many unique assignees are there?
+Q8 [multi-field]: List the names of items that are "blocked" AND assigned to bob.
+Q9 [cross-reference]: What is the description of the item assigned to eve that is "done"?
+Q10 [multi-field]: Which assignee has the most items? How many?

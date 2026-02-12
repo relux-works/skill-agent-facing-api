@@ -1,0 +1,5002 @@
+[
+  {
+    "id": "TASK-0001",
+    "name": "Validate cache invalidation strategy",
+    "status": "review",
+    "assignee": "judy",
+    "description": "As discussed in standup, patch our caching layer. cold starts is blocking meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-06-20",
+    "updated": "2025-06-22"
+  },
+  {
+    "id": "TASK-0002",
+    "name": "Restructure rate limit header propagation",
+    "status": "open",
+    "assignee": "nick",
+    "description": "Follow-up from incident: the auth module failed during schema changes. Must harden to prevent returns stale data.",
+    "priority": "high",
+    "created": "2025-03-07",
+    "updated": "2025-03-28"
+  },
+  {
+    "id": "TASK-0003",
+    "name": "Cache memory leak in worker pool",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "The our caching layer has issues when cold starts. We should patch it to unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-06-24",
+    "updated": "2025-07-24"
+  },
+  {
+    "id": "TASK-0004",
+    "name": "Cache dead letter queue processing",
+    "status": "in-progress",
+    "assignee": "tina",
+    "description": "As discussed in standup, patch the API gateway. large payloads is blocking unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-12-05",
+    "updated": "2025-12-15"
+  },
+  {
+    "id": "TASK-0005",
+    "name": "Fix schema validation middleware",
+    "status": "review",
+    "assignee": "heidi",
+    "description": "As discussed in standup, simplify the middleware stack. network partitions is blocking reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2026-01-05",
+    "updated": "2026-01-19"
+  },
+  {
+    "id": "TASK-0006",
+    "name": "Migrate timezone handling utilities",
+    "status": "blocked",
+    "assignee": "olivia",
+    "description": "As discussed in standup, simplify the config loader. token expiration is blocking reduce latency by 40%.",
+    "priority": "high",
+    "created": "2026-02-06",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0007",
+    "name": "Automate connection timeout configuration",
+    "status": "review",
+    "assignee": "rosa",
+    "description": "Need to rewrite the the event bus to handle concurrent writes. Current implementation leaks memory over time.",
+    "priority": "low",
+    "created": "2025-05-09",
+    "updated": "2025-05-10"
+  },
+  {
+    "id": "TASK-0008",
+    "name": "Investigate payment webhook handler",
+    "status": "in-progress",
+    "assignee": "olivia",
+    "description": "the config loader needs attention: high traffic spikes causes times out under load. Plan: refactor and unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-09-20",
+    "updated": "2025-09-24"
+  },
+  {
+    "id": "TASK-0009",
+    "name": "Refactor timezone handling utilities",
+    "status": "in-progress",
+    "assignee": "alice",
+    "description": "the ORM layer needs attention: large payloads causes leaks memory over time. Plan: rewrite and improve reliability.",
+    "priority": "medium",
+    "created": "2025-05-01",
+    "updated": "2025-05-13"
+  },
+  {
+    "id": "TASK-0010",
+    "name": "Update connection timeout configuration",
+    "status": "done",
+    "assignee": "tina",
+    "description": "Need to rewrite the the auth module to handle cold starts. Current implementation leaks memory over time.",
+    "priority": "low",
+    "created": "2025-08-30",
+    "updated": "2025-09-21"
+  },
+  {
+    "id": "TASK-0011",
+    "name": "Document email template rendering",
+    "status": "review",
+    "assignee": "dave",
+    "description": "Need to extend the the config loader to handle failover events. Current implementation silently drops requests.",
+    "priority": "low",
+    "created": "2025-02-26",
+    "updated": "2025-03-22"
+  },
+  {
+    "id": "TASK-0012",
+    "name": "Implement pagination cursor encoding",
+    "status": "blocked",
+    "assignee": "heidi",
+    "description": "The the config loader has issues when high traffic spikes. We should simplify it to support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-11-02",
+    "updated": "2025-11-19"
+  },
+  {
+    "id": "TASK-0013",
+    "name": "Remove payment webhook handler",
+    "status": "blocked",
+    "assignee": "liam",
+    "description": "Need to refactor the the config loader to handle failover events. Current implementation silently drops requests.",
+    "priority": "low",
+    "created": "2025-10-20",
+    "updated": "2025-11-02"
+  },
+  {
+    "id": "TASK-0014",
+    "name": "Normalize database connection pooling",
+    "status": "review",
+    "assignee": "carol",
+    "description": "our caching layer needs attention: schema changes causes leaks memory over time. Plan: extend and improve reliability.",
+    "priority": "medium",
+    "created": "2025-07-11",
+    "updated": "2025-07-19"
+  },
+  {
+    "id": "TASK-0015",
+    "name": "Automate GraphQL schema resolver",
+    "status": "done",
+    "assignee": "pat",
+    "description": "The our caching layer has issues when failover events. We should patch it to support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-10-07",
+    "updated": "2025-10-17"
+  },
+  {
+    "id": "TASK-0016",
+    "name": "Migrate API rate limiting middleware",
+    "status": "review",
+    "assignee": "judy",
+    "description": "Follow-up from incident: the middleware stack failed during cold starts. Must decouple to prevent silently drops requests.",
+    "priority": "high",
+    "created": "2025-01-23",
+    "updated": "2025-02-17"
+  },
+  {
+    "id": "TASK-0017",
+    "name": "Cache search indexing pipeline",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "Need to harden the the config loader to handle token expiration. Current implementation corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-05-27",
+    "updated": "2025-06-07"
+  },
+  {
+    "id": "TASK-0018",
+    "name": "Integrate memory leak in worker pool",
+    "status": "review",
+    "assignee": "quinn",
+    "description": "the config loader needs attention: concurrent writes causes times out under load. Plan: rewrite and unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-06-23",
+    "updated": "2025-06-28"
+  },
+  {
+    "id": "TASK-0019",
+    "name": "Test session management logic",
+    "status": "open",
+    "assignee": "karl",
+    "description": "the middleware stack needs attention: token expiration causes leaks memory over time. Plan: simplify and pass the security audit.",
+    "priority": "low",
+    "created": "2025-10-07",
+    "updated": "2025-10-16"
+  },
+  {
+    "id": "TASK-0020",
+    "name": "Fix audit trail logging",
+    "status": "blocked",
+    "assignee": "nick",
+    "description": "our caching layer needs attention: token expiration causes returns stale data. Plan: refactor and unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-06-29",
+    "updated": "2025-07-13"
+  },
+  {
+    "id": "TASK-0021",
+    "name": "Monitor API versioning strategy",
+    "status": "open",
+    "assignee": "eve",
+    "description": "Need to extend the the ORM layer to handle schema changes. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-01-16",
+    "updated": "2025-01-20"
+  },
+  {
+    "id": "TASK-0022",
+    "name": "Upgrade API versioning strategy",
+    "status": "review",
+    "assignee": "liam",
+    "description": "As discussed in standup, rewrite the API gateway. schema changes is blocking support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-11-06",
+    "updated": "2025-11-10"
+  },
+  {
+    "id": "TASK-0023",
+    "name": "Add database connection pooling",
+    "status": "in-progress",
+    "assignee": "pat",
+    "description": "Follow-up from incident: our caching layer failed during cold starts. Must decouple to prevent returns stale data.",
+    "priority": "low",
+    "created": "2025-05-08",
+    "updated": "2025-06-07"
+  },
+  {
+    "id": "TASK-0024",
+    "name": "Document memory leak in worker pool",
+    "status": "in-progress",
+    "assignee": "dave",
+    "description": "The the middleware stack has issues when large payloads. We should rewrite it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-04-20",
+    "updated": "2025-05-09"
+  },
+  {
+    "id": "TASK-0025",
+    "name": "Test audit trail logging",
+    "status": "open",
+    "assignee": "rosa",
+    "description": "Follow-up from incident: the event bus failed during large payloads. Must simplify to prevent corrupts state on restart.",
+    "priority": "high",
+    "created": "2025-12-16",
+    "updated": "2026-01-15"
+  },
+  {
+    "id": "TASK-0026",
+    "name": "Extract data migration scripts",
+    "status": "open",
+    "assignee": "grace",
+    "description": "The the middleware stack has issues when high traffic spikes. We should extend it to unblock the frontend team.",
+    "priority": "medium",
+    "created": "2026-02-11",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0027",
+    "name": "Replace error logging infrastructure",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "Need to simplify the the config loader to handle failover events. Current implementation fails without retry.",
+    "priority": "low",
+    "created": "2025-08-28",
+    "updated": "2025-09-22"
+  },
+  {
+    "id": "TASK-0028",
+    "name": "Update OAuth2 token refresh flow",
+    "status": "open",
+    "assignee": "olivia",
+    "description": "As discussed in standup, harden the API gateway. large payloads is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-10-22",
+    "updated": "2025-10-24"
+  },
+  {
+    "id": "TASK-0029",
+    "name": "Update batch processing queue",
+    "status": "in-progress",
+    "assignee": "frank",
+    "description": "the ORM layer needs attention: cold starts causes silently drops requests. Plan: extend and support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-03-05",
+    "updated": "2025-03-21"
+  },
+  {
+    "id": "TASK-0030",
+    "name": "Replace metrics dashboard endpoint",
+    "status": "in-progress",
+    "assignee": "judy",
+    "description": "Follow-up from incident: the API gateway failed during large payloads. Must rewrite to prevent leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-11-22",
+    "updated": "2025-12-22"
+  },
+  {
+    "id": "TASK-0031",
+    "name": "Implement payment webhook handler",
+    "status": "open",
+    "assignee": "sam",
+    "description": "the config loader needs attention: high traffic spikes causes times out under load. Plan: extend and pass the security audit.",
+    "priority": "medium",
+    "created": "2025-10-16",
+    "updated": "2025-10-17"
+  },
+  {
+    "id": "TASK-0032",
+    "name": "Document connection timeout configuration",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "our caching layer needs attention: high traffic spikes causes leaks memory over time. Plan: wrap and meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-11-25",
+    "updated": "2025-12-25"
+  },
+  {
+    "id": "TASK-0033",
+    "name": "Migrate image resize worker",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "the ORM layer needs attention: token expiration causes leaks memory over time. Plan: harden and support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-09-05",
+    "updated": "2025-09-19"
+  },
+  {
+    "id": "TASK-0034",
+    "name": "Design file upload validation",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "The our caching layer has issues when high traffic spikes. We should patch it to meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-06-13",
+    "updated": "2025-06-20"
+  },
+  {
+    "id": "TASK-0035",
+    "name": "Remove OAuth2 token refresh flow",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "The the middleware stack has issues when failover events. We should patch it to support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-05-08",
+    "updated": "2025-06-07"
+  },
+  {
+    "id": "TASK-0036",
+    "name": "Deploy pagination cursor encoding",
+    "status": "done",
+    "assignee": "heidi",
+    "description": "The the auth module has issues when high traffic spikes. We should harden it to meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-01-12",
+    "updated": "2025-01-14"
+  },
+  {
+    "id": "TASK-0037",
+    "name": "Implement session management logic",
+    "status": "done",
+    "assignee": "eve",
+    "description": "the config loader needs attention: schema changes causes silently drops requests. Plan: harden and meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-05-27",
+    "updated": "2025-06-13"
+  },
+  {
+    "id": "TASK-0038",
+    "name": "Migrate timezone handling utilities",
+    "status": "blocked",
+    "assignee": "judy",
+    "description": "Need to decouple the the middleware stack to handle cold starts. Current implementation fails without retry.",
+    "priority": "critical",
+    "created": "2025-10-19",
+    "updated": "2025-11-05"
+  },
+  {
+    "id": "TASK-0039",
+    "name": "Deploy timezone handling utilities",
+    "status": "review",
+    "assignee": "rosa",
+    "description": "the worker pool needs attention: token expiration causes fails without retry. Plan: patch and improve reliability.",
+    "priority": "critical",
+    "created": "2025-03-07",
+    "updated": "2025-03-10"
+  },
+  {
+    "id": "TASK-0040",
+    "name": "Restructure image resize worker",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "As discussed in standup, patch the API gateway. schema changes is blocking support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-01-20",
+    "updated": "2025-01-24"
+  },
+  {
+    "id": "TASK-0041",
+    "name": "Normalize batch processing queue",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "Follow-up from incident: the event bus failed during failover events. Must wrap to prevent silently drops requests.",
+    "priority": "medium",
+    "created": "2025-07-21",
+    "updated": "2025-08-09"
+  },
+  {
+    "id": "TASK-0042",
+    "name": "Investigate stale cache purge mechanism",
+    "status": "review",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the event bus failed during network partitions. Must wrap to prevent corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-12-11",
+    "updated": "2025-12-14"
+  },
+  {
+    "id": "TASK-0043",
+    "name": "Automate dead letter queue processing",
+    "status": "done",
+    "assignee": "eve",
+    "description": "The our caching layer has issues when network partitions. We should refactor it to meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-03-29",
+    "updated": "2025-04-14"
+  },
+  {
+    "id": "TASK-0044",
+    "name": "Investigate load balancer health checks",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the auth module failed during large payloads. Must wrap to prevent fails without retry.",
+    "priority": "medium",
+    "created": "2025-08-03",
+    "updated": "2025-08-07"
+  },
+  {
+    "id": "TASK-0045",
+    "name": "Extract CSV export functionality",
+    "status": "review",
+    "assignee": "frank",
+    "description": "As discussed in standup, harden the ORM layer. cold starts is blocking meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-12-06",
+    "updated": "2025-12-21"
+  },
+  {
+    "id": "TASK-0046",
+    "name": "Replace batch processing queue",
+    "status": "in-progress",
+    "assignee": "judy",
+    "description": "the middleware stack needs attention: schema changes causes times out under load. Plan: extend and support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-05-07",
+    "updated": "2025-05-15"
+  },
+  {
+    "id": "TASK-0047",
+    "name": "Validate CORS preflight handling",
+    "status": "done",
+    "assignee": "mona",
+    "description": "the event bus needs attention: high traffic spikes causes returns stale data. Plan: patch and pass the security audit.",
+    "priority": "critical",
+    "created": "2025-05-28",
+    "updated": "2025-05-31"
+  },
+  {
+    "id": "TASK-0048",
+    "name": "Design feature flag evaluation",
+    "status": "done",
+    "assignee": "grace",
+    "description": "The the event bus has issues when large payloads. We should simplify it to unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-06-27",
+    "updated": "2025-07-26"
+  },
+  {
+    "id": "TASK-0049",
+    "name": "Upgrade rate limit header propagation",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "Need to rewrite the the config loader to handle schema changes. Current implementation corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-05-05",
+    "updated": "2025-05-06"
+  },
+  {
+    "id": "TASK-0050",
+    "name": "Update user authentication flow",
+    "status": "blocked",
+    "assignee": "frank",
+    "description": "As discussed in standup, wrap the middleware stack. network partitions is blocking support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-12-15",
+    "updated": "2026-01-08"
+  },
+  {
+    "id": "TASK-0051",
+    "name": "Cache payment webhook handler",
+    "status": "blocked",
+    "assignee": "heidi",
+    "description": "Follow-up from incident: the API gateway failed during token expiration. Must refactor to prevent leaks memory over time.",
+    "priority": "low",
+    "created": "2025-11-27",
+    "updated": "2025-11-28"
+  },
+  {
+    "id": "TASK-0052",
+    "name": "Remove WebSocket reconnection logic",
+    "status": "open",
+    "assignee": "alice",
+    "description": "the ORM layer needs attention: cold starts causes times out under load. Plan: rewrite and pass the security audit.",
+    "priority": "low",
+    "created": "2026-02-08",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0053",
+    "name": "Extract request deduplication layer",
+    "status": "review",
+    "assignee": "grace",
+    "description": "Need to harden the the API gateway to handle failover events. Current implementation corrupts state on restart.",
+    "priority": "high",
+    "created": "2025-03-10",
+    "updated": "2025-04-06"
+  },
+  {
+    "id": "TASK-0054",
+    "name": "Test WebSocket reconnection logic",
+    "status": "blocked",
+    "assignee": "grace",
+    "description": "The the config loader has issues when schema changes. We should decouple it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-01-08",
+    "updated": "2025-01-31"
+  },
+  {
+    "id": "TASK-0055",
+    "name": "Integrate OAuth2 token refresh flow",
+    "status": "in-progress",
+    "assignee": "alice",
+    "description": "the worker pool needs attention: failover events causes returns stale data. Plan: decouple and support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-04-05",
+    "updated": "2025-04-09"
+  },
+  {
+    "id": "TASK-0056",
+    "name": "Validate user authentication flow",
+    "status": "review",
+    "assignee": "liam",
+    "description": "The our caching layer has issues when failover events. We should refactor it to reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-10-26",
+    "updated": "2025-11-18"
+  },
+  {
+    "id": "TASK-0057",
+    "name": "Restructure batch processing queue",
+    "status": "open",
+    "assignee": "judy",
+    "description": "the worker pool needs attention: large payloads causes times out under load. Plan: extend and reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-12-18",
+    "updated": "2026-01-03"
+  },
+  {
+    "id": "TASK-0058",
+    "name": "Review schema validation middleware",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "Follow-up from incident: the worker pool failed during concurrent writes. Must extend to prevent fails without retry.",
+    "priority": "medium",
+    "created": "2026-01-18",
+    "updated": "2026-02-06"
+  },
+  {
+    "id": "TASK-0059",
+    "name": "Validate file upload validation",
+    "status": "open",
+    "assignee": "rosa",
+    "description": "Follow-up from incident: the API gateway failed during large payloads. Must extend to prevent returns stale data.",
+    "priority": "low",
+    "created": "2025-02-09",
+    "updated": "2025-03-10"
+  },
+  {
+    "id": "TASK-0060",
+    "name": "Migrate stale cache purge mechanism",
+    "status": "done",
+    "assignee": "carol",
+    "description": "Follow-up from incident: the auth module failed during failover events. Must wrap to prevent leaks memory over time.",
+    "priority": "low",
+    "created": "2025-03-01",
+    "updated": "2025-03-22"
+  },
+  {
+    "id": "TASK-0061",
+    "name": "Fix TLS certificate rotation",
+    "status": "done",
+    "assignee": "judy",
+    "description": "Need to decouple the the event bus to handle high traffic spikes. Current implementation corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-08-22",
+    "updated": "2025-09-09"
+  },
+  {
+    "id": "TASK-0062",
+    "name": "Review notification service integration",
+    "status": "blocked",
+    "assignee": "bob",
+    "description": "Need to wrap the the auth module to handle cold starts. Current implementation times out under load.",
+    "priority": "high",
+    "created": "2025-01-24",
+    "updated": "2025-02-06"
+  },
+  {
+    "id": "TASK-0063",
+    "name": "Normalize schema validation middleware",
+    "status": "review",
+    "assignee": "mona",
+    "description": "As discussed in standup, decouple the config loader. concurrent writes is blocking pass the security audit.",
+    "priority": "high",
+    "created": "2026-01-28",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0064",
+    "name": "Review file upload validation",
+    "status": "in-progress",
+    "assignee": "rosa",
+    "description": "As discussed in standup, patch the worker pool. high traffic spikes is blocking support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-12-01",
+    "updated": "2025-12-28"
+  },
+  {
+    "id": "TASK-0065",
+    "name": "Replace background job scheduler",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "The the middleware stack has issues when schema changes. We should extend it to support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-12-11",
+    "updated": "2026-01-03"
+  },
+  {
+    "id": "TASK-0066",
+    "name": "Add API rate limiting middleware",
+    "status": "done",
+    "assignee": "tina",
+    "description": "Need to extend the the worker pool to handle concurrent writes. Current implementation silently drops requests.",
+    "priority": "critical",
+    "created": "2026-01-07",
+    "updated": "2026-01-31"
+  },
+  {
+    "id": "TASK-0067",
+    "name": "Upgrade search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "bob",
+    "description": "As discussed in standup, wrap the worker pool. network partitions is blocking reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-08-17",
+    "updated": "2025-09-05"
+  },
+  {
+    "id": "TASK-0068",
+    "name": "Normalize dependency version bumps",
+    "status": "review",
+    "assignee": "sam",
+    "description": "Follow-up from incident: the worker pool failed during cold starts. Must harden to prevent leaks memory over time.",
+    "priority": "high",
+    "created": "2025-04-30",
+    "updated": "2025-05-26"
+  },
+  {
+    "id": "TASK-0069",
+    "name": "Configure search indexing pipeline",
+    "status": "blocked",
+    "assignee": "sam",
+    "description": "The the middleware stack has issues when high traffic spikes. We should decouple it to pass the security audit.",
+    "priority": "low",
+    "created": "2025-07-31",
+    "updated": "2025-08-09"
+  },
+  {
+    "id": "TASK-0070",
+    "name": "Test schema validation middleware",
+    "status": "done",
+    "assignee": "eve",
+    "description": "the API gateway needs attention: failover events causes leaks memory over time. Plan: decouple and reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2026-02-07",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0071",
+    "name": "Design search indexing pipeline",
+    "status": "blocked",
+    "assignee": "nick",
+    "description": "As discussed in standup, patch the config loader. network partitions is blocking reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-12-29",
+    "updated": "2026-01-02"
+  },
+  {
+    "id": "TASK-0072",
+    "name": "Design timezone handling utilities",
+    "status": "open",
+    "assignee": "rosa",
+    "description": "The the event bus has issues when token expiration. We should refactor it to unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-11-28",
+    "updated": "2025-11-30"
+  },
+  {
+    "id": "TASK-0073",
+    "name": "Cache stale cache purge mechanism",
+    "status": "blocked",
+    "assignee": "grace",
+    "description": "As discussed in standup, extend the ORM layer. cold starts is blocking reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-02-07",
+    "updated": "2025-02-13"
+  },
+  {
+    "id": "TASK-0074",
+    "name": "Normalize connection timeout configuration",
+    "status": "in-progress",
+    "assignee": "tina",
+    "description": "The the worker pool has issues when schema changes. We should decouple it to meet SLA requirements.",
+    "priority": "low",
+    "created": "2026-01-15",
+    "updated": "2026-01-18"
+  },
+  {
+    "id": "TASK-0075",
+    "name": "Review batch processing queue",
+    "status": "review",
+    "assignee": "liam",
+    "description": "Follow-up from incident: the middleware stack failed during concurrent writes. Must wrap to prevent corrupts state on restart.",
+    "priority": "medium",
+    "created": "2025-10-01",
+    "updated": "2025-10-21"
+  },
+  {
+    "id": "TASK-0076",
+    "name": "Test schema validation middleware",
+    "status": "open",
+    "assignee": "sam",
+    "description": "The the auth module has issues when cold starts. We should patch it to unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-04-15",
+    "updated": "2025-04-26"
+  },
+  {
+    "id": "TASK-0077",
+    "name": "Migrate image resize worker",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the middleware stack failed during schema changes. Must extend to prevent returns stale data.",
+    "priority": "low",
+    "created": "2025-06-01",
+    "updated": "2025-06-05"
+  },
+  {
+    "id": "TASK-0078",
+    "name": "Normalize audit trail logging",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "Follow-up from incident: the API gateway failed during high traffic spikes. Must wrap to prevent fails without retry.",
+    "priority": "critical",
+    "created": "2025-08-24",
+    "updated": "2025-08-29"
+  },
+  {
+    "id": "TASK-0079",
+    "name": "Cache user authentication flow",
+    "status": "done",
+    "assignee": "eve",
+    "description": "The the API gateway has issues when high traffic spikes. We should rewrite it to unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-12-09",
+    "updated": "2025-12-10"
+  },
+  {
+    "id": "TASK-0080",
+    "name": "Monitor dead letter queue processing",
+    "status": "done",
+    "assignee": "pat",
+    "description": "Need to refactor the the config loader to handle high traffic spikes. Current implementation silently drops requests.",
+    "priority": "medium",
+    "created": "2025-07-11",
+    "updated": "2025-07-12"
+  },
+  {
+    "id": "TASK-0081",
+    "name": "Implement pagination cursor encoding",
+    "status": "done",
+    "assignee": "frank",
+    "description": "Need to rewrite the the API gateway to handle network partitions. Current implementation leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-10-02",
+    "updated": "2025-10-11"
+  },
+  {
+    "id": "TASK-0082",
+    "name": "Deploy payment webhook handler",
+    "status": "review",
+    "assignee": "mona",
+    "description": "As discussed in standup, extend the worker pool. cold starts is blocking improve reliability.",
+    "priority": "critical",
+    "created": "2025-07-01",
+    "updated": "2025-07-09"
+  },
+  {
+    "id": "TASK-0083",
+    "name": "Deploy CSV export functionality",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "Need to refactor the the API gateway to handle concurrent writes. Current implementation times out under load.",
+    "priority": "medium",
+    "created": "2025-02-17",
+    "updated": "2025-03-01"
+  },
+  {
+    "id": "TASK-0084",
+    "name": "Add rate limit header propagation",
+    "status": "open",
+    "assignee": "heidi",
+    "description": "The the event bus has issues when high traffic spikes. We should wrap it to pass the security audit.",
+    "priority": "medium",
+    "created": "2025-10-17",
+    "updated": "2025-11-13"
+  },
+  {
+    "id": "TASK-0085",
+    "name": "Upgrade API rate limiting middleware",
+    "status": "in-progress",
+    "assignee": "karl",
+    "description": "Need to extend the the API gateway to handle token expiration. Current implementation silently drops requests.",
+    "priority": "high",
+    "created": "2025-10-06",
+    "updated": "2025-10-24"
+  },
+  {
+    "id": "TASK-0086",
+    "name": "Validate CSV export functionality",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "As discussed in standup, patch our caching layer. schema changes is blocking improve reliability.",
+    "priority": "low",
+    "created": "2025-10-16",
+    "updated": "2025-10-23"
+  },
+  {
+    "id": "TASK-0087",
+    "name": "Refactor image resize worker",
+    "status": "blocked",
+    "assignee": "tina",
+    "description": "Follow-up from incident: the ORM layer failed during high traffic spikes. Must decouple to prevent corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-04-29",
+    "updated": "2025-05-25"
+  },
+  {
+    "id": "TASK-0088",
+    "name": "Review TLS certificate rotation",
+    "status": "done",
+    "assignee": "nick",
+    "description": "The our caching layer has issues when cold starts. We should decouple it to pass the security audit.",
+    "priority": "critical",
+    "created": "2025-09-09",
+    "updated": "2025-09-16"
+  },
+  {
+    "id": "TASK-0089",
+    "name": "Update CSV export functionality",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "our caching layer needs attention: concurrent writes causes silently drops requests. Plan: harden and support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-02-12",
+    "updated": "2025-02-20"
+  },
+  {
+    "id": "TASK-0090",
+    "name": "Configure session management logic",
+    "status": "in-progress",
+    "assignee": "carol",
+    "description": "The the middleware stack has issues when token expiration. We should decouple it to improve reliability.",
+    "priority": "critical",
+    "created": "2025-07-04",
+    "updated": "2025-07-28"
+  },
+  {
+    "id": "TASK-0091",
+    "name": "Refactor input sanitization filters",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "As discussed in standup, refactor the event bus. token expiration is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-07-01",
+    "updated": "2025-07-18"
+  },
+  {
+    "id": "TASK-0092",
+    "name": "Remove CSV export functionality",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "the event bus needs attention: failover events causes leaks memory over time. Plan: simplify and improve reliability.",
+    "priority": "high",
+    "created": "2025-10-20",
+    "updated": "2025-11-05"
+  },
+  {
+    "id": "TASK-0093",
+    "name": "Investigate batch processing queue",
+    "status": "done",
+    "assignee": "carol",
+    "description": "the worker pool needs attention: failover events causes fails without retry. Plan: simplify and unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-08-11",
+    "updated": "2025-08-19"
+  },
+  {
+    "id": "TASK-0094",
+    "name": "Update batch processing queue",
+    "status": "open",
+    "assignee": "mona",
+    "description": "the ORM layer needs attention: failover events causes returns stale data. Plan: decouple and meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-08-23",
+    "updated": "2025-08-26"
+  },
+  {
+    "id": "TASK-0095",
+    "name": "Monitor CI/CD pipeline configuration",
+    "status": "done",
+    "assignee": "karl",
+    "description": "The the ORM layer has issues when cold starts. We should decouple it to pass the security audit.",
+    "priority": "low",
+    "created": "2025-06-03",
+    "updated": "2025-06-13"
+  },
+  {
+    "id": "TASK-0096",
+    "name": "Optimize OAuth2 token refresh flow",
+    "status": "done",
+    "assignee": "ivan",
+    "description": "As discussed in standup, harden our caching layer. network partitions is blocking unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-10-22",
+    "updated": "2025-11-16"
+  },
+  {
+    "id": "TASK-0097",
+    "name": "Replace database connection pooling",
+    "status": "done",
+    "assignee": "grace",
+    "description": "As discussed in standup, simplify our caching layer. token expiration is blocking meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-12-16",
+    "updated": "2026-01-09"
+  },
+  {
+    "id": "TASK-0098",
+    "name": "Optimize feature flag evaluation",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "As discussed in standup, rewrite the middleware stack. failover events is blocking meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-11-21",
+    "updated": "2025-11-30"
+  },
+  {
+    "id": "TASK-0099",
+    "name": "Review CORS preflight handling",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "Need to extend the the ORM layer to handle large payloads. Current implementation corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-10-06",
+    "updated": "2025-10-07"
+  },
+  {
+    "id": "TASK-0100",
+    "name": "Upgrade retry policy for external calls",
+    "status": "review",
+    "assignee": "nick",
+    "description": "Need to refactor the our caching layer to handle cold starts. Current implementation leaks memory over time.",
+    "priority": "high",
+    "created": "2025-10-16",
+    "updated": "2025-11-05"
+  },
+  {
+    "id": "TASK-0101",
+    "name": "Deploy request deduplication layer",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "The the auth module has issues when failover events. We should harden it to support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-08-17",
+    "updated": "2025-08-28"
+  },
+  {
+    "id": "TASK-0102",
+    "name": "Normalize cache invalidation strategy",
+    "status": "review",
+    "assignee": "judy",
+    "description": "the worker pool needs attention: failover events causes returns stale data. Plan: wrap and meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-02-13",
+    "updated": "2025-02-16"
+  },
+  {
+    "id": "TASK-0103",
+    "name": "Restructure API versioning strategy",
+    "status": "review",
+    "assignee": "carol",
+    "description": "our caching layer needs attention: high traffic spikes causes returns stale data. Plan: refactor and pass the security audit.",
+    "priority": "critical",
+    "created": "2025-08-13",
+    "updated": "2025-09-05"
+  },
+  {
+    "id": "TASK-0104",
+    "name": "Remove email template rendering",
+    "status": "blocked",
+    "assignee": "frank",
+    "description": "Follow-up from incident: the ORM layer failed during token expiration. Must patch to prevent times out under load.",
+    "priority": "low",
+    "created": "2025-12-13",
+    "updated": "2026-01-07"
+  },
+  {
+    "id": "TASK-0105",
+    "name": "Remove background job scheduler",
+    "status": "done",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the middleware stack failed during token expiration. Must extend to prevent times out under load.",
+    "priority": "high",
+    "created": "2025-11-19",
+    "updated": "2025-11-24"
+  },
+  {
+    "id": "TASK-0106",
+    "name": "Cache notification service integration",
+    "status": "blocked",
+    "assignee": "dave",
+    "description": "Follow-up from incident: the ORM layer failed during schema changes. Must patch to prevent leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-04-16",
+    "updated": "2025-04-24"
+  },
+  {
+    "id": "TASK-0107",
+    "name": "Integrate rate limit header propagation",
+    "status": "review",
+    "assignee": "tina",
+    "description": "As discussed in standup, decouple our caching layer. schema changes is blocking meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-05-15",
+    "updated": "2025-06-05"
+  },
+  {
+    "id": "TASK-0108",
+    "name": "Document dead letter queue processing",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "The our caching layer has issues when network partitions. We should harden it to improve reliability.",
+    "priority": "high",
+    "created": "2025-12-11",
+    "updated": "2026-01-02"
+  },
+  {
+    "id": "TASK-0109",
+    "name": "Update pagination cursor encoding",
+    "status": "done",
+    "assignee": "nick",
+    "description": "Follow-up from incident: the config loader failed during token expiration. Must patch to prevent leaks memory over time.",
+    "priority": "high",
+    "created": "2025-07-11",
+    "updated": "2025-08-02"
+  },
+  {
+    "id": "TASK-0110",
+    "name": "Integrate WebSocket reconnection logic",
+    "status": "in-progress",
+    "assignee": "frank",
+    "description": "the auth module needs attention: schema changes causes silently drops requests. Plan: wrap and meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-10-12",
+    "updated": "2025-10-17"
+  },
+  {
+    "id": "TASK-0111",
+    "name": "Deploy TLS certificate rotation",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "As discussed in standup, wrap the config loader. failover events is blocking reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-04-10",
+    "updated": "2025-05-06"
+  },
+  {
+    "id": "TASK-0112",
+    "name": "Cache data migration scripts",
+    "status": "review",
+    "assignee": "bob",
+    "description": "the event bus needs attention: large payloads causes times out under load. Plan: extend and unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-10-17",
+    "updated": "2025-10-17"
+  },
+  {
+    "id": "TASK-0113",
+    "name": "Add dependency version bumps",
+    "status": "open",
+    "assignee": "ivan",
+    "description": "Follow-up from incident: the auth module failed during failover events. Must harden to prevent fails without retry.",
+    "priority": "low",
+    "created": "2025-10-09",
+    "updated": "2025-10-25"
+  },
+  {
+    "id": "TASK-0114",
+    "name": "Automate email template rendering",
+    "status": "review",
+    "assignee": "bob",
+    "description": "As discussed in standup, simplify the ORM layer. concurrent writes is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-02-22",
+    "updated": "2025-03-17"
+  },
+  {
+    "id": "TASK-0115",
+    "name": "Normalize stale cache purge mechanism",
+    "status": "review",
+    "assignee": "tina",
+    "description": "As discussed in standup, patch the API gateway. network partitions is blocking improve reliability.",
+    "priority": "medium",
+    "created": "2025-04-18",
+    "updated": "2025-05-13"
+  },
+  {
+    "id": "TASK-0116",
+    "name": "Monitor CORS preflight handling",
+    "status": "in-progress",
+    "assignee": "karl",
+    "description": "the event bus needs attention: concurrent writes causes leaks memory over time. Plan: simplify and meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-09-30",
+    "updated": "2025-10-08"
+  },
+  {
+    "id": "TASK-0117",
+    "name": "Automate error logging infrastructure",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "The the worker pool has issues when token expiration. We should harden it to reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-05-22",
+    "updated": "2025-06-18"
+  },
+  {
+    "id": "TASK-0118",
+    "name": "Deploy API versioning strategy",
+    "status": "open",
+    "assignee": "carol",
+    "description": "As discussed in standup, simplify the ORM layer. failover events is blocking support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-11-18",
+    "updated": "2025-12-01"
+  },
+  {
+    "id": "TASK-0119",
+    "name": "Normalize payment webhook handler",
+    "status": "done",
+    "assignee": "liam",
+    "description": "Need to decouple the the worker pool to handle token expiration. Current implementation leaks memory over time.",
+    "priority": "medium",
+    "created": "2026-02-01",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0120",
+    "name": "Document image resize worker",
+    "status": "blocked",
+    "assignee": "sam",
+    "description": "The the ORM layer has issues when high traffic spikes. We should wrap it to improve reliability.",
+    "priority": "low",
+    "created": "2025-06-15",
+    "updated": "2025-07-11"
+  },
+  {
+    "id": "TASK-0121",
+    "name": "Remove API versioning strategy",
+    "status": "done",
+    "assignee": "alice",
+    "description": "As discussed in standup, extend the API gateway. cold starts is blocking support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-01-09",
+    "updated": "2025-01-12"
+  },
+  {
+    "id": "TASK-0122",
+    "name": "Configure payment webhook handler",
+    "status": "review",
+    "assignee": "frank",
+    "description": "Need to decouple the the event bus to handle network partitions. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-12-02",
+    "updated": "2025-12-13"
+  },
+  {
+    "id": "TASK-0123",
+    "name": "Implement load balancer health checks",
+    "status": "done",
+    "assignee": "carol",
+    "description": "The the middleware stack has issues when high traffic spikes. We should extend it to pass the security audit.",
+    "priority": "medium",
+    "created": "2025-12-27",
+    "updated": "2025-12-30"
+  },
+  {
+    "id": "TASK-0124",
+    "name": "Investigate error logging infrastructure",
+    "status": "done",
+    "assignee": "carol",
+    "description": "The our caching layer has issues when concurrent writes. We should decouple it to support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-03-03",
+    "updated": "2025-03-30"
+  },
+  {
+    "id": "TASK-0125",
+    "name": "Deploy error logging infrastructure",
+    "status": "in-progress",
+    "assignee": "carol",
+    "description": "Follow-up from incident: the API gateway failed during failover events. Must refactor to prevent returns stale data.",
+    "priority": "high",
+    "created": "2025-06-03",
+    "updated": "2025-06-07"
+  },
+  {
+    "id": "TASK-0126",
+    "name": "Update schema validation middleware",
+    "status": "blocked",
+    "assignee": "olivia",
+    "description": "The our caching layer has issues when large payloads. We should rewrite it to unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-11-18",
+    "updated": "2025-12-11"
+  },
+  {
+    "id": "TASK-0127",
+    "name": "Investigate OAuth2 token refresh flow",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "the worker pool needs attention: cold starts causes corrupts state on restart. Plan: rewrite and improve reliability.",
+    "priority": "medium",
+    "created": "2025-06-29",
+    "updated": "2025-07-29"
+  },
+  {
+    "id": "TASK-0128",
+    "name": "Monitor pagination cursor encoding",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "the worker pool needs attention: failover events causes times out under load. Plan: refactor and improve reliability.",
+    "priority": "high",
+    "created": "2025-04-16",
+    "updated": "2025-05-02"
+  },
+  {
+    "id": "TASK-0129",
+    "name": "Monitor notification service integration",
+    "status": "blocked",
+    "assignee": "alice",
+    "description": "the API gateway needs attention: token expiration causes fails without retry. Plan: harden and meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-09-13",
+    "updated": "2025-10-03"
+  },
+  {
+    "id": "TASK-0130",
+    "name": "Remove connection timeout configuration",
+    "status": "open",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the auth module failed during cold starts. Must rewrite to prevent leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-10-07",
+    "updated": "2025-10-28"
+  },
+  {
+    "id": "TASK-0131",
+    "name": "Extract WebSocket reconnection logic",
+    "status": "blocked",
+    "assignee": "nick",
+    "description": "As discussed in standup, decouple our caching layer. large payloads is blocking improve reliability.",
+    "priority": "medium",
+    "created": "2026-02-09",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0132",
+    "name": "Migrate cache invalidation strategy",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "As discussed in standup, rewrite the event bus. token expiration is blocking reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-02-10",
+    "updated": "2025-02-26"
+  },
+  {
+    "id": "TASK-0133",
+    "name": "Investigate file upload validation",
+    "status": "done",
+    "assignee": "tina",
+    "description": "Follow-up from incident: the event bus failed during large payloads. Must refactor to prevent silently drops requests.",
+    "priority": "high",
+    "created": "2025-05-06",
+    "updated": "2025-05-08"
+  },
+  {
+    "id": "TASK-0134",
+    "name": "Remove memory leak in worker pool",
+    "status": "review",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the API gateway failed during schema changes. Must simplify to prevent leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-12-26",
+    "updated": "2025-12-26"
+  },
+  {
+    "id": "TASK-0135",
+    "name": "Add database connection pooling",
+    "status": "review",
+    "assignee": "nick",
+    "description": "the event bus needs attention: concurrent writes causes times out under load. Plan: rewrite and meet SLA requirements.",
+    "priority": "medium",
+    "created": "2026-01-11",
+    "updated": "2026-02-08"
+  },
+  {
+    "id": "TASK-0136",
+    "name": "Validate role-based access control",
+    "status": "review",
+    "assignee": "frank",
+    "description": "our caching layer needs attention: network partitions causes corrupts state on restart. Plan: rewrite and unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-01-29",
+    "updated": "2025-02-13"
+  },
+  {
+    "id": "TASK-0137",
+    "name": "Implement email template rendering",
+    "status": "open",
+    "assignee": "pat",
+    "description": "the API gateway needs attention: large payloads causes silently drops requests. Plan: decouple and unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-01-23",
+    "updated": "2025-02-19"
+  },
+  {
+    "id": "TASK-0138",
+    "name": "Optimize schema validation middleware",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "Need to harden the our caching layer to handle high traffic spikes. Current implementation leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-04-25",
+    "updated": "2025-05-05"
+  },
+  {
+    "id": "TASK-0139",
+    "name": "Design WebSocket reconnection logic",
+    "status": "review",
+    "assignee": "karl",
+    "description": "Need to wrap the the auth module to handle schema changes. Current implementation leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-07-25",
+    "updated": "2025-07-27"
+  },
+  {
+    "id": "TASK-0140",
+    "name": "Optimize request deduplication layer",
+    "status": "review",
+    "assignee": "sam",
+    "description": "As discussed in standup, extend the worker pool. large payloads is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2026-01-14",
+    "updated": "2026-02-02"
+  },
+  {
+    "id": "TASK-0141",
+    "name": "Review user authentication flow",
+    "status": "review",
+    "assignee": "alice",
+    "description": "As discussed in standup, simplify our caching layer. network partitions is blocking reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-04-30",
+    "updated": "2025-05-17"
+  },
+  {
+    "id": "TASK-0142",
+    "name": "Fix cache invalidation strategy",
+    "status": "review",
+    "assignee": "carol",
+    "description": "Need to extend the the config loader to handle schema changes. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-09-09",
+    "updated": "2025-10-09"
+  },
+  {
+    "id": "TASK-0143",
+    "name": "Extract error logging infrastructure",
+    "status": "done",
+    "assignee": "carol",
+    "description": "Follow-up from incident: the config loader failed during large payloads. Must refactor to prevent leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-10-25",
+    "updated": "2025-10-28"
+  },
+  {
+    "id": "TASK-0144",
+    "name": "Deploy OAuth2 token refresh flow",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "our caching layer needs attention: network partitions causes leaks memory over time. Plan: extend and unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-06-11",
+    "updated": "2025-07-10"
+  },
+  {
+    "id": "TASK-0145",
+    "name": "Remove API versioning strategy",
+    "status": "done",
+    "assignee": "karl",
+    "description": "As discussed in standup, rewrite the ORM layer. network partitions is blocking support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-03-21",
+    "updated": "2025-03-24"
+  },
+  {
+    "id": "TASK-0146",
+    "name": "Add payment webhook handler",
+    "status": "in-progress",
+    "assignee": "judy",
+    "description": "Follow-up from incident: the worker pool failed during schema changes. Must refactor to prevent leaks memory over time.",
+    "priority": "high",
+    "created": "2025-05-16",
+    "updated": "2025-06-12"
+  },
+  {
+    "id": "TASK-0147",
+    "name": "Extract search indexing pipeline",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "The the config loader has issues when failover events. We should refactor it to pass the security audit.",
+    "priority": "high",
+    "created": "2025-07-02",
+    "updated": "2025-07-14"
+  },
+  {
+    "id": "TASK-0148",
+    "name": "Add error logging infrastructure",
+    "status": "open",
+    "assignee": "alice",
+    "description": "Need to extend the the API gateway to handle network partitions. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-02-18",
+    "updated": "2025-03-04"
+  },
+  {
+    "id": "TASK-0149",
+    "name": "Configure notification service integration",
+    "status": "open",
+    "assignee": "carol",
+    "description": "The the API gateway has issues when concurrent writes. We should wrap it to improve reliability.",
+    "priority": "critical",
+    "created": "2025-10-26",
+    "updated": "2025-11-13"
+  },
+  {
+    "id": "TASK-0150",
+    "name": "Remove dependency version bumps",
+    "status": "done",
+    "assignee": "mona",
+    "description": "As discussed in standup, refactor the config loader. token expiration is blocking support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-08-25",
+    "updated": "2025-08-26"
+  },
+  {
+    "id": "TASK-0151",
+    "name": "Configure API versioning strategy",
+    "status": "in-progress",
+    "assignee": "bob",
+    "description": "Follow-up from incident: the event bus failed during failover events. Must extend to prevent times out under load.",
+    "priority": "low",
+    "created": "2025-04-06",
+    "updated": "2025-04-14"
+  },
+  {
+    "id": "TASK-0152",
+    "name": "Configure CSV export functionality",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "The the auth module has issues when token expiration. We should extend it to support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-02-01",
+    "updated": "2025-02-03"
+  },
+  {
+    "id": "TASK-0153",
+    "name": "Integrate audit trail logging",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "the event bus needs attention: large payloads causes silently drops requests. Plan: decouple and support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-10-06",
+    "updated": "2025-10-31"
+  },
+  {
+    "id": "TASK-0154",
+    "name": "Cache metrics dashboard endpoint",
+    "status": "open",
+    "assignee": "pat",
+    "description": "Follow-up from incident: the worker pool failed during large payloads. Must harden to prevent silently drops requests.",
+    "priority": "high",
+    "created": "2025-01-16",
+    "updated": "2025-02-13"
+  },
+  {
+    "id": "TASK-0155",
+    "name": "Normalize search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "sam",
+    "description": "As discussed in standup, harden the API gateway. large payloads is blocking unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-05-17",
+    "updated": "2025-06-03"
+  },
+  {
+    "id": "TASK-0156",
+    "name": "Review stale cache purge mechanism",
+    "status": "open",
+    "assignee": "liam",
+    "description": "Follow-up from incident: the worker pool failed during failover events. Must patch to prevent fails without retry.",
+    "priority": "high",
+    "created": "2026-01-13",
+    "updated": "2026-02-04"
+  },
+  {
+    "id": "TASK-0157",
+    "name": "Refactor search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "tina",
+    "description": "The the middleware stack has issues when high traffic spikes. We should refactor it to unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-09-09",
+    "updated": "2025-09-10"
+  },
+  {
+    "id": "TASK-0158",
+    "name": "Restructure GraphQL schema resolver",
+    "status": "review",
+    "assignee": "bob",
+    "description": "Need to patch the the API gateway to handle concurrent writes. Current implementation fails without retry.",
+    "priority": "critical",
+    "created": "2025-03-08",
+    "updated": "2025-03-18"
+  },
+  {
+    "id": "TASK-0159",
+    "name": "Upgrade retry policy for external calls",
+    "status": "blocked",
+    "assignee": "dave",
+    "description": "the ORM layer needs attention: large payloads causes leaks memory over time. Plan: simplify and pass the security audit.",
+    "priority": "low",
+    "created": "2025-07-11",
+    "updated": "2025-08-02"
+  },
+  {
+    "id": "TASK-0160",
+    "name": "Integrate OAuth2 token refresh flow",
+    "status": "in-progress",
+    "assignee": "rosa",
+    "description": "Follow-up from incident: the worker pool failed during large payloads. Must harden to prevent times out under load.",
+    "priority": "medium",
+    "created": "2026-02-10",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0161",
+    "name": "Normalize user authentication flow",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the API gateway failed during schema changes. Must refactor to prevent fails without retry.",
+    "priority": "critical",
+    "created": "2025-03-07",
+    "updated": "2025-03-12"
+  },
+  {
+    "id": "TASK-0162",
+    "name": "Test notification service integration",
+    "status": "in-progress",
+    "assignee": "liam",
+    "description": "our caching layer needs attention: schema changes causes times out under load. Plan: patch and improve reliability.",
+    "priority": "medium",
+    "created": "2025-09-12",
+    "updated": "2025-09-16"
+  },
+  {
+    "id": "TASK-0163",
+    "name": "Restructure notification service integration",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "Need to refactor the the auth module to handle token expiration. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2025-04-18",
+    "updated": "2025-04-25"
+  },
+  {
+    "id": "TASK-0164",
+    "name": "Investigate memory leak in worker pool",
+    "status": "done",
+    "assignee": "liam",
+    "description": "Follow-up from incident: our caching layer failed during failover events. Must decouple to prevent fails without retry.",
+    "priority": "high",
+    "created": "2025-03-27",
+    "updated": "2025-04-24"
+  },
+  {
+    "id": "TASK-0165",
+    "name": "Refactor API rate limiting middleware",
+    "status": "review",
+    "assignee": "alice",
+    "description": "our caching layer needs attention: concurrent writes causes returns stale data. Plan: simplify and reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-03-25",
+    "updated": "2025-04-08"
+  },
+  {
+    "id": "TASK-0166",
+    "name": "Refactor TLS certificate rotation",
+    "status": "open",
+    "assignee": "karl",
+    "description": "Follow-up from incident: the auth module failed during token expiration. Must wrap to prevent corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-03-24",
+    "updated": "2025-04-16"
+  },
+  {
+    "id": "TASK-0167",
+    "name": "Add image resize worker",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "As discussed in standup, simplify the event bus. cold starts is blocking improve reliability.",
+    "priority": "critical",
+    "created": "2025-03-22",
+    "updated": "2025-03-23"
+  },
+  {
+    "id": "TASK-0168",
+    "name": "Replace memory leak in worker pool",
+    "status": "in-progress",
+    "assignee": "bob",
+    "description": "the config loader needs attention: concurrent writes causes returns stale data. Plan: refactor and pass the security audit.",
+    "priority": "low",
+    "created": "2025-07-21",
+    "updated": "2025-08-08"
+  },
+  {
+    "id": "TASK-0169",
+    "name": "Implement load balancer health checks",
+    "status": "in-progress",
+    "assignee": "judy",
+    "description": "Need to wrap the our caching layer to handle cold starts. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2025-04-13",
+    "updated": "2025-04-16"
+  },
+  {
+    "id": "TASK-0170",
+    "name": "Refactor CORS preflight handling",
+    "status": "done",
+    "assignee": "frank",
+    "description": "the ORM layer needs attention: large payloads causes times out under load. Plan: decouple and improve reliability.",
+    "priority": "medium",
+    "created": "2025-12-05",
+    "updated": "2025-12-13"
+  },
+  {
+    "id": "TASK-0171",
+    "name": "Configure data migration scripts",
+    "status": "review",
+    "assignee": "sam",
+    "description": "Need to patch the our caching layer to handle concurrent writes. Current implementation corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-08-14",
+    "updated": "2025-08-28"
+  },
+  {
+    "id": "TASK-0172",
+    "name": "Optimize TLS certificate rotation",
+    "status": "open",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the middleware stack failed during network partitions. Must decouple to prevent times out under load.",
+    "priority": "critical",
+    "created": "2026-01-23",
+    "updated": "2026-02-10"
+  },
+  {
+    "id": "TASK-0173",
+    "name": "Restructure API rate limiting middleware",
+    "status": "blocked",
+    "assignee": "sam",
+    "description": "Follow-up from incident: our caching layer failed during failover events. Must patch to prevent leaks memory over time.",
+    "priority": "high",
+    "created": "2025-07-22",
+    "updated": "2025-08-19"
+  },
+  {
+    "id": "TASK-0174",
+    "name": "Fix background job scheduler",
+    "status": "open",
+    "assignee": "nick",
+    "description": "The the event bus has issues when schema changes. We should patch it to improve reliability.",
+    "priority": "critical",
+    "created": "2025-04-09",
+    "updated": "2025-04-13"
+  },
+  {
+    "id": "TASK-0175",
+    "name": "Deploy TLS certificate rotation",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "Follow-up from incident: the auth module failed during token expiration. Must wrap to prevent silently drops requests.",
+    "priority": "high",
+    "created": "2025-07-18",
+    "updated": "2025-08-04"
+  },
+  {
+    "id": "TASK-0176",
+    "name": "Validate stale cache purge mechanism",
+    "status": "open",
+    "assignee": "dave",
+    "description": "Follow-up from incident: the event bus failed during schema changes. Must rewrite to prevent times out under load.",
+    "priority": "low",
+    "created": "2025-03-17",
+    "updated": "2025-04-04"
+  },
+  {
+    "id": "TASK-0177",
+    "name": "Validate input sanitization filters",
+    "status": "done",
+    "assignee": "bob",
+    "description": "The the config loader has issues when large payloads. We should simplify it to unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-12-02",
+    "updated": "2025-12-17"
+  },
+  {
+    "id": "TASK-0178",
+    "name": "Test email template rendering",
+    "status": "open",
+    "assignee": "pat",
+    "description": "the auth module needs attention: schema changes causes returns stale data. Plan: harden and support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-01-20",
+    "updated": "2025-02-01"
+  },
+  {
+    "id": "TASK-0179",
+    "name": "Restructure session management logic",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "the ORM layer needs attention: cold starts causes corrupts state on restart. Plan: wrap and meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-09-09",
+    "updated": "2025-10-06"
+  },
+  {
+    "id": "TASK-0180",
+    "name": "Migrate schema validation middleware",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "the API gateway needs attention: concurrent writes causes returns stale data. Plan: refactor and pass the security audit.",
+    "priority": "low",
+    "created": "2025-04-07",
+    "updated": "2025-04-21"
+  },
+  {
+    "id": "TASK-0181",
+    "name": "Extract dependency version bumps",
+    "status": "open",
+    "assignee": "frank",
+    "description": "The the auth module has issues when network partitions. We should extend it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-03-11",
+    "updated": "2025-04-04"
+  },
+  {
+    "id": "TASK-0182",
+    "name": "Migrate metrics dashboard endpoint",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "Follow-up from incident: our caching layer failed during high traffic spikes. Must decouple to prevent leaks memory over time.",
+    "priority": "low",
+    "created": "2025-07-04",
+    "updated": "2025-07-26"
+  },
+  {
+    "id": "TASK-0183",
+    "name": "Remove connection timeout configuration",
+    "status": "blocked",
+    "assignee": "rosa",
+    "description": "the API gateway needs attention: cold starts causes corrupts state on restart. Plan: harden and pass the security audit.",
+    "priority": "critical",
+    "created": "2025-11-01",
+    "updated": "2025-11-15"
+  },
+  {
+    "id": "TASK-0184",
+    "name": "Deploy search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "sam",
+    "description": "The the worker pool has issues when network partitions. We should extend it to pass the security audit.",
+    "priority": "low",
+    "created": "2025-05-26",
+    "updated": "2025-05-26"
+  },
+  {
+    "id": "TASK-0185",
+    "name": "Cache user authentication flow",
+    "status": "done",
+    "assignee": "eve",
+    "description": "The the worker pool has issues when cold starts. We should refactor it to support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-09-20",
+    "updated": "2025-09-20"
+  },
+  {
+    "id": "TASK-0186",
+    "name": "Deploy audit trail logging",
+    "status": "done",
+    "assignee": "ivan",
+    "description": "The the event bus has issues when token expiration. We should wrap it to improve reliability.",
+    "priority": "critical",
+    "created": "2025-08-05",
+    "updated": "2025-09-02"
+  },
+  {
+    "id": "TASK-0187",
+    "name": "Review TLS certificate rotation",
+    "status": "blocked",
+    "assignee": "tina",
+    "description": "our caching layer needs attention: failover events causes silently drops requests. Plan: simplify and support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-09-19",
+    "updated": "2025-10-10"
+  },
+  {
+    "id": "TASK-0188",
+    "name": "Configure feature flag evaluation",
+    "status": "review",
+    "assignee": "grace",
+    "description": "The the auth module has issues when token expiration. We should extend it to support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-11-24",
+    "updated": "2025-12-04"
+  },
+  {
+    "id": "TASK-0189",
+    "name": "Automate memory leak in worker pool",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "As discussed in standup, decouple the config loader. high traffic spikes is blocking pass the security audit.",
+    "priority": "high",
+    "created": "2026-01-05",
+    "updated": "2026-01-05"
+  },
+  {
+    "id": "TASK-0190",
+    "name": "Restructure data migration scripts",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "the API gateway needs attention: large payloads causes returns stale data. Plan: simplify and improve reliability.",
+    "priority": "low",
+    "created": "2025-06-25",
+    "updated": "2025-07-18"
+  },
+  {
+    "id": "TASK-0191",
+    "name": "Configure TLS certificate rotation",
+    "status": "in-progress",
+    "assignee": "karl",
+    "description": "Need to extend the the ORM layer to handle network partitions. Current implementation corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-03-07",
+    "updated": "2025-03-30"
+  },
+  {
+    "id": "TASK-0192",
+    "name": "Test timezone handling utilities",
+    "status": "review",
+    "assignee": "sam",
+    "description": "our caching layer needs attention: failover events causes silently drops requests. Plan: wrap and pass the security audit.",
+    "priority": "critical",
+    "created": "2026-02-08",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0193",
+    "name": "Migrate pagination cursor encoding",
+    "status": "open",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the config loader failed during high traffic spikes. Must simplify to prevent leaks memory over time.",
+    "priority": "high",
+    "created": "2025-08-30",
+    "updated": "2025-09-27"
+  },
+  {
+    "id": "TASK-0194",
+    "name": "Validate request deduplication layer",
+    "status": "in-progress",
+    "assignee": "karl",
+    "description": "The the middleware stack has issues when schema changes. We should rewrite it to reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-06-25",
+    "updated": "2025-07-08"
+  },
+  {
+    "id": "TASK-0195",
+    "name": "Implement API versioning strategy",
+    "status": "review",
+    "assignee": "grace",
+    "description": "The the middleware stack has issues when concurrent writes. We should patch it to unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-11-21",
+    "updated": "2025-11-22"
+  },
+  {
+    "id": "TASK-0196",
+    "name": "Deploy background job scheduler",
+    "status": "done",
+    "assignee": "mona",
+    "description": "Need to refactor the the worker pool to handle schema changes. Current implementation silently drops requests.",
+    "priority": "high",
+    "created": "2025-11-21",
+    "updated": "2025-12-04"
+  },
+  {
+    "id": "TASK-0197",
+    "name": "Implement email template rendering",
+    "status": "in-progress",
+    "assignee": "liam",
+    "description": "our caching layer needs attention: token expiration causes fails without retry. Plan: patch and unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-01-10",
+    "updated": "2025-01-31"
+  },
+  {
+    "id": "TASK-0198",
+    "name": "Fix batch processing queue",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "Follow-up from incident: the config loader failed during large payloads. Must harden to prevent returns stale data.",
+    "priority": "medium",
+    "created": "2025-03-27",
+    "updated": "2025-03-29"
+  },
+  {
+    "id": "TASK-0199",
+    "name": "Remove retry policy for external calls",
+    "status": "open",
+    "assignee": "heidi",
+    "description": "The the worker pool has issues when high traffic spikes. We should patch it to unblock the frontend team.",
+    "priority": "high",
+    "created": "2026-01-20",
+    "updated": "2026-01-26"
+  },
+  {
+    "id": "TASK-0200",
+    "name": "Restructure API rate limiting middleware",
+    "status": "done",
+    "assignee": "ivan",
+    "description": "Follow-up from incident: the auth module failed during concurrent writes. Must refactor to prevent corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-03-05",
+    "updated": "2025-03-16"
+  },
+  {
+    "id": "TASK-0201",
+    "name": "Investigate API versioning strategy",
+    "status": "done",
+    "assignee": "dave",
+    "description": "Follow-up from incident: the middleware stack failed during large payloads. Must simplify to prevent leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-12-20",
+    "updated": "2025-12-23"
+  },
+  {
+    "id": "TASK-0202",
+    "name": "Upgrade session management logic",
+    "status": "blocked",
+    "assignee": "ivan",
+    "description": "Follow-up from incident: the config loader failed during concurrent writes. Must patch to prevent fails without retry.",
+    "priority": "critical",
+    "created": "2025-06-04",
+    "updated": "2025-06-17"
+  },
+  {
+    "id": "TASK-0203",
+    "name": "Add memory leak in worker pool",
+    "status": "in-progress",
+    "assignee": "tina",
+    "description": "The the worker pool has issues when schema changes. We should simplify it to meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-05-25",
+    "updated": "2025-05-28"
+  },
+  {
+    "id": "TASK-0204",
+    "name": "Replace memory leak in worker pool",
+    "status": "in-progress",
+    "assignee": "pat",
+    "description": "the auth module needs attention: high traffic spikes causes corrupts state on restart. Plan: extend and improve reliability.",
+    "priority": "critical",
+    "created": "2025-03-24",
+    "updated": "2025-03-25"
+  },
+  {
+    "id": "TASK-0205",
+    "name": "Integrate cache invalidation strategy",
+    "status": "open",
+    "assignee": "quinn",
+    "description": "Need to rewrite the the event bus to handle network partitions. Current implementation times out under load.",
+    "priority": "medium",
+    "created": "2025-10-21",
+    "updated": "2025-11-11"
+  },
+  {
+    "id": "TASK-0206",
+    "name": "Add GraphQL schema resolver",
+    "status": "open",
+    "assignee": "judy",
+    "description": "the config loader needs attention: concurrent writes causes silently drops requests. Plan: harden and improve reliability.",
+    "priority": "critical",
+    "created": "2025-08-26",
+    "updated": "2025-08-27"
+  },
+  {
+    "id": "TASK-0207",
+    "name": "Automate role-based access control",
+    "status": "review",
+    "assignee": "liam",
+    "description": "As discussed in standup, simplify our caching layer. schema changes is blocking reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-03-12",
+    "updated": "2025-04-02"
+  },
+  {
+    "id": "TASK-0208",
+    "name": "Design metrics dashboard endpoint",
+    "status": "done",
+    "assignee": "pat",
+    "description": "As discussed in standup, patch our caching layer. large payloads is blocking pass the security audit.",
+    "priority": "critical",
+    "created": "2025-07-25",
+    "updated": "2025-08-06"
+  },
+  {
+    "id": "TASK-0209",
+    "name": "Investigate stale cache purge mechanism",
+    "status": "done",
+    "assignee": "sam",
+    "description": "As discussed in standup, patch the config loader. schema changes is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-03-23",
+    "updated": "2025-03-26"
+  },
+  {
+    "id": "TASK-0210",
+    "name": "Integrate file upload validation",
+    "status": "done",
+    "assignee": "olivia",
+    "description": "Need to rewrite the the event bus to handle schema changes. Current implementation silently drops requests.",
+    "priority": "high",
+    "created": "2025-09-05",
+    "updated": "2025-10-04"
+  },
+  {
+    "id": "TASK-0211",
+    "name": "Test rate limit header propagation",
+    "status": "blocked",
+    "assignee": "tina",
+    "description": "Need to decouple the the worker pool to handle failover events. Current implementation returns stale data.",
+    "priority": "low",
+    "created": "2025-12-09",
+    "updated": "2026-01-05"
+  },
+  {
+    "id": "TASK-0212",
+    "name": "Replace dead letter queue processing",
+    "status": "open",
+    "assignee": "alice",
+    "description": "The the middleware stack has issues when large payloads. We should wrap it to meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-03-18",
+    "updated": "2025-04-13"
+  },
+  {
+    "id": "TASK-0213",
+    "name": "Configure search indexing pipeline",
+    "status": "blocked",
+    "assignee": "heidi",
+    "description": "Follow-up from incident: the config loader failed during network partitions. Must decouple to prevent silently drops requests.",
+    "priority": "low",
+    "created": "2025-05-04",
+    "updated": "2025-05-14"
+  },
+  {
+    "id": "TASK-0214",
+    "name": "Refactor memory leak in worker pool",
+    "status": "done",
+    "assignee": "karl",
+    "description": "Need to wrap the the auth module to handle concurrent writes. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-10-21",
+    "updated": "2025-11-04"
+  },
+  {
+    "id": "TASK-0215",
+    "name": "Implement payment webhook handler",
+    "status": "blocked",
+    "assignee": "tina",
+    "description": "the middleware stack needs attention: schema changes causes returns stale data. Plan: extend and improve reliability.",
+    "priority": "high",
+    "created": "2025-10-13",
+    "updated": "2025-10-30"
+  },
+  {
+    "id": "TASK-0216",
+    "name": "Replace dead letter queue processing",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "our caching layer needs attention: concurrent writes causes corrupts state on restart. Plan: wrap and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-08-21",
+    "updated": "2025-08-31"
+  },
+  {
+    "id": "TASK-0217",
+    "name": "Automate WebSocket reconnection logic",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "the auth module needs attention: large payloads causes times out under load. Plan: rewrite and reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-06-24",
+    "updated": "2025-07-05"
+  },
+  {
+    "id": "TASK-0218",
+    "name": "Monitor CI/CD pipeline configuration",
+    "status": "in-progress",
+    "assignee": "dave",
+    "description": "As discussed in standup, extend the middleware stack. network partitions is blocking support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-02-24",
+    "updated": "2025-03-04"
+  },
+  {
+    "id": "TASK-0219",
+    "name": "Fix stale cache purge mechanism",
+    "status": "open",
+    "assignee": "olivia",
+    "description": "As discussed in standup, patch the middleware stack. high traffic spikes is blocking pass the security audit.",
+    "priority": "critical",
+    "created": "2026-01-23",
+    "updated": "2026-02-05"
+  },
+  {
+    "id": "TASK-0220",
+    "name": "Investigate stale cache purge mechanism",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "The the API gateway has issues when concurrent writes. We should patch it to pass the security audit.",
+    "priority": "medium",
+    "created": "2025-10-11",
+    "updated": "2025-11-09"
+  },
+  {
+    "id": "TASK-0221",
+    "name": "Deploy schema validation middleware",
+    "status": "blocked",
+    "assignee": "heidi",
+    "description": "the ORM layer needs attention: cold starts causes times out under load. Plan: decouple and reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-09-16",
+    "updated": "2025-10-14"
+  },
+  {
+    "id": "TASK-0222",
+    "name": "Restructure pagination cursor encoding",
+    "status": "review",
+    "assignee": "rosa",
+    "description": "the worker pool needs attention: network partitions causes fails without retry. Plan: extend and pass the security audit.",
+    "priority": "medium",
+    "created": "2025-07-31",
+    "updated": "2025-08-19"
+  },
+  {
+    "id": "TASK-0223",
+    "name": "Upgrade error logging infrastructure",
+    "status": "in-progress",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: our caching layer failed during schema changes. Must harden to prevent fails without retry.",
+    "priority": "low",
+    "created": "2025-12-18",
+    "updated": "2025-12-29"
+  },
+  {
+    "id": "TASK-0224",
+    "name": "Replace WebSocket reconnection logic",
+    "status": "done",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the auth module failed during token expiration. Must rewrite to prevent leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-12-12",
+    "updated": "2026-01-04"
+  },
+  {
+    "id": "TASK-0225",
+    "name": "Cache role-based access control",
+    "status": "review",
+    "assignee": "ivan",
+    "description": "The the event bus has issues when network partitions. We should refactor it to improve reliability.",
+    "priority": "medium",
+    "created": "2025-04-13",
+    "updated": "2025-04-21"
+  },
+  {
+    "id": "TASK-0226",
+    "name": "Monitor TLS certificate rotation",
+    "status": "in-progress",
+    "assignee": "rosa",
+    "description": "As discussed in standup, extend the event bus. high traffic spikes is blocking meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-08-20",
+    "updated": "2025-08-23"
+  },
+  {
+    "id": "TASK-0227",
+    "name": "Test TLS certificate rotation",
+    "status": "open",
+    "assignee": "alice",
+    "description": "the middleware stack needs attention: network partitions causes corrupts state on restart. Plan: extend and pass the security audit.",
+    "priority": "medium",
+    "created": "2026-02-08",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0228",
+    "name": "Replace input sanitization filters",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "the API gateway needs attention: concurrent writes causes leaks memory over time. Plan: wrap and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2026-01-22",
+    "updated": "2026-02-09"
+  },
+  {
+    "id": "TASK-0229",
+    "name": "Investigate metrics dashboard endpoint",
+    "status": "blocked",
+    "assignee": "ivan",
+    "description": "The the event bus has issues when high traffic spikes. We should patch it to meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-07-13",
+    "updated": "2025-07-14"
+  },
+  {
+    "id": "TASK-0230",
+    "name": "Test input sanitization filters",
+    "status": "open",
+    "assignee": "tina",
+    "description": "the ORM layer needs attention: concurrent writes causes corrupts state on restart. Plan: wrap and support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-01-21",
+    "updated": "2025-01-25"
+  },
+  {
+    "id": "TASK-0231",
+    "name": "Refactor pagination cursor encoding",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "Follow-up from incident: our caching layer failed during schema changes. Must decouple to prevent leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-04-05",
+    "updated": "2025-04-21"
+  },
+  {
+    "id": "TASK-0232",
+    "name": "Document load balancer health checks",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "As discussed in standup, refactor our caching layer. schema changes is blocking reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-06-19",
+    "updated": "2025-06-30"
+  },
+  {
+    "id": "TASK-0233",
+    "name": "Test CSV export functionality",
+    "status": "open",
+    "assignee": "mona",
+    "description": "the auth module needs attention: schema changes causes fails without retry. Plan: simplify and unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-01-21",
+    "updated": "2025-02-11"
+  },
+  {
+    "id": "TASK-0234",
+    "name": "Document CI/CD pipeline configuration",
+    "status": "review",
+    "assignee": "quinn",
+    "description": "Need to rewrite the the API gateway to handle high traffic spikes. Current implementation corrupts state on restart.",
+    "priority": "high",
+    "created": "2025-09-07",
+    "updated": "2025-09-08"
+  },
+  {
+    "id": "TASK-0235",
+    "name": "Cache load balancer health checks",
+    "status": "done",
+    "assignee": "dave",
+    "description": "The our caching layer has issues when large payloads. We should decouple it to meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-12-10",
+    "updated": "2025-12-30"
+  },
+  {
+    "id": "TASK-0236",
+    "name": "Refactor search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "ivan",
+    "description": "Follow-up from incident: the worker pool failed during cold starts. Must rewrite to prevent times out under load.",
+    "priority": "low",
+    "created": "2025-01-20",
+    "updated": "2025-01-22"
+  },
+  {
+    "id": "TASK-0237",
+    "name": "Investigate OAuth2 token refresh flow",
+    "status": "open",
+    "assignee": "mona",
+    "description": "Need to refactor the our caching layer to handle high traffic spikes. Current implementation corrupts state on restart.",
+    "priority": "medium",
+    "created": "2025-11-19",
+    "updated": "2025-12-01"
+  },
+  {
+    "id": "TASK-0238",
+    "name": "Document batch processing queue",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "the config loader needs attention: token expiration causes corrupts state on restart. Plan: wrap and improve reliability.",
+    "priority": "low",
+    "created": "2025-09-15",
+    "updated": "2025-09-18"
+  },
+  {
+    "id": "TASK-0239",
+    "name": "Optimize error logging infrastructure",
+    "status": "done",
+    "assignee": "rosa",
+    "description": "the event bus needs attention: schema changes causes silently drops requests. Plan: patch and unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-03-22",
+    "updated": "2025-04-08"
+  },
+  {
+    "id": "TASK-0240",
+    "name": "Implement dependency version bumps",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the event bus failed during network partitions. Must rewrite to prevent corrupts state on restart.",
+    "priority": "medium",
+    "created": "2025-03-05",
+    "updated": "2025-03-06"
+  },
+  {
+    "id": "TASK-0241",
+    "name": "Automate pagination cursor encoding",
+    "status": "in-progress",
+    "assignee": "frank",
+    "description": "The the event bus has issues when network partitions. We should extend it to reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-04-19",
+    "updated": "2025-05-02"
+  },
+  {
+    "id": "TASK-0242",
+    "name": "Replace request deduplication layer",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "the event bus needs attention: concurrent writes causes leaks memory over time. Plan: rewrite and pass the security audit.",
+    "priority": "low",
+    "created": "2026-01-20",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0243",
+    "name": "Update email template rendering",
+    "status": "open",
+    "assignee": "judy",
+    "description": "Follow-up from incident: the worker pool failed during schema changes. Must rewrite to prevent times out under load.",
+    "priority": "medium",
+    "created": "2025-06-19",
+    "updated": "2025-06-30"
+  },
+  {
+    "id": "TASK-0244",
+    "name": "Document stale cache purge mechanism",
+    "status": "in-progress",
+    "assignee": "sam",
+    "description": "Follow-up from incident: the ORM layer failed during token expiration. Must harden to prevent leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-11-12",
+    "updated": "2025-12-03"
+  },
+  {
+    "id": "TASK-0245",
+    "name": "Optimize background job scheduler",
+    "status": "review",
+    "assignee": "liam",
+    "description": "The the middleware stack has issues when failover events. We should harden it to support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-05-07",
+    "updated": "2025-06-01"
+  },
+  {
+    "id": "TASK-0246",
+    "name": "Add GraphQL schema resolver",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "the worker pool needs attention: cold starts causes corrupts state on restart. Plan: patch and pass the security audit.",
+    "priority": "critical",
+    "created": "2025-09-07",
+    "updated": "2025-09-24"
+  },
+  {
+    "id": "TASK-0247",
+    "name": "Implement pagination cursor encoding",
+    "status": "open",
+    "assignee": "sam",
+    "description": "Follow-up from incident: the worker pool failed during high traffic spikes. Must decouple to prevent fails without retry.",
+    "priority": "low",
+    "created": "2026-01-08",
+    "updated": "2026-01-10"
+  },
+  {
+    "id": "TASK-0248",
+    "name": "Update timezone handling utilities",
+    "status": "done",
+    "assignee": "heidi",
+    "description": "Follow-up from incident: the API gateway failed during failover events. Must simplify to prevent fails without retry.",
+    "priority": "critical",
+    "created": "2025-12-01",
+    "updated": "2025-12-25"
+  },
+  {
+    "id": "TASK-0249",
+    "name": "Extract user authentication flow",
+    "status": "in-progress",
+    "assignee": "tina",
+    "description": "The the middleware stack has issues when large payloads. We should patch it to unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-07-23",
+    "updated": "2025-08-03"
+  },
+  {
+    "id": "TASK-0250",
+    "name": "Integrate audit trail logging",
+    "status": "open",
+    "assignee": "heidi",
+    "description": "As discussed in standup, extend our caching layer. cold starts is blocking reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2026-01-12",
+    "updated": "2026-02-04"
+  },
+  {
+    "id": "TASK-0251",
+    "name": "Extract timezone handling utilities",
+    "status": "done",
+    "assignee": "pat",
+    "description": "As discussed in standup, refactor the auth module. schema changes is blocking pass the security audit.",
+    "priority": "medium",
+    "created": "2025-12-09",
+    "updated": "2025-12-15"
+  },
+  {
+    "id": "TASK-0252",
+    "name": "Validate CORS preflight handling",
+    "status": "blocked",
+    "assignee": "frank",
+    "description": "As discussed in standup, decouple the ORM layer. concurrent writes is blocking support horizontal scaling.",
+    "priority": "low",
+    "created": "2026-01-15",
+    "updated": "2026-01-23"
+  },
+  {
+    "id": "TASK-0253",
+    "name": "Deploy audit trail logging",
+    "status": "review",
+    "assignee": "pat",
+    "description": "As discussed in standup, refactor the API gateway. failover events is blocking reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-04-25",
+    "updated": "2025-05-11"
+  },
+  {
+    "id": "TASK-0254",
+    "name": "Configure load balancer health checks",
+    "status": "in-progress",
+    "assignee": "frank",
+    "description": "The our caching layer has issues when network partitions. We should harden it to support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-09-21",
+    "updated": "2025-10-11"
+  },
+  {
+    "id": "TASK-0255",
+    "name": "Integrate connection timeout configuration",
+    "status": "in-progress",
+    "assignee": "sam",
+    "description": "The the auth module has issues when network partitions. We should decouple it to reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-09-04",
+    "updated": "2025-09-25"
+  },
+  {
+    "id": "TASK-0256",
+    "name": "Extract API rate limiting middleware",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "Need to patch the the event bus to handle large payloads. Current implementation fails without retry.",
+    "priority": "critical",
+    "created": "2025-03-10",
+    "updated": "2025-03-30"
+  },
+  {
+    "id": "TASK-0257",
+    "name": "Upgrade WebSocket reconnection logic",
+    "status": "open",
+    "assignee": "grace",
+    "description": "As discussed in standup, wrap the middleware stack. large payloads is blocking meet SLA requirements.",
+    "priority": "high",
+    "created": "2026-01-04",
+    "updated": "2026-01-27"
+  },
+  {
+    "id": "TASK-0258",
+    "name": "Cache GraphQL schema resolver",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "the ORM layer needs attention: failover events causes fails without retry. Plan: patch and unblock the frontend team.",
+    "priority": "critical",
+    "created": "2026-02-11",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0259",
+    "name": "Deploy error logging infrastructure",
+    "status": "open",
+    "assignee": "alice",
+    "description": "The the API gateway has issues when concurrent writes. We should decouple it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-04-28",
+    "updated": "2025-05-10"
+  },
+  {
+    "id": "TASK-0260",
+    "name": "Extract file upload validation",
+    "status": "open",
+    "assignee": "pat",
+    "description": "The the config loader has issues when token expiration. We should refactor it to improve reliability.",
+    "priority": "low",
+    "created": "2026-02-06",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0261",
+    "name": "Integrate CSV export functionality",
+    "status": "review",
+    "assignee": "sam",
+    "description": "Follow-up from incident: the config loader failed during large payloads. Must rewrite to prevent returns stale data.",
+    "priority": "high",
+    "created": "2025-04-28",
+    "updated": "2025-05-28"
+  },
+  {
+    "id": "TASK-0262",
+    "name": "Monitor CORS preflight handling",
+    "status": "done",
+    "assignee": "ivan",
+    "description": "The the auth module has issues when concurrent writes. We should refactor it to improve reliability.",
+    "priority": "low",
+    "created": "2025-02-12",
+    "updated": "2025-02-21"
+  },
+  {
+    "id": "TASK-0263",
+    "name": "Restructure OAuth2 token refresh flow",
+    "status": "done",
+    "assignee": "liam",
+    "description": "Need to patch the the config loader to handle cold starts. Current implementation returns stale data.",
+    "priority": "low",
+    "created": "2025-12-02",
+    "updated": "2025-12-08"
+  },
+  {
+    "id": "TASK-0264",
+    "name": "Monitor metrics dashboard endpoint",
+    "status": "done",
+    "assignee": "grace",
+    "description": "As discussed in standup, wrap the API gateway. schema changes is blocking unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-10-17",
+    "updated": "2025-10-28"
+  },
+  {
+    "id": "TASK-0265",
+    "name": "Validate audit trail logging",
+    "status": "done",
+    "assignee": "eve",
+    "description": "Need to extend the the middleware stack to handle large payloads. Current implementation silently drops requests.",
+    "priority": "low",
+    "created": "2025-05-10",
+    "updated": "2025-05-19"
+  },
+  {
+    "id": "TASK-0266",
+    "name": "Replace dead letter queue processing",
+    "status": "open",
+    "assignee": "frank",
+    "description": "As discussed in standup, refactor our caching layer. large payloads is blocking unblock the frontend team.",
+    "priority": "low",
+    "created": "2026-02-07",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0267",
+    "name": "Configure data migration scripts",
+    "status": "review",
+    "assignee": "carol",
+    "description": "Follow-up from incident: the config loader failed during token expiration. Must refactor to prevent fails without retry.",
+    "priority": "medium",
+    "created": "2025-02-15",
+    "updated": "2025-02-17"
+  },
+  {
+    "id": "TASK-0268",
+    "name": "Monitor search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "pat",
+    "description": "As discussed in standup, refactor the worker pool. cold starts is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-12-31",
+    "updated": "2026-01-30"
+  },
+  {
+    "id": "TASK-0269",
+    "name": "Upgrade API rate limiting middleware",
+    "status": "review",
+    "assignee": "heidi",
+    "description": "Need to patch the our caching layer to handle cold starts. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2025-11-11",
+    "updated": "2025-11-16"
+  },
+  {
+    "id": "TASK-0270",
+    "name": "Migrate rate limit header propagation",
+    "status": "open",
+    "assignee": "carol",
+    "description": "Need to simplify the the ORM layer to handle schema changes. Current implementation returns stale data.",
+    "priority": "high",
+    "created": "2025-07-27",
+    "updated": "2025-08-14"
+  },
+  {
+    "id": "TASK-0271",
+    "name": "Deploy dependency version bumps",
+    "status": "open",
+    "assignee": "ivan",
+    "description": "The our caching layer has issues when concurrent writes. We should decouple it to support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-08-21",
+    "updated": "2025-09-19"
+  },
+  {
+    "id": "TASK-0272",
+    "name": "Extract feature flag evaluation",
+    "status": "blocked",
+    "assignee": "sam",
+    "description": "the config loader needs attention: failover events causes leaks memory over time. Plan: wrap and support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-03-01",
+    "updated": "2025-03-26"
+  },
+  {
+    "id": "TASK-0273",
+    "name": "Validate database connection pooling",
+    "status": "done",
+    "assignee": "dave",
+    "description": "the config loader needs attention: network partitions causes corrupts state on restart. Plan: rewrite and pass the security audit.",
+    "priority": "high",
+    "created": "2025-12-15",
+    "updated": "2025-12-29"
+  },
+  {
+    "id": "TASK-0274",
+    "name": "Review rate limit header propagation",
+    "status": "blocked",
+    "assignee": "alice",
+    "description": "the event bus needs attention: concurrent writes causes times out under load. Plan: extend and pass the security audit.",
+    "priority": "medium",
+    "created": "2025-06-11",
+    "updated": "2025-06-24"
+  },
+  {
+    "id": "TASK-0275",
+    "name": "Remove connection timeout configuration",
+    "status": "review",
+    "assignee": "liam",
+    "description": "The the API gateway has issues when network partitions. We should simplify it to pass the security audit.",
+    "priority": "high",
+    "created": "2025-02-08",
+    "updated": "2025-02-25"
+  },
+  {
+    "id": "TASK-0276",
+    "name": "Optimize feature flag evaluation",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "The the ORM layer has issues when large payloads. We should extend it to improve reliability.",
+    "priority": "critical",
+    "created": "2025-05-01",
+    "updated": "2025-05-24"
+  },
+  {
+    "id": "TASK-0277",
+    "name": "Upgrade memory leak in worker pool",
+    "status": "blocked",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the middleware stack failed during schema changes. Must refactor to prevent fails without retry.",
+    "priority": "low",
+    "created": "2025-12-13",
+    "updated": "2026-01-12"
+  },
+  {
+    "id": "TASK-0278",
+    "name": "Configure memory leak in worker pool",
+    "status": "in-progress",
+    "assignee": "quinn",
+    "description": "the worker pool needs attention: large payloads causes silently drops requests. Plan: decouple and unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-10-22",
+    "updated": "2025-11-18"
+  },
+  {
+    "id": "TASK-0279",
+    "name": "Replace API rate limiting middleware",
+    "status": "blocked",
+    "assignee": "liam",
+    "description": "As discussed in standup, patch the middleware stack. concurrent writes is blocking unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-09-02",
+    "updated": "2025-10-02"
+  },
+  {
+    "id": "TASK-0280",
+    "name": "Implement user authentication flow",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the ORM layer failed during schema changes. Must rewrite to prevent fails without retry.",
+    "priority": "high",
+    "created": "2025-06-11",
+    "updated": "2025-07-03"
+  },
+  {
+    "id": "TASK-0281",
+    "name": "Optimize metrics dashboard endpoint",
+    "status": "done",
+    "assignee": "tina",
+    "description": "the API gateway needs attention: failover events causes times out under load. Plan: harden and reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-10-08",
+    "updated": "2025-10-16"
+  },
+  {
+    "id": "TASK-0282",
+    "name": "Review timezone handling utilities",
+    "status": "done",
+    "assignee": "ivan",
+    "description": "As discussed in standup, patch the API gateway. network partitions is blocking pass the security audit.",
+    "priority": "medium",
+    "created": "2025-12-25",
+    "updated": "2026-01-18"
+  },
+  {
+    "id": "TASK-0283",
+    "name": "Investigate CSV export functionality",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "The the auth module has issues when large payloads. We should wrap it to meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-05-01",
+    "updated": "2025-05-18"
+  },
+  {
+    "id": "TASK-0284",
+    "name": "Replace OAuth2 token refresh flow",
+    "status": "done",
+    "assignee": "judy",
+    "description": "the config loader needs attention: concurrent writes causes corrupts state on restart. Plan: refactor and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-11-19",
+    "updated": "2025-12-05"
+  },
+  {
+    "id": "TASK-0285",
+    "name": "Configure connection timeout configuration",
+    "status": "open",
+    "assignee": "olivia",
+    "description": "the ORM layer needs attention: schema changes causes fails without retry. Plan: simplify and unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-04-21",
+    "updated": "2025-05-17"
+  },
+  {
+    "id": "TASK-0286",
+    "name": "Investigate file upload validation",
+    "status": "review",
+    "assignee": "tina",
+    "description": "The the event bus has issues when schema changes. We should patch it to pass the security audit.",
+    "priority": "low",
+    "created": "2025-06-26",
+    "updated": "2025-06-26"
+  },
+  {
+    "id": "TASK-0287",
+    "name": "Design payment webhook handler",
+    "status": "done",
+    "assignee": "tina",
+    "description": "the API gateway needs attention: large payloads causes corrupts state on restart. Plan: wrap and support horizontal scaling.",
+    "priority": "low",
+    "created": "2026-02-01",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0288",
+    "name": "Validate retry policy for external calls",
+    "status": "open",
+    "assignee": "carol",
+    "description": "The the worker pool has issues when schema changes. We should harden it to pass the security audit.",
+    "priority": "medium",
+    "created": "2025-11-20",
+    "updated": "2025-12-09"
+  },
+  {
+    "id": "TASK-0289",
+    "name": "Monitor retry policy for external calls",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "the config loader needs attention: large payloads causes leaks memory over time. Plan: wrap and improve reliability.",
+    "priority": "high",
+    "created": "2025-12-30",
+    "updated": "2026-01-07"
+  },
+  {
+    "id": "TASK-0290",
+    "name": "Upgrade feature flag evaluation",
+    "status": "open",
+    "assignee": "grace",
+    "description": "The our caching layer has issues when concurrent writes. We should decouple it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2026-01-08",
+    "updated": "2026-01-15"
+  },
+  {
+    "id": "TASK-0291",
+    "name": "Deploy rate limit header propagation",
+    "status": "open",
+    "assignee": "dave",
+    "description": "our caching layer needs attention: token expiration causes returns stale data. Plan: patch and reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-01-14",
+    "updated": "2025-02-07"
+  },
+  {
+    "id": "TASK-0292",
+    "name": "Design error logging infrastructure",
+    "status": "in-progress",
+    "assignee": "quinn",
+    "description": "The the auth module has issues when schema changes. We should refactor it to meet SLA requirements.",
+    "priority": "low",
+    "created": "2026-01-13",
+    "updated": "2026-01-22"
+  },
+  {
+    "id": "TASK-0293",
+    "name": "Configure TLS certificate rotation",
+    "status": "done",
+    "assignee": "eve",
+    "description": "Follow-up from incident: the middleware stack failed during token expiration. Must patch to prevent fails without retry.",
+    "priority": "medium",
+    "created": "2025-10-04",
+    "updated": "2025-11-02"
+  },
+  {
+    "id": "TASK-0294",
+    "name": "Replace data migration scripts",
+    "status": "open",
+    "assignee": "olivia",
+    "description": "the config loader needs attention: cold starts causes leaks memory over time. Plan: harden and support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-06-27",
+    "updated": "2025-07-12"
+  },
+  {
+    "id": "TASK-0295",
+    "name": "Cache error logging infrastructure",
+    "status": "review",
+    "assignee": "judy",
+    "description": "As discussed in standup, refactor the middleware stack. failover events is blocking improve reliability.",
+    "priority": "low",
+    "created": "2025-01-01",
+    "updated": "2025-01-17"
+  },
+  {
+    "id": "TASK-0296",
+    "name": "Optimize user authentication flow",
+    "status": "blocked",
+    "assignee": "liam",
+    "description": "The the config loader has issues when token expiration. We should decouple it to reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-05-30",
+    "updated": "2025-06-18"
+  },
+  {
+    "id": "TASK-0297",
+    "name": "Configure payment webhook handler",
+    "status": "done",
+    "assignee": "heidi",
+    "description": "Follow-up from incident: the event bus failed during cold starts. Must simplify to prevent times out under load.",
+    "priority": "critical",
+    "created": "2025-07-13",
+    "updated": "2025-07-20"
+  },
+  {
+    "id": "TASK-0298",
+    "name": "Document file upload validation",
+    "status": "done",
+    "assignee": "tina",
+    "description": "As discussed in standup, simplify the middleware stack. network partitions is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-04-04",
+    "updated": "2025-04-08"
+  },
+  {
+    "id": "TASK-0299",
+    "name": "Implement GraphQL schema resolver",
+    "status": "open",
+    "assignee": "judy",
+    "description": "the middleware stack needs attention: high traffic spikes causes leaks memory over time. Plan: patch and improve reliability.",
+    "priority": "high",
+    "created": "2025-01-26",
+    "updated": "2025-02-12"
+  },
+  {
+    "id": "TASK-0300",
+    "name": "Migrate image resize worker",
+    "status": "done",
+    "assignee": "judy",
+    "description": "As discussed in standup, harden the middleware stack. high traffic spikes is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-01-08",
+    "updated": "2025-01-23"
+  },
+  {
+    "id": "TASK-0301",
+    "name": "Cache retry policy for external calls",
+    "status": "open",
+    "assignee": "rosa",
+    "description": "As discussed in standup, patch the worker pool. cold starts is blocking improve reliability.",
+    "priority": "critical",
+    "created": "2025-01-29",
+    "updated": "2025-02-06"
+  },
+  {
+    "id": "TASK-0302",
+    "name": "Optimize CSV export functionality",
+    "status": "done",
+    "assignee": "heidi",
+    "description": "Need to extend the the middleware stack to handle concurrent writes. Current implementation fails without retry.",
+    "priority": "high",
+    "created": "2026-01-29",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0303",
+    "name": "Upgrade batch processing queue",
+    "status": "review",
+    "assignee": "frank",
+    "description": "Need to rewrite the the event bus to handle failover events. Current implementation corrupts state on restart.",
+    "priority": "high",
+    "created": "2025-08-31",
+    "updated": "2025-09-12"
+  },
+  {
+    "id": "TASK-0304",
+    "name": "Fix load balancer health checks",
+    "status": "open",
+    "assignee": "heidi",
+    "description": "As discussed in standup, harden the auth module. large payloads is blocking unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-07-04",
+    "updated": "2025-08-01"
+  },
+  {
+    "id": "TASK-0305",
+    "name": "Optimize user authentication flow",
+    "status": "open",
+    "assignee": "sam",
+    "description": "As discussed in standup, patch the ORM layer. concurrent writes is blocking reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-07-22",
+    "updated": "2025-08-16"
+  },
+  {
+    "id": "TASK-0306",
+    "name": "Monitor image resize worker",
+    "status": "open",
+    "assignee": "bob",
+    "description": "our caching layer needs attention: large payloads causes times out under load. Plan: patch and reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-02-16",
+    "updated": "2025-03-09"
+  },
+  {
+    "id": "TASK-0307",
+    "name": "Automate audit trail logging",
+    "status": "done",
+    "assignee": "grace",
+    "description": "Need to decouple the the ORM layer to handle large payloads. Current implementation returns stale data.",
+    "priority": "low",
+    "created": "2025-10-13",
+    "updated": "2025-11-07"
+  },
+  {
+    "id": "TASK-0308",
+    "name": "Replace WebSocket reconnection logic",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "The the ORM layer has issues when schema changes. We should patch it to meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-12-28",
+    "updated": "2026-01-11"
+  },
+  {
+    "id": "TASK-0309",
+    "name": "Replace role-based access control",
+    "status": "open",
+    "assignee": "quinn",
+    "description": "The the event bus has issues when cold starts. We should wrap it to support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-11-03",
+    "updated": "2025-12-02"
+  },
+  {
+    "id": "TASK-0310",
+    "name": "Automate pagination cursor encoding",
+    "status": "done",
+    "assignee": "frank",
+    "description": "Need to harden the the worker pool to handle schema changes. Current implementation corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-01-01",
+    "updated": "2025-01-25"
+  },
+  {
+    "id": "TASK-0311",
+    "name": "Upgrade memory leak in worker pool",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "Follow-up from incident: the ORM layer failed during token expiration. Must simplify to prevent corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-04-08",
+    "updated": "2025-04-24"
+  },
+  {
+    "id": "TASK-0312",
+    "name": "Upgrade notification service integration",
+    "status": "open",
+    "assignee": "eve",
+    "description": "The the worker pool has issues when concurrent writes. We should refactor it to reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-02-19",
+    "updated": "2025-03-07"
+  },
+  {
+    "id": "TASK-0313",
+    "name": "Automate CSV export functionality",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the auth module failed during schema changes. Must simplify to prevent leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-01-17",
+    "updated": "2025-02-04"
+  },
+  {
+    "id": "TASK-0314",
+    "name": "Migrate memory leak in worker pool",
+    "status": "open",
+    "assignee": "olivia",
+    "description": "Need to harden the the config loader to handle schema changes. Current implementation corrupts state on restart.",
+    "priority": "medium",
+    "created": "2025-01-07",
+    "updated": "2025-02-05"
+  },
+  {
+    "id": "TASK-0315",
+    "name": "Normalize notification service integration",
+    "status": "review",
+    "assignee": "carol",
+    "description": "The our caching layer has issues when network partitions. We should rewrite it to meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-09-28",
+    "updated": "2025-09-29"
+  },
+  {
+    "id": "TASK-0316",
+    "name": "Upgrade email template rendering",
+    "status": "blocked",
+    "assignee": "frank",
+    "description": "Follow-up from incident: our caching layer failed during schema changes. Must decouple to prevent corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-04-09",
+    "updated": "2025-04-25"
+  },
+  {
+    "id": "TASK-0317",
+    "name": "Remove TLS certificate rotation",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "the middleware stack needs attention: schema changes causes returns stale data. Plan: patch and unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-02-23",
+    "updated": "2025-02-28"
+  },
+  {
+    "id": "TASK-0318",
+    "name": "Cache background job scheduler",
+    "status": "review",
+    "assignee": "tina",
+    "description": "The the config loader has issues when cold starts. We should extend it to meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-07-10",
+    "updated": "2025-07-23"
+  },
+  {
+    "id": "TASK-0319",
+    "name": "Normalize API rate limiting middleware",
+    "status": "review",
+    "assignee": "tina",
+    "description": "Need to patch the the event bus to handle high traffic spikes. Current implementation returns stale data.",
+    "priority": "high",
+    "created": "2025-07-23",
+    "updated": "2025-07-23"
+  },
+  {
+    "id": "TASK-0320",
+    "name": "Cache metrics dashboard endpoint",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: our caching layer failed during high traffic spikes. Must patch to prevent times out under load.",
+    "priority": "high",
+    "created": "2025-06-11",
+    "updated": "2025-06-11"
+  },
+  {
+    "id": "TASK-0321",
+    "name": "Review stale cache purge mechanism",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "our caching layer needs attention: token expiration causes fails without retry. Plan: simplify and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-03-12",
+    "updated": "2025-03-20"
+  },
+  {
+    "id": "TASK-0322",
+    "name": "Integrate GraphQL schema resolver",
+    "status": "done",
+    "assignee": "sam",
+    "description": "Need to simplify the the auth module to handle token expiration. Current implementation silently drops requests.",
+    "priority": "medium",
+    "created": "2026-01-06",
+    "updated": "2026-01-16"
+  },
+  {
+    "id": "TASK-0323",
+    "name": "Investigate schema validation middleware",
+    "status": "open",
+    "assignee": "heidi",
+    "description": "Follow-up from incident: the config loader failed during high traffic spikes. Must refactor to prevent returns stale data.",
+    "priority": "critical",
+    "created": "2025-06-28",
+    "updated": "2025-07-26"
+  },
+  {
+    "id": "TASK-0324",
+    "name": "Validate cache invalidation strategy",
+    "status": "review",
+    "assignee": "quinn",
+    "description": "The the auth module has issues when token expiration. We should patch it to unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-06-13",
+    "updated": "2025-06-30"
+  },
+  {
+    "id": "TASK-0325",
+    "name": "Document retry policy for external calls",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "the middleware stack needs attention: high traffic spikes causes fails without retry. Plan: rewrite and meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-04-24",
+    "updated": "2025-05-07"
+  },
+  {
+    "id": "TASK-0326",
+    "name": "Extract background job scheduler",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "As discussed in standup, extend the middleware stack. token expiration is blocking unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-02-13",
+    "updated": "2025-02-25"
+  },
+  {
+    "id": "TASK-0327",
+    "name": "Normalize rate limit header propagation",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "Need to simplify the the config loader to handle schema changes. Current implementation corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-10-15",
+    "updated": "2025-11-03"
+  },
+  {
+    "id": "TASK-0328",
+    "name": "Investigate background job scheduler",
+    "status": "review",
+    "assignee": "liam",
+    "description": "The the ORM layer has issues when high traffic spikes. We should harden it to reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-02-27",
+    "updated": "2025-03-20"
+  },
+  {
+    "id": "TASK-0329",
+    "name": "Design dead letter queue processing",
+    "status": "in-progress",
+    "assignee": "olivia",
+    "description": "Need to extend the the worker pool to handle schema changes. Current implementation leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-11-12",
+    "updated": "2025-12-08"
+  },
+  {
+    "id": "TASK-0330",
+    "name": "Fix email template rendering",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "the ORM layer needs attention: concurrent writes causes returns stale data. Plan: refactor and meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-02-27",
+    "updated": "2025-03-22"
+  },
+  {
+    "id": "TASK-0331",
+    "name": "Migrate CORS preflight handling",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "Follow-up from incident: the middleware stack failed during large payloads. Must simplify to prevent corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-01-12",
+    "updated": "2025-01-22"
+  },
+  {
+    "id": "TASK-0332",
+    "name": "Upgrade rate limit header propagation",
+    "status": "open",
+    "assignee": "ivan",
+    "description": "The the event bus has issues when network partitions. We should refactor it to unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-07-12",
+    "updated": "2025-07-30"
+  },
+  {
+    "id": "TASK-0333",
+    "name": "Automate user authentication flow",
+    "status": "open",
+    "assignee": "mona",
+    "description": "our caching layer needs attention: high traffic spikes causes returns stale data. Plan: harden and pass the security audit.",
+    "priority": "low",
+    "created": "2025-01-28",
+    "updated": "2025-02-11"
+  },
+  {
+    "id": "TASK-0334",
+    "name": "Extract session management logic",
+    "status": "review",
+    "assignee": "pat",
+    "description": "Follow-up from incident: the API gateway failed during network partitions. Must rewrite to prevent fails without retry.",
+    "priority": "critical",
+    "created": "2025-04-29",
+    "updated": "2025-05-11"
+  },
+  {
+    "id": "TASK-0335",
+    "name": "Extract batch processing queue",
+    "status": "review",
+    "assignee": "pat",
+    "description": "As discussed in standup, patch the auth module. schema changes is blocking support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-01-21",
+    "updated": "2025-01-28"
+  },
+  {
+    "id": "TASK-0336",
+    "name": "Optimize pagination cursor encoding",
+    "status": "review",
+    "assignee": "bob",
+    "description": "the auth module needs attention: cold starts causes leaks memory over time. Plan: decouple and reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-11-17",
+    "updated": "2025-11-26"
+  },
+  {
+    "id": "TASK-0337",
+    "name": "Update payment webhook handler",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the config loader failed during network partitions. Must extend to prevent fails without retry.",
+    "priority": "low",
+    "created": "2025-07-21",
+    "updated": "2025-08-11"
+  },
+  {
+    "id": "TASK-0338",
+    "name": "Monitor image resize worker",
+    "status": "done",
+    "assignee": "rosa",
+    "description": "The the API gateway has issues when network partitions. We should extend it to support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-06-09",
+    "updated": "2025-07-08"
+  },
+  {
+    "id": "TASK-0339",
+    "name": "Cache cache invalidation strategy",
+    "status": "blocked",
+    "assignee": "frank",
+    "description": "our caching layer needs attention: large payloads causes returns stale data. Plan: rewrite and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-08-09",
+    "updated": "2025-09-07"
+  },
+  {
+    "id": "TASK-0340",
+    "name": "Investigate schema validation middleware",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "the worker pool needs attention: concurrent writes causes leaks memory over time. Plan: patch and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2026-01-27",
+    "updated": "2026-02-06"
+  },
+  {
+    "id": "TASK-0341",
+    "name": "Monitor metrics dashboard endpoint",
+    "status": "blocked",
+    "assignee": "sam",
+    "description": "Follow-up from incident: the worker pool failed during network partitions. Must extend to prevent corrupts state on restart.",
+    "priority": "medium",
+    "created": "2026-01-26",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0342",
+    "name": "Cache connection timeout configuration",
+    "status": "in-progress",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the ORM layer failed during large payloads. Must wrap to prevent times out under load.",
+    "priority": "low",
+    "created": "2025-02-10",
+    "updated": "2025-03-04"
+  },
+  {
+    "id": "TASK-0343",
+    "name": "Migrate data migration scripts",
+    "status": "open",
+    "assignee": "nick",
+    "description": "Need to simplify the the config loader to handle network partitions. Current implementation corrupts state on restart.",
+    "priority": "high",
+    "created": "2025-03-12",
+    "updated": "2025-03-17"
+  },
+  {
+    "id": "TASK-0344",
+    "name": "Refactor GraphQL schema resolver",
+    "status": "done",
+    "assignee": "tina",
+    "description": "As discussed in standup, harden the middleware stack. network partitions is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2026-01-23",
+    "updated": "2026-01-29"
+  },
+  {
+    "id": "TASK-0345",
+    "name": "Deploy OAuth2 token refresh flow",
+    "status": "done",
+    "assignee": "tina",
+    "description": "Follow-up from incident: our caching layer failed during failover events. Must refactor to prevent times out under load.",
+    "priority": "high",
+    "created": "2025-11-08",
+    "updated": "2025-12-01"
+  },
+  {
+    "id": "TASK-0346",
+    "name": "Deploy API rate limiting middleware",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the worker pool failed during cold starts. Must refactor to prevent times out under load.",
+    "priority": "medium",
+    "created": "2025-09-23",
+    "updated": "2025-10-10"
+  },
+  {
+    "id": "TASK-0347",
+    "name": "Document request deduplication layer",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "the API gateway needs attention: failover events causes corrupts state on restart. Plan: refactor and meet SLA requirements.",
+    "priority": "critical",
+    "created": "2026-02-01",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0348",
+    "name": "Add GraphQL schema resolver",
+    "status": "blocked",
+    "assignee": "rosa",
+    "description": "The the config loader has issues when schema changes. We should decouple it to improve reliability.",
+    "priority": "high",
+    "created": "2026-01-05",
+    "updated": "2026-01-21"
+  },
+  {
+    "id": "TASK-0349",
+    "name": "Restructure CI/CD pipeline configuration",
+    "status": "done",
+    "assignee": "carol",
+    "description": "the API gateway needs attention: concurrent writes causes silently drops requests. Plan: harden and improve reliability.",
+    "priority": "low",
+    "created": "2025-08-21",
+    "updated": "2025-09-08"
+  },
+  {
+    "id": "TASK-0350",
+    "name": "Refactor rate limit header propagation",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the config loader failed during token expiration. Must patch to prevent silently drops requests.",
+    "priority": "medium",
+    "created": "2025-11-21",
+    "updated": "2025-12-02"
+  },
+  {
+    "id": "TASK-0351",
+    "name": "Upgrade cache invalidation strategy",
+    "status": "in-progress",
+    "assignee": "eve",
+    "description": "The the config loader has issues when cold starts. We should refactor it to pass the security audit.",
+    "priority": "low",
+    "created": "2025-10-17",
+    "updated": "2025-11-13"
+  },
+  {
+    "id": "TASK-0352",
+    "name": "Remove file upload validation",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "Need to simplify the the auth module to handle failover events. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-05-28",
+    "updated": "2025-06-17"
+  },
+  {
+    "id": "TASK-0353",
+    "name": "Integrate email template rendering",
+    "status": "in-progress",
+    "assignee": "sam",
+    "description": "As discussed in standup, wrap the config loader. failover events is blocking unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-11-08",
+    "updated": "2025-12-06"
+  },
+  {
+    "id": "TASK-0354",
+    "name": "Replace metrics dashboard endpoint",
+    "status": "blocked",
+    "assignee": "rosa",
+    "description": "The the API gateway has issues when large payloads. We should refactor it to pass the security audit.",
+    "priority": "medium",
+    "created": "2025-05-06",
+    "updated": "2025-06-03"
+  },
+  {
+    "id": "TASK-0355",
+    "name": "Fix dependency version bumps",
+    "status": "blocked",
+    "assignee": "judy",
+    "description": "the auth module needs attention: concurrent writes causes times out under load. Plan: rewrite and reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-01-19",
+    "updated": "2025-01-23"
+  },
+  {
+    "id": "TASK-0356",
+    "name": "Monitor input sanitization filters",
+    "status": "blocked",
+    "assignee": "rosa",
+    "description": "The the ORM layer has issues when high traffic spikes. We should wrap it to support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-12-11",
+    "updated": "2025-12-20"
+  },
+  {
+    "id": "TASK-0357",
+    "name": "Deploy notification service integration",
+    "status": "done",
+    "assignee": "rosa",
+    "description": "Need to simplify the the middleware stack to handle large payloads. Current implementation silently drops requests.",
+    "priority": "medium",
+    "created": "2025-07-08",
+    "updated": "2025-08-05"
+  },
+  {
+    "id": "TASK-0358",
+    "name": "Investigate rate limit header propagation",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "Follow-up from incident: our caching layer failed during concurrent writes. Must refactor to prevent times out under load.",
+    "priority": "medium",
+    "created": "2025-06-18",
+    "updated": "2025-07-04"
+  },
+  {
+    "id": "TASK-0359",
+    "name": "Test feature flag evaluation",
+    "status": "blocked",
+    "assignee": "sam",
+    "description": "Follow-up from incident: the API gateway failed during failover events. Must harden to prevent fails without retry.",
+    "priority": "low",
+    "created": "2025-08-07",
+    "updated": "2025-08-26"
+  },
+  {
+    "id": "TASK-0360",
+    "name": "Remove dead letter queue processing",
+    "status": "in-progress",
+    "assignee": "judy",
+    "description": "The our caching layer has issues when high traffic spikes. We should refactor it to pass the security audit.",
+    "priority": "critical",
+    "created": "2025-09-10",
+    "updated": "2025-10-05"
+  },
+  {
+    "id": "TASK-0361",
+    "name": "Migrate dead letter queue processing",
+    "status": "done",
+    "assignee": "nick",
+    "description": "Need to harden the the ORM layer to handle network partitions. Current implementation silently drops requests.",
+    "priority": "high",
+    "created": "2026-01-13",
+    "updated": "2026-02-09"
+  },
+  {
+    "id": "TASK-0362",
+    "name": "Configure notification service integration",
+    "status": "review",
+    "assignee": "judy",
+    "description": "Follow-up from incident: the auth module failed during concurrent writes. Must harden to prevent corrupts state on restart.",
+    "priority": "medium",
+    "created": "2025-12-20",
+    "updated": "2025-12-29"
+  },
+  {
+    "id": "TASK-0363",
+    "name": "Validate dead letter queue processing",
+    "status": "open",
+    "assignee": "frank",
+    "description": "The the ORM layer has issues when failover events. We should harden it to improve reliability.",
+    "priority": "high",
+    "created": "2025-07-22",
+    "updated": "2025-08-14"
+  },
+  {
+    "id": "TASK-0364",
+    "name": "Automate request deduplication layer",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "As discussed in standup, decouple the auth module. cold starts is blocking pass the security audit.",
+    "priority": "medium",
+    "created": "2025-09-04",
+    "updated": "2025-09-08"
+  },
+  {
+    "id": "TASK-0365",
+    "name": "Implement load balancer health checks",
+    "status": "blocked",
+    "assignee": "karl",
+    "description": "the API gateway needs attention: cold starts causes silently drops requests. Plan: rewrite and support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-10-12",
+    "updated": "2025-10-29"
+  },
+  {
+    "id": "TASK-0366",
+    "name": "Remove dependency version bumps",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "The the event bus has issues when schema changes. We should rewrite it to improve reliability.",
+    "priority": "medium",
+    "created": "2025-11-17",
+    "updated": "2025-12-04"
+  },
+  {
+    "id": "TASK-0367",
+    "name": "Integrate email template rendering",
+    "status": "review",
+    "assignee": "olivia",
+    "description": "the event bus needs attention: large payloads causes silently drops requests. Plan: extend and support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-07-31",
+    "updated": "2025-08-02"
+  },
+  {
+    "id": "TASK-0368",
+    "name": "Refactor API versioning strategy",
+    "status": "blocked",
+    "assignee": "alice",
+    "description": "As discussed in standup, patch the worker pool. schema changes is blocking pass the security audit.",
+    "priority": "medium",
+    "created": "2026-02-03",
+    "updated": "2026-02-09"
+  },
+  {
+    "id": "TASK-0369",
+    "name": "Update session management logic",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "The the middleware stack has issues when token expiration. We should refactor it to unblock the frontend team.",
+    "priority": "critical",
+    "created": "2026-02-02",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0370",
+    "name": "Fix input sanitization filters",
+    "status": "open",
+    "assignee": "karl",
+    "description": "As discussed in standup, refactor our caching layer. cold starts is blocking unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-01-03",
+    "updated": "2025-01-12"
+  },
+  {
+    "id": "TASK-0371",
+    "name": "Migrate OAuth2 token refresh flow",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "the ORM layer needs attention: failover events causes corrupts state on restart. Plan: simplify and improve reliability.",
+    "priority": "medium",
+    "created": "2025-11-24",
+    "updated": "2025-12-22"
+  },
+  {
+    "id": "TASK-0372",
+    "name": "Configure file upload validation",
+    "status": "open",
+    "assignee": "tina",
+    "description": "Follow-up from incident: the worker pool failed during schema changes. Must rewrite to prevent fails without retry.",
+    "priority": "medium",
+    "created": "2025-03-18",
+    "updated": "2025-03-23"
+  },
+  {
+    "id": "TASK-0373",
+    "name": "Restructure WebSocket reconnection logic",
+    "status": "blocked",
+    "assignee": "heidi",
+    "description": "The the event bus has issues when schema changes. We should rewrite it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-03-14",
+    "updated": "2025-04-13"
+  },
+  {
+    "id": "TASK-0374",
+    "name": "Integrate search indexing pipeline",
+    "status": "open",
+    "assignee": "mona",
+    "description": "Need to rewrite the the config loader to handle token expiration. Current implementation leaks memory over time.",
+    "priority": "low",
+    "created": "2025-03-08",
+    "updated": "2025-03-08"
+  },
+  {
+    "id": "TASK-0375",
+    "name": "Document image resize worker",
+    "status": "in-progress",
+    "assignee": "rosa",
+    "description": "Need to wrap the the API gateway to handle concurrent writes. Current implementation corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-11-12",
+    "updated": "2025-11-23"
+  },
+  {
+    "id": "TASK-0376",
+    "name": "Upgrade request deduplication layer",
+    "status": "done",
+    "assignee": "heidi",
+    "description": "The the event bus has issues when schema changes. We should patch it to reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-08-22",
+    "updated": "2025-08-31"
+  },
+  {
+    "id": "TASK-0377",
+    "name": "Test request deduplication layer",
+    "status": "done",
+    "assignee": "alice",
+    "description": "Need to wrap the our caching layer to handle schema changes. Current implementation times out under load.",
+    "priority": "high",
+    "created": "2026-02-08",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0378",
+    "name": "Review input sanitization filters",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "Follow-up from incident: the config loader failed during concurrent writes. Must rewrite to prevent returns stale data.",
+    "priority": "critical",
+    "created": "2025-05-25",
+    "updated": "2025-06-18"
+  },
+  {
+    "id": "TASK-0379",
+    "name": "Replace request deduplication layer",
+    "status": "done",
+    "assignee": "sam",
+    "description": "As discussed in standup, extend the worker pool. large payloads is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2026-02-10",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0380",
+    "name": "Restructure stale cache purge mechanism",
+    "status": "done",
+    "assignee": "nick",
+    "description": "Follow-up from incident: the worker pool failed during large payloads. Must harden to prevent corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-06-24",
+    "updated": "2025-06-30"
+  },
+  {
+    "id": "TASK-0381",
+    "name": "Restructure dependency version bumps",
+    "status": "done",
+    "assignee": "dave",
+    "description": "Follow-up from incident: the ORM layer failed during concurrent writes. Must wrap to prevent times out under load.",
+    "priority": "medium",
+    "created": "2026-01-14",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0382",
+    "name": "Monitor session management logic",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "the auth module needs attention: concurrent writes causes leaks memory over time. Plan: wrap and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-07-27",
+    "updated": "2025-07-29"
+  },
+  {
+    "id": "TASK-0383",
+    "name": "Upgrade cache invalidation strategy",
+    "status": "done",
+    "assignee": "rosa",
+    "description": "the middleware stack needs attention: network partitions causes leaks memory over time. Plan: decouple and pass the security audit.",
+    "priority": "medium",
+    "created": "2026-01-23",
+    "updated": "2026-01-27"
+  },
+  {
+    "id": "TASK-0384",
+    "name": "Upgrade batch processing queue",
+    "status": "done",
+    "assignee": "liam",
+    "description": "Need to refactor the the config loader to handle large payloads. Current implementation returns stale data.",
+    "priority": "medium",
+    "created": "2025-06-03",
+    "updated": "2025-06-21"
+  },
+  {
+    "id": "TASK-0385",
+    "name": "Fix user authentication flow",
+    "status": "blocked",
+    "assignee": "liam",
+    "description": "Need to simplify the the auth module to handle network partitions. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2025-10-09",
+    "updated": "2025-11-08"
+  },
+  {
+    "id": "TASK-0386",
+    "name": "Restructure CSV export functionality",
+    "status": "done",
+    "assignee": "mona",
+    "description": "As discussed in standup, extend the API gateway. failover events is blocking reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-11-17",
+    "updated": "2025-11-27"
+  },
+  {
+    "id": "TASK-0387",
+    "name": "Investigate cache invalidation strategy",
+    "status": "review",
+    "assignee": "eve",
+    "description": "The our caching layer has issues when high traffic spikes. We should refactor it to pass the security audit.",
+    "priority": "low",
+    "created": "2025-07-04",
+    "updated": "2025-07-30"
+  },
+  {
+    "id": "TASK-0388",
+    "name": "Update payment webhook handler",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "As discussed in standup, decouple the API gateway. failover events is blocking meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-12-03",
+    "updated": "2025-12-16"
+  },
+  {
+    "id": "TASK-0389",
+    "name": "Optimize GraphQL schema resolver",
+    "status": "done",
+    "assignee": "tina",
+    "description": "Need to wrap the the worker pool to handle cold starts. Current implementation times out under load.",
+    "priority": "medium",
+    "created": "2025-07-16",
+    "updated": "2025-07-27"
+  },
+  {
+    "id": "TASK-0390",
+    "name": "Validate connection timeout configuration",
+    "status": "review",
+    "assignee": "dave",
+    "description": "Follow-up from incident: our caching layer failed during large payloads. Must wrap to prevent corrupts state on restart.",
+    "priority": "medium",
+    "created": "2025-01-18",
+    "updated": "2025-01-19"
+  },
+  {
+    "id": "TASK-0391",
+    "name": "Refactor rate limit header propagation",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "The our caching layer has issues when cold starts. We should wrap it to improve reliability.",
+    "priority": "medium",
+    "created": "2025-08-27",
+    "updated": "2025-09-12"
+  },
+  {
+    "id": "TASK-0392",
+    "name": "Implement connection timeout configuration",
+    "status": "done",
+    "assignee": "quinn",
+    "description": "As discussed in standup, harden the config loader. schema changes is blocking support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-10-01",
+    "updated": "2025-10-25"
+  },
+  {
+    "id": "TASK-0393",
+    "name": "Monitor batch processing queue",
+    "status": "blocked",
+    "assignee": "ivan",
+    "description": "Need to wrap the the API gateway to handle high traffic spikes. Current implementation corrupts state on restart.",
+    "priority": "critical",
+    "created": "2025-01-19",
+    "updated": "2025-02-10"
+  },
+  {
+    "id": "TASK-0394",
+    "name": "Refactor error logging infrastructure",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "the API gateway needs attention: cold starts causes returns stale data. Plan: simplify and support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-05-27",
+    "updated": "2025-06-11"
+  },
+  {
+    "id": "TASK-0395",
+    "name": "Monitor GraphQL schema resolver",
+    "status": "blocked",
+    "assignee": "eve",
+    "description": "As discussed in standup, harden the API gateway. cold starts is blocking reduce latency by 40%.",
+    "priority": "low",
+    "created": "2026-01-15",
+    "updated": "2026-01-18"
+  },
+  {
+    "id": "TASK-0396",
+    "name": "Extract API rate limiting middleware",
+    "status": "review",
+    "assignee": "carol",
+    "description": "The the middleware stack has issues when token expiration. We should patch it to reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-04-03",
+    "updated": "2025-04-28"
+  },
+  {
+    "id": "TASK-0397",
+    "name": "Remove load balancer health checks",
+    "status": "blocked",
+    "assignee": "liam",
+    "description": "Need to simplify the our caching layer to handle high traffic spikes. Current implementation leaks memory over time.",
+    "priority": "low",
+    "created": "2026-01-07",
+    "updated": "2026-01-27"
+  },
+  {
+    "id": "TASK-0398",
+    "name": "Integrate CORS preflight handling",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "As discussed in standup, wrap the event bus. large payloads is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-09-01",
+    "updated": "2025-09-10"
+  },
+  {
+    "id": "TASK-0399",
+    "name": "Design CSV export functionality",
+    "status": "review",
+    "assignee": "quinn",
+    "description": "Need to rewrite the the ORM layer to handle token expiration. Current implementation fails without retry.",
+    "priority": "medium",
+    "created": "2025-05-28",
+    "updated": "2025-06-26"
+  },
+  {
+    "id": "TASK-0400",
+    "name": "Configure session management logic",
+    "status": "review",
+    "assignee": "sam",
+    "description": "As discussed in standup, wrap the worker pool. network partitions is blocking support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-06-21",
+    "updated": "2025-06-29"
+  },
+  {
+    "id": "TASK-0401",
+    "name": "Implement user authentication flow",
+    "status": "open",
+    "assignee": "alice",
+    "description": "As discussed in standup, rewrite our caching layer. failover events is blocking reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-06-10",
+    "updated": "2025-06-27"
+  },
+  {
+    "id": "TASK-0402",
+    "name": "Fix database connection pooling",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "Need to extend the our caching layer to handle concurrent writes. Current implementation silently drops requests.",
+    "priority": "high",
+    "created": "2025-05-09",
+    "updated": "2025-05-15"
+  },
+  {
+    "id": "TASK-0403",
+    "name": "Cache dependency version bumps",
+    "status": "in-progress",
+    "assignee": "dave",
+    "description": "The the event bus has issues when failover events. We should simplify it to improve reliability.",
+    "priority": "low",
+    "created": "2025-07-12",
+    "updated": "2025-08-02"
+  },
+  {
+    "id": "TASK-0404",
+    "name": "Investigate OAuth2 token refresh flow",
+    "status": "review",
+    "assignee": "frank",
+    "description": "Need to simplify the the auth module to handle token expiration. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-05-22",
+    "updated": "2025-06-15"
+  },
+  {
+    "id": "TASK-0405",
+    "name": "Configure GraphQL schema resolver",
+    "status": "done",
+    "assignee": "carol",
+    "description": "As discussed in standup, extend the config loader. large payloads is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-05-13",
+    "updated": "2025-06-12"
+  },
+  {
+    "id": "TASK-0406",
+    "name": "Cache background job scheduler",
+    "status": "in-progress",
+    "assignee": "tina",
+    "description": "Need to wrap the the event bus to handle concurrent writes. Current implementation silently drops requests.",
+    "priority": "critical",
+    "created": "2025-03-15",
+    "updated": "2025-04-01"
+  },
+  {
+    "id": "TASK-0407",
+    "name": "Configure API versioning strategy",
+    "status": "open",
+    "assignee": "pat",
+    "description": "The the auth module has issues when token expiration. We should refactor it to reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-10-20",
+    "updated": "2025-11-12"
+  },
+  {
+    "id": "TASK-0408",
+    "name": "Implement pagination cursor encoding",
+    "status": "done",
+    "assignee": "pat",
+    "description": "As discussed in standup, decouple our caching layer. network partitions is blocking meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-07-20",
+    "updated": "2025-08-07"
+  },
+  {
+    "id": "TASK-0409",
+    "name": "Replace audit trail logging",
+    "status": "review",
+    "assignee": "judy",
+    "description": "As discussed in standup, refactor our caching layer. schema changes is blocking support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-03-04",
+    "updated": "2025-03-22"
+  },
+  {
+    "id": "TASK-0410",
+    "name": "Cache WebSocket reconnection logic",
+    "status": "in-progress",
+    "assignee": "frank",
+    "description": "Follow-up from incident: the config loader failed during network partitions. Must refactor to prevent returns stale data.",
+    "priority": "low",
+    "created": "2025-08-24",
+    "updated": "2025-09-17"
+  },
+  {
+    "id": "TASK-0411",
+    "name": "Restructure audit trail logging",
+    "status": "done",
+    "assignee": "carol",
+    "description": "As discussed in standup, extend the API gateway. high traffic spikes is blocking improve reliability.",
+    "priority": "high",
+    "created": "2025-02-24",
+    "updated": "2025-03-16"
+  },
+  {
+    "id": "TASK-0412",
+    "name": "Refactor CORS preflight handling",
+    "status": "review",
+    "assignee": "pat",
+    "description": "Follow-up from incident: the auth module failed during high traffic spikes. Must wrap to prevent returns stale data.",
+    "priority": "medium",
+    "created": "2025-09-08",
+    "updated": "2025-09-20"
+  },
+  {
+    "id": "TASK-0413",
+    "name": "Fix retry policy for external calls",
+    "status": "open",
+    "assignee": "grace",
+    "description": "Follow-up from incident: the API gateway failed during network partitions. Must wrap to prevent silently drops requests.",
+    "priority": "high",
+    "created": "2026-02-08",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0414",
+    "name": "Implement connection timeout configuration",
+    "status": "blocked",
+    "assignee": "bob",
+    "description": "The the auth module has issues when large payloads. We should patch it to improve reliability.",
+    "priority": "medium",
+    "created": "2025-09-08",
+    "updated": "2025-09-28"
+  },
+  {
+    "id": "TASK-0415",
+    "name": "Design dead letter queue processing",
+    "status": "in-progress",
+    "assignee": "sam",
+    "description": "Need to rewrite the our caching layer to handle failover events. Current implementation fails without retry.",
+    "priority": "high",
+    "created": "2026-02-11",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0416",
+    "name": "Migrate background job scheduler",
+    "status": "review",
+    "assignee": "mona",
+    "description": "the API gateway needs attention: schema changes causes leaks memory over time. Plan: rewrite and improve reliability.",
+    "priority": "high",
+    "created": "2025-02-02",
+    "updated": "2025-02-27"
+  },
+  {
+    "id": "TASK-0417",
+    "name": "Add metrics dashboard endpoint",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "The the API gateway has issues when failover events. We should harden it to unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-06-21",
+    "updated": "2025-06-23"
+  },
+  {
+    "id": "TASK-0418",
+    "name": "Automate dead letter queue processing",
+    "status": "done",
+    "assignee": "frank",
+    "description": "Need to wrap the our caching layer to handle high traffic spikes. Current implementation silently drops requests.",
+    "priority": "critical",
+    "created": "2025-03-10",
+    "updated": "2025-03-13"
+  },
+  {
+    "id": "TASK-0419",
+    "name": "Validate WebSocket reconnection logic",
+    "status": "done",
+    "assignee": "pat",
+    "description": "The the API gateway has issues when cold starts. We should extend it to meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-12-28",
+    "updated": "2026-01-17"
+  },
+  {
+    "id": "TASK-0420",
+    "name": "Remove dead letter queue processing",
+    "status": "open",
+    "assignee": "tina",
+    "description": "The our caching layer has issues when cold starts. We should wrap it to meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-05-03",
+    "updated": "2025-06-02"
+  },
+  {
+    "id": "TASK-0421",
+    "name": "Migrate file upload validation",
+    "status": "blocked",
+    "assignee": "dave",
+    "description": "Follow-up from incident: the worker pool failed during failover events. Must harden to prevent corrupts state on restart.",
+    "priority": "high",
+    "created": "2025-10-13",
+    "updated": "2025-10-20"
+  },
+  {
+    "id": "TASK-0422",
+    "name": "Migrate file upload validation",
+    "status": "in-progress",
+    "assignee": "pat",
+    "description": "As discussed in standup, patch the API gateway. high traffic spikes is blocking pass the security audit.",
+    "priority": "medium",
+    "created": "2025-05-22",
+    "updated": "2025-05-23"
+  },
+  {
+    "id": "TASK-0423",
+    "name": "Investigate feature flag evaluation",
+    "status": "review",
+    "assignee": "tina",
+    "description": "As discussed in standup, refactor our caching layer. high traffic spikes is blocking reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-05-26",
+    "updated": "2025-06-01"
+  },
+  {
+    "id": "TASK-0424",
+    "name": "Integrate pagination cursor encoding",
+    "status": "open",
+    "assignee": "carol",
+    "description": "The the ORM layer has issues when token expiration. We should wrap it to pass the security audit.",
+    "priority": "medium",
+    "created": "2026-02-07",
+    "updated": "2026-02-07"
+  },
+  {
+    "id": "TASK-0425",
+    "name": "Add OAuth2 token refresh flow",
+    "status": "in-progress",
+    "assignee": "dave",
+    "description": "The the worker pool has issues when token expiration. We should decouple it to improve reliability.",
+    "priority": "low",
+    "created": "2025-04-28",
+    "updated": "2025-05-22"
+  },
+  {
+    "id": "TASK-0426",
+    "name": "Fix background job scheduler",
+    "status": "in-progress",
+    "assignee": "grace",
+    "description": "Follow-up from incident: the API gateway failed during token expiration. Must wrap to prevent returns stale data.",
+    "priority": "low",
+    "created": "2025-10-27",
+    "updated": "2025-11-11"
+  },
+  {
+    "id": "TASK-0427",
+    "name": "Automate audit trail logging",
+    "status": "review",
+    "assignee": "grace",
+    "description": "the auth module needs attention: high traffic spikes causes returns stale data. Plan: patch and reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2026-01-04",
+    "updated": "2026-01-10"
+  },
+  {
+    "id": "TASK-0428",
+    "name": "Investigate role-based access control",
+    "status": "review",
+    "assignee": "heidi",
+    "description": "the API gateway needs attention: network partitions causes silently drops requests. Plan: patch and meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-08-27",
+    "updated": "2025-09-10"
+  },
+  {
+    "id": "TASK-0429",
+    "name": "Integrate request deduplication layer",
+    "status": "review",
+    "assignee": "alice",
+    "description": "As discussed in standup, extend the worker pool. schema changes is blocking unblock the frontend team.",
+    "priority": "high",
+    "created": "2025-04-21",
+    "updated": "2025-05-09"
+  },
+  {
+    "id": "TASK-0430",
+    "name": "Update dependency version bumps",
+    "status": "open",
+    "assignee": "nick",
+    "description": "Need to refactor the the middleware stack to handle high traffic spikes. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2025-10-30",
+    "updated": "2025-11-29"
+  },
+  {
+    "id": "TASK-0431",
+    "name": "Restructure session management logic",
+    "status": "done",
+    "assignee": "pat",
+    "description": "The the auth module has issues when token expiration. We should rewrite it to reduce latency by 40%.",
+    "priority": "medium",
+    "created": "2025-09-03",
+    "updated": "2025-09-28"
+  },
+  {
+    "id": "TASK-0432",
+    "name": "Automate payment webhook handler",
+    "status": "open",
+    "assignee": "pat",
+    "description": "the middleware stack needs attention: high traffic spikes causes times out under load. Plan: patch and meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-06-01",
+    "updated": "2025-06-08"
+  },
+  {
+    "id": "TASK-0433",
+    "name": "Remove timezone handling utilities",
+    "status": "done",
+    "assignee": "alice",
+    "description": "Need to decouple the the ORM layer to handle high traffic spikes. Current implementation returns stale data.",
+    "priority": "medium",
+    "created": "2025-12-27",
+    "updated": "2026-01-08"
+  },
+  {
+    "id": "TASK-0434",
+    "name": "Monitor CORS preflight handling",
+    "status": "blocked",
+    "assignee": "grace",
+    "description": "Need to harden the the auth module to handle schema changes. Current implementation silently drops requests.",
+    "priority": "low",
+    "created": "2025-12-24",
+    "updated": "2026-01-23"
+  },
+  {
+    "id": "TASK-0435",
+    "name": "Monitor API rate limiting middleware",
+    "status": "review",
+    "assignee": "liam",
+    "description": "The the worker pool has issues when large payloads. We should rewrite it to reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-07-07",
+    "updated": "2025-07-21"
+  },
+  {
+    "id": "TASK-0436",
+    "name": "Normalize stale cache purge mechanism",
+    "status": "in-progress",
+    "assignee": "heidi",
+    "description": "the event bus needs attention: token expiration causes returns stale data. Plan: harden and improve reliability.",
+    "priority": "critical",
+    "created": "2025-11-29",
+    "updated": "2025-12-14"
+  },
+  {
+    "id": "TASK-0437",
+    "name": "Design memory leak in worker pool",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "Need to wrap the the event bus to handle failover events. Current implementation fails without retry.",
+    "priority": "critical",
+    "created": "2025-07-10",
+    "updated": "2025-07-21"
+  },
+  {
+    "id": "TASK-0438",
+    "name": "Design payment webhook handler",
+    "status": "open",
+    "assignee": "mona",
+    "description": "The our caching layer has issues when concurrent writes. We should simplify it to support horizontal scaling.",
+    "priority": "critical",
+    "created": "2025-04-07",
+    "updated": "2025-05-05"
+  },
+  {
+    "id": "TASK-0439",
+    "name": "Integrate cache invalidation strategy",
+    "status": "in-progress",
+    "assignee": "quinn",
+    "description": "Need to simplify the the config loader to handle large payloads. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2025-12-23",
+    "updated": "2025-12-27"
+  },
+  {
+    "id": "TASK-0440",
+    "name": "Automate database connection pooling",
+    "status": "review",
+    "assignee": "grace",
+    "description": "Need to refactor the the worker pool to handle schema changes. Current implementation times out under load.",
+    "priority": "medium",
+    "created": "2025-08-16",
+    "updated": "2025-09-08"
+  },
+  {
+    "id": "TASK-0441",
+    "name": "Test memory leak in worker pool",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "Follow-up from incident: the middleware stack failed during cold starts. Must wrap to prevent fails without retry.",
+    "priority": "medium",
+    "created": "2025-12-02",
+    "updated": "2025-12-22"
+  },
+  {
+    "id": "TASK-0442",
+    "name": "Configure data migration scripts",
+    "status": "done",
+    "assignee": "liam",
+    "description": "the API gateway needs attention: schema changes causes returns stale data. Plan: refactor and meet SLA requirements.",
+    "priority": "high",
+    "created": "2025-03-29",
+    "updated": "2025-04-23"
+  },
+  {
+    "id": "TASK-0443",
+    "name": "Remove CORS preflight handling",
+    "status": "review",
+    "assignee": "frank",
+    "description": "The the API gateway has issues when network partitions. We should patch it to improve reliability.",
+    "priority": "medium",
+    "created": "2025-11-13",
+    "updated": "2025-12-12"
+  },
+  {
+    "id": "TASK-0444",
+    "name": "Design feature flag evaluation",
+    "status": "review",
+    "assignee": "frank",
+    "description": "The the ORM layer has issues when schema changes. We should refactor it to support horizontal scaling.",
+    "priority": "low",
+    "created": "2025-10-22",
+    "updated": "2025-10-26"
+  },
+  {
+    "id": "TASK-0445",
+    "name": "Replace batch processing queue",
+    "status": "open",
+    "assignee": "alice",
+    "description": "As discussed in standup, wrap the API gateway. failover events is blocking reduce latency by 40%.",
+    "priority": "critical",
+    "created": "2025-10-04",
+    "updated": "2025-10-09"
+  },
+  {
+    "id": "TASK-0446",
+    "name": "Extract image resize worker",
+    "status": "review",
+    "assignee": "pat",
+    "description": "the middleware stack needs attention: schema changes causes corrupts state on restart. Plan: patch and improve reliability.",
+    "priority": "low",
+    "created": "2026-01-14",
+    "updated": "2026-01-31"
+  },
+  {
+    "id": "TASK-0447",
+    "name": "Upgrade TLS certificate rotation",
+    "status": "open",
+    "assignee": "judy",
+    "description": "Need to decouple the the worker pool to handle failover events. Current implementation returns stale data.",
+    "priority": "medium",
+    "created": "2025-01-21",
+    "updated": "2025-01-25"
+  },
+  {
+    "id": "TASK-0448",
+    "name": "Automate CI/CD pipeline configuration",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "The the worker pool has issues when high traffic spikes. We should simplify it to unblock the frontend team.",
+    "priority": "low",
+    "created": "2025-01-29",
+    "updated": "2025-02-17"
+  },
+  {
+    "id": "TASK-0449",
+    "name": "Refactor pagination cursor encoding",
+    "status": "done",
+    "assignee": "grace",
+    "description": "As discussed in standup, harden the auth module. schema changes is blocking reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-12-13",
+    "updated": "2026-01-03"
+  },
+  {
+    "id": "TASK-0450",
+    "name": "Review user authentication flow",
+    "status": "review",
+    "assignee": "liam",
+    "description": "the middleware stack needs attention: concurrent writes causes leaks memory over time. Plan: simplify and pass the security audit.",
+    "priority": "low",
+    "created": "2025-07-09",
+    "updated": "2025-07-21"
+  },
+  {
+    "id": "TASK-0451",
+    "name": "Design WebSocket reconnection logic",
+    "status": "in-progress",
+    "assignee": "nick",
+    "description": "As discussed in standup, patch our caching layer. large payloads is blocking support horizontal scaling.",
+    "priority": "low",
+    "created": "2026-01-15",
+    "updated": "2026-01-28"
+  },
+  {
+    "id": "TASK-0452",
+    "name": "Refactor stale cache purge mechanism",
+    "status": "done",
+    "assignee": "carol",
+    "description": "Need to decouple the the event bus to handle token expiration. Current implementation leaks memory over time.",
+    "priority": "low",
+    "created": "2025-09-26",
+    "updated": "2025-10-06"
+  },
+  {
+    "id": "TASK-0453",
+    "name": "Cache error logging infrastructure",
+    "status": "in-progress",
+    "assignee": "frank",
+    "description": "As discussed in standup, simplify the middleware stack. high traffic spikes is blocking unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-12-30",
+    "updated": "2026-01-17"
+  },
+  {
+    "id": "TASK-0454",
+    "name": "Normalize request deduplication layer",
+    "status": "in-progress",
+    "assignee": "alice",
+    "description": "Need to patch the the event bus to handle cold starts. Current implementation corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-09-10",
+    "updated": "2025-09-27"
+  },
+  {
+    "id": "TASK-0455",
+    "name": "Upgrade WebSocket reconnection logic",
+    "status": "done",
+    "assignee": "frank",
+    "description": "As discussed in standup, extend the auth module. concurrent writes is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-03-05",
+    "updated": "2025-03-25"
+  },
+  {
+    "id": "TASK-0456",
+    "name": "Review stale cache purge mechanism",
+    "status": "done",
+    "assignee": "sam",
+    "description": "As discussed in standup, simplify the middleware stack. concurrent writes is blocking unblock the frontend team.",
+    "priority": "critical",
+    "created": "2025-11-03",
+    "updated": "2025-11-26"
+  },
+  {
+    "id": "TASK-0457",
+    "name": "Validate search indexing pipeline",
+    "status": "in-progress",
+    "assignee": "karl",
+    "description": "As discussed in standup, patch the ORM layer. large payloads is blocking support horizontal scaling.",
+    "priority": "medium",
+    "created": "2025-05-13",
+    "updated": "2025-05-18"
+  },
+  {
+    "id": "TASK-0458",
+    "name": "Review search indexing pipeline",
+    "status": "review",
+    "assignee": "judy",
+    "description": "Follow-up from incident: the worker pool failed during large payloads. Must rewrite to prevent silently drops requests.",
+    "priority": "high",
+    "created": "2025-08-03",
+    "updated": "2025-08-23"
+  },
+  {
+    "id": "TASK-0459",
+    "name": "Test batch processing queue",
+    "status": "review",
+    "assignee": "liam",
+    "description": "Need to harden the the API gateway to handle high traffic spikes. Current implementation leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-10-06",
+    "updated": "2025-10-16"
+  },
+  {
+    "id": "TASK-0460",
+    "name": "Integrate schema validation middleware",
+    "status": "review",
+    "assignee": "frank",
+    "description": "Need to extend the the API gateway to handle network partitions. Current implementation leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-07-10",
+    "updated": "2025-08-03"
+  },
+  {
+    "id": "TASK-0461",
+    "name": "Refactor file upload validation",
+    "status": "in-progress",
+    "assignee": "alice",
+    "description": "As discussed in standup, harden the event bus. schema changes is blocking meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-08-02",
+    "updated": "2025-08-16"
+  },
+  {
+    "id": "TASK-0462",
+    "name": "Document database connection pooling",
+    "status": "open",
+    "assignee": "heidi",
+    "description": "The the worker pool has issues when cold starts. We should patch it to reduce latency by 40%.",
+    "priority": "high",
+    "created": "2025-03-30",
+    "updated": "2025-04-21"
+  },
+  {
+    "id": "TASK-0463",
+    "name": "Restructure file upload validation",
+    "status": "open",
+    "assignee": "alice",
+    "description": "As discussed in standup, decouple the auth module. network partitions is blocking improve reliability.",
+    "priority": "critical",
+    "created": "2025-02-10",
+    "updated": "2025-02-23"
+  },
+  {
+    "id": "TASK-0464",
+    "name": "Configure API rate limiting middleware",
+    "status": "open",
+    "assignee": "judy",
+    "description": "Need to rewrite the our caching layer to handle network partitions. Current implementation fails without retry.",
+    "priority": "high",
+    "created": "2025-08-29",
+    "updated": "2025-09-01"
+  },
+  {
+    "id": "TASK-0465",
+    "name": "Implement payment webhook handler",
+    "status": "in-progress",
+    "assignee": "ivan",
+    "description": "Follow-up from incident: the ORM layer failed during large payloads. Must harden to prevent fails without retry.",
+    "priority": "high",
+    "created": "2025-12-10",
+    "updated": "2025-12-21"
+  },
+  {
+    "id": "TASK-0466",
+    "name": "Refactor session management logic",
+    "status": "blocked",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the worker pool failed during cold starts. Must extend to prevent leaks memory over time.",
+    "priority": "critical",
+    "created": "2025-09-16",
+    "updated": "2025-10-04"
+  },
+  {
+    "id": "TASK-0467",
+    "name": "Migrate pagination cursor encoding",
+    "status": "done",
+    "assignee": "liam",
+    "description": "Follow-up from incident: the middleware stack failed during concurrent writes. Must patch to prevent leaks memory over time.",
+    "priority": "low",
+    "created": "2026-01-07",
+    "updated": "2026-01-10"
+  },
+  {
+    "id": "TASK-0468",
+    "name": "Extract data migration scripts",
+    "status": "done",
+    "assignee": "dave",
+    "description": "the middleware stack needs attention: concurrent writes causes fails without retry. Plan: rewrite and reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-08-06",
+    "updated": "2025-08-12"
+  },
+  {
+    "id": "TASK-0469",
+    "name": "Restructure WebSocket reconnection logic",
+    "status": "blocked",
+    "assignee": "bob",
+    "description": "Need to harden the the middleware stack to handle concurrent writes. Current implementation times out under load.",
+    "priority": "low",
+    "created": "2026-01-26",
+    "updated": "2026-02-06"
+  },
+  {
+    "id": "TASK-0470",
+    "name": "Document API versioning strategy",
+    "status": "in-progress",
+    "assignee": "rosa",
+    "description": "As discussed in standup, simplify the config loader. network partitions is blocking meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-11-04",
+    "updated": "2025-11-27"
+  },
+  {
+    "id": "TASK-0471",
+    "name": "Upgrade memory leak in worker pool",
+    "status": "open",
+    "assignee": "mona",
+    "description": "As discussed in standup, rewrite our caching layer. large payloads is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-04-02",
+    "updated": "2025-04-02"
+  },
+  {
+    "id": "TASK-0472",
+    "name": "Remove notification service integration",
+    "status": "review",
+    "assignee": "grace",
+    "description": "the config loader needs attention: concurrent writes causes leaks memory over time. Plan: extend and meet SLA requirements.",
+    "priority": "low",
+    "created": "2026-01-15",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0473",
+    "name": "Restructure stale cache purge mechanism",
+    "status": "blocked",
+    "assignee": "ivan",
+    "description": "As discussed in standup, harden the middleware stack. token expiration is blocking unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-05-23",
+    "updated": "2025-06-16"
+  },
+  {
+    "id": "TASK-0474",
+    "name": "Design session management logic",
+    "status": "open",
+    "assignee": "ivan",
+    "description": "As discussed in standup, wrap the worker pool. large payloads is blocking improve reliability.",
+    "priority": "critical",
+    "created": "2025-03-17",
+    "updated": "2025-04-10"
+  },
+  {
+    "id": "TASK-0475",
+    "name": "Upgrade database connection pooling",
+    "status": "in-progress",
+    "assignee": "mona",
+    "description": "Follow-up from incident: the API gateway failed during cold starts. Must harden to prevent fails without retry.",
+    "priority": "critical",
+    "created": "2025-02-04",
+    "updated": "2025-02-19"
+  },
+  {
+    "id": "TASK-0476",
+    "name": "Upgrade rate limit header propagation",
+    "status": "done",
+    "assignee": "olivia",
+    "description": "The the middleware stack has issues when failover events. We should simplify it to support horizontal scaling.",
+    "priority": "medium",
+    "created": "2026-01-25",
+    "updated": "2026-01-27"
+  },
+  {
+    "id": "TASK-0477",
+    "name": "Implement API rate limiting middleware",
+    "status": "done",
+    "assignee": "dave",
+    "description": "As discussed in standup, wrap the ORM layer. token expiration is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2025-10-04",
+    "updated": "2025-10-21"
+  },
+  {
+    "id": "TASK-0478",
+    "name": "Replace batch processing queue",
+    "status": "in-progress",
+    "assignee": "pat",
+    "description": "As discussed in standup, patch the event bus. token expiration is blocking improve reliability.",
+    "priority": "low",
+    "created": "2025-01-17",
+    "updated": "2025-01-22"
+  },
+  {
+    "id": "TASK-0479",
+    "name": "Upgrade CORS preflight handling",
+    "status": "blocked",
+    "assignee": "pat",
+    "description": "As discussed in standup, patch the auth module. token expiration is blocking meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-12-04",
+    "updated": "2025-12-21"
+  },
+  {
+    "id": "TASK-0480",
+    "name": "Review WebSocket reconnection logic",
+    "status": "review",
+    "assignee": "bob",
+    "description": "Need to refactor the the API gateway to handle schema changes. Current implementation returns stale data.",
+    "priority": "critical",
+    "created": "2025-11-12",
+    "updated": "2025-12-03"
+  },
+  {
+    "id": "TASK-0481",
+    "name": "Automate image resize worker",
+    "status": "done",
+    "assignee": "dave",
+    "description": "As discussed in standup, harden the ORM layer. token expiration is blocking improve reliability.",
+    "priority": "high",
+    "created": "2026-01-27",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0482",
+    "name": "Automate batch processing queue",
+    "status": "blocked",
+    "assignee": "carol",
+    "description": "Need to simplify the our caching layer to handle schema changes. Current implementation leaks memory over time.",
+    "priority": "medium",
+    "created": "2025-05-07",
+    "updated": "2025-05-14"
+  },
+  {
+    "id": "TASK-0483",
+    "name": "Upgrade background job scheduler",
+    "status": "blocked",
+    "assignee": "quinn",
+    "description": "As discussed in standup, simplify the auth module. failover events is blocking improve reliability.",
+    "priority": "medium",
+    "created": "2025-01-20",
+    "updated": "2025-02-03"
+  },
+  {
+    "id": "TASK-0484",
+    "name": "Deploy OAuth2 token refresh flow",
+    "status": "blocked",
+    "assignee": "dave",
+    "description": "As discussed in standup, rewrite the worker pool. schema changes is blocking unblock the frontend team.",
+    "priority": "medium",
+    "created": "2025-07-13",
+    "updated": "2025-07-31"
+  },
+  {
+    "id": "TASK-0485",
+    "name": "Document timezone handling utilities",
+    "status": "done",
+    "assignee": "grace",
+    "description": "As discussed in standup, rewrite the worker pool. cold starts is blocking improve reliability.",
+    "priority": "medium",
+    "created": "2025-03-27",
+    "updated": "2025-04-15"
+  },
+  {
+    "id": "TASK-0486",
+    "name": "Optimize dead letter queue processing",
+    "status": "open",
+    "assignee": "sam",
+    "description": "Need to harden the the event bus to handle concurrent writes. Current implementation fails without retry.",
+    "priority": "low",
+    "created": "2025-10-21",
+    "updated": "2025-11-02"
+  },
+  {
+    "id": "TASK-0487",
+    "name": "Review notification service integration",
+    "status": "review",
+    "assignee": "quinn",
+    "description": "the ORM layer needs attention: network partitions causes times out under load. Plan: decouple and meet SLA requirements.",
+    "priority": "medium",
+    "created": "2025-08-07",
+    "updated": "2025-08-13"
+  },
+  {
+    "id": "TASK-0488",
+    "name": "Design TLS certificate rotation",
+    "status": "in-progress",
+    "assignee": "alice",
+    "description": "Follow-up from incident: the middleware stack failed during network partitions. Must patch to prevent corrupts state on restart.",
+    "priority": "low",
+    "created": "2025-11-16",
+    "updated": "2025-12-02"
+  },
+  {
+    "id": "TASK-0489",
+    "name": "Automate CORS preflight handling",
+    "status": "blocked",
+    "assignee": "nick",
+    "description": "Follow-up from incident: the worker pool failed during schema changes. Must refactor to prevent times out under load.",
+    "priority": "high",
+    "created": "2025-05-18",
+    "updated": "2025-06-16"
+  },
+  {
+    "id": "TASK-0490",
+    "name": "Upgrade batch processing queue",
+    "status": "done",
+    "assignee": "nick",
+    "description": "the worker pool needs attention: token expiration causes returns stale data. Plan: rewrite and support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-03-19",
+    "updated": "2025-04-11"
+  },
+  {
+    "id": "TASK-0491",
+    "name": "Monitor email template rendering",
+    "status": "done",
+    "assignee": "heidi",
+    "description": "Need to patch the the worker pool to handle high traffic spikes. Current implementation leaks memory over time.",
+    "priority": "low",
+    "created": "2025-05-12",
+    "updated": "2025-06-02"
+  },
+  {
+    "id": "TASK-0492",
+    "name": "Investigate background job scheduler",
+    "status": "open",
+    "assignee": "grace",
+    "description": "The the API gateway has issues when high traffic spikes. We should simplify it to support horizontal scaling.",
+    "priority": "high",
+    "created": "2025-09-06",
+    "updated": "2025-09-23"
+  },
+  {
+    "id": "TASK-0493",
+    "name": "Fix memory leak in worker pool",
+    "status": "open",
+    "assignee": "bob",
+    "description": "Need to harden the the event bus to handle concurrent writes. Current implementation times out under load.",
+    "priority": "critical",
+    "created": "2025-11-26",
+    "updated": "2025-12-23"
+  },
+  {
+    "id": "TASK-0494",
+    "name": "Normalize error logging infrastructure",
+    "status": "in-progress",
+    "assignee": "dave",
+    "description": "Follow-up from incident: the event bus failed during failover events. Must rewrite to prevent silently drops requests.",
+    "priority": "critical",
+    "created": "2025-07-23",
+    "updated": "2025-08-22"
+  },
+  {
+    "id": "TASK-0495",
+    "name": "Test image resize worker",
+    "status": "blocked",
+    "assignee": "mona",
+    "description": "The the worker pool has issues when large payloads. We should decouple it to reduce latency by 40%.",
+    "priority": "high",
+    "created": "2026-01-31",
+    "updated": "2026-02-12"
+  },
+  {
+    "id": "TASK-0496",
+    "name": "Investigate feature flag evaluation",
+    "status": "blocked",
+    "assignee": "bob",
+    "description": "As discussed in standup, harden our caching layer. schema changes is blocking meet SLA requirements.",
+    "priority": "low",
+    "created": "2025-05-21",
+    "updated": "2025-06-04"
+  },
+  {
+    "id": "TASK-0497",
+    "name": "Configure cache invalidation strategy",
+    "status": "review",
+    "assignee": "pat",
+    "description": "the auth module needs attention: high traffic spikes causes corrupts state on restart. Plan: simplify and pass the security audit.",
+    "priority": "critical",
+    "created": "2025-12-16",
+    "updated": "2025-12-23"
+  },
+  {
+    "id": "TASK-0498",
+    "name": "Upgrade email template rendering",
+    "status": "review",
+    "assignee": "rosa",
+    "description": "As discussed in standup, simplify the ORM layer. concurrent writes is blocking reduce latency by 40%.",
+    "priority": "low",
+    "created": "2025-12-20",
+    "updated": "2026-01-18"
+  },
+  {
+    "id": "TASK-0499",
+    "name": "Deploy feature flag evaluation",
+    "status": "review",
+    "assignee": "carol",
+    "description": "The the worker pool has issues when large payloads. We should simplify it to pass the security audit.",
+    "priority": "medium",
+    "created": "2025-07-18",
+    "updated": "2025-07-18"
+  },
+  {
+    "id": "TASK-0500",
+    "name": "Investigate API rate limiting middleware",
+    "status": "review",
+    "assignee": "carol",
+    "description": "As discussed in standup, wrap the config loader. schema changes is blocking meet SLA requirements.",
+    "priority": "critical",
+    "created": "2026-01-28",
+    "updated": "2026-02-12"
+  }
+]

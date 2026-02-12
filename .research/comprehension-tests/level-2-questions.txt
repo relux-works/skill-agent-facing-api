@@ -1,0 +1,12 @@
+## Questions (Level 2 — 15 fields)
+
+Q1 [direct-lookup]: What is the priority of T-106?
+Q2 [direct-lookup]: What is the deadline for T-109?
+Q3 [filtering]: List all items with type "feature".
+Q4 [filtering]: How many items have the tag "backend"?
+Q5 [cross-reference]: Which item has the most comments? What is its name and assignee?
+Q6 [cross-reference]: What is blocking T-111? What is the status of the blocking item?
+Q7 [aggregation]: What is the total estimate (in hours) of all "in-progress" items?
+Q8 [aggregation]: How many items belong to parent E-11?
+Q9 [multi-field]: List all high-priority items that are NOT done. Show their name and status.
+Q10 [multi-field]: Which item was created earliest, has priority "high", and what is its current status?

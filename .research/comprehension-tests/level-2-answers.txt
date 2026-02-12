@@ -1,0 +1,12 @@
+## Correct Answers (Level 2)
+
+A1: high
+A2: 2026-02-25
+A3: T-103 (Dark mode), T-107 (Cache layer), T-109 (Search), T-112 (Onboarding)
+A4: 6 (T-101, T-104, T-106, T-107, T-109, T-111)
+A5: T-109 (Search) — 7 comments, assigned to alice
+A6: T-111 is blocked by T-108. T-108 status is "done".
+A7: 28h (T-102: 2h + T-104: 5h + T-109: 21h)
+A8: 4 (T-103, T-109, T-110, T-112)
+A9: T-104 Rate limiter (in-progress), T-106 DB migration (blocked), T-109 Search (in-progress)
+A10: T-101 Auth refactor, created 2026-01-05, status is "done". (Note: T-106 created 2026-01-08 is next earliest high-priority)

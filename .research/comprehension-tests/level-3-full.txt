@@ -1,0 +1,14 @@
+## Data (12 items)
+id	name	status	assignee	description	priority	type	created	updated	deadline	estimate	tags	blocked-by	comments	parent	scope	sprint	story-points	category	closed	reporter	reviewer	rank	source	depends-on	environment	version	label	milestone	watchers
+T-201	Auth refactor	done	alice	OAuth2 migration	high	task	2026-01-05	2026-02-01	2026-02-15	8h	security,backend		3	E-20	backend	S-14	5	engineering	2026-02-01	frank	grace	1	internal		prod	2.1	team-a	M-3	alice,bob
+T-202	Login bug	in-progress	bob	Safari login fail	critical	bug	2026-01-20	2026-02-10	2026-02-12	2h	frontend,auth		5	E-20	frontend	S-15	2	engineering		frank	alice	3	customer	T-201	staging	2.1	team-b	M-3	carol
+T-203	Dark mode	todo	carol	Dark theme	medium	feature	2026-02-01	2026-02-01	2026-03-01	13h	frontend,ui		0	E-21	frontend	S-16	8	design		grace	dave	7	roadmap		dev	2.2	team-b	M-4	dave,eve
+T-204	Rate limiter	in-progress	alice	API rate limiting	high	task	2026-01-15	2026-02-08	2026-02-20	5h	backend,api		2	E-20	backend	S-15	3	engineering		frank	bob	2	internal		prod	2.1	team-a	M-3	bob
+T-205	Update docs	done	dave	API docs refresh	low	task	2026-01-10	2026-01-25	2026-02-28	3h	docs		1	E-22	docs	S-14	1	documentation	2026-01-25	eve	frank	10	internal		prod	2.0	team-c	M-3
+T-206	DB migration	blocked	bob	Postgres 15	high	task	2026-01-08	2026-02-05	2026-02-18	8h	backend,db	T-220	4	E-23	backend	S-15	5	engineering		grace	alice	4	internal	T-220	staging	2.1	team-a	M-3	alice,frank
+T-207	Cache layer	todo	carol	Redis caching	medium	feature	2026-02-03	2026-02-03	2026-03-15	13h	backend,perf		0	E-23	backend	S-16	8	engineering		frank	eve	8	roadmap		dev	2.2	team-a	M-4
+T-208	CI pipeline	done	eve	GH Actions	medium	task	2026-01-12	2026-01-30	2026-02-10	5h	devops,ci		2	E-22	devops	S-14	3	devops	2026-01-30	alice	frank	6	internal		prod	2.0	team-c	M-3	grace
+T-209	Search	in-progress	alice	ES full-text	high	feature	2026-01-25	2026-02-09	2026-02-25	21h	backend,search		7	E-21	backend	S-15	13	engineering		bob	carol	5	customer		staging	2.2	team-a	M-4	bob,carol,dave
+T-210	Mobile nav	todo	dave	Fix nav drawer	low	bug	2026-02-05	2026-02-05	2026-03-10	3h	frontend,mobile		0	E-21	frontend	S-16	2	engineering		carol	bob	9	customer		dev	2.2	team-b	M-4
+T-211	Perf audit	blocked	eve	Perf profiling	medium	task	2026-02-01	2026-02-07	2026-02-28	8h	perf,backend	T-208	3	E-23	backend	S-16	5	engineering		bob	grace	11	internal	T-208	staging	2.1	team-a	M-4	frank
+T-212	Onboarding	done	bob	Onboarding wizard	high	feature	2026-01-18	2026-02-04	2026-02-10	13h	frontend,ux		6	E-21	frontend	S-14	8	design	2026-02-04	dave	alice	12	roadmap		prod	2.1	team-b	M-3	alice,dave

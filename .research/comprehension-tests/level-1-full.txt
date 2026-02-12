@@ -1,0 +1,14 @@
+## Data (12 items)
+id	name	status	assignee	description
+T-001	Auth refactor	done	alice	Migrate auth module to OAuth2
+T-002	Fix login bug	in-progress	bob	Login fails on Safari
+T-003	Add dark mode	todo	carol	Support dark theme in settings
+T-004	API rate limiting	in-progress	alice	Implement rate limiter middleware
+T-005	Update docs	done	dave	Refresh API documentation
+T-006	DB migration	blocked	bob	Postgres 15 upgrade blocked by vendor
+T-007	Cache layer	todo	carol	Add Redis caching for hot paths
+T-008	CI pipeline	done	eve	Setup GitHub Actions
+T-009	Search feature	in-progress	alice	Full-text search with Elasticsearch
+T-010	Mobile nav	todo	dave	Fix mobile navigation drawer
+T-011	Perf audit	blocked	eve	Performance profiling blocked by staging env
+T-012	Onboarding flow	done	bob	New user onboarding wizard

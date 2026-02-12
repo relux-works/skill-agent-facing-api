@@ -1,0 +1,12 @@
+## Correct Answers (Level 1)
+
+A1: blocked
+A2: alice
+A3: 3 (T-002, T-004, T-009)
+A4: T-001, T-005, T-008, T-012
+A5: Auth refactor, API rate limiting, Search feature
+A6: 25% (3 out of 12)
+A7: 5 (alice, bob, carol, dave, eve)
+A8: DB migration
+A9: Setup GitHub Actions
+A10: alice — 3 items (T-001, T-004, T-009)

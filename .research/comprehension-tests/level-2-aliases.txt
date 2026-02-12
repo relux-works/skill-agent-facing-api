@@ -1,0 +1,17 @@
+## Field Aliases
+i=id, n=name, s=status, a=assignee, d=description, p=priority, t=type, cr=created, up=updated, dl=deadline, e=estimate, tg=tags, bl=blocked-by, cm=comments, pr=parent
+
+## Data (12 items)
+i	n	s	a	d	p	t	cr	up	dl	e	tg	bl	cm	pr
+T-101	Auth refactor	done	alice	Migrate to OAuth2	high	task	2026-01-05	2026-02-01	2026-02-15	8h	security,backend		3	E-10
+T-102	Fix login bug	in-progress	bob	Safari login fails	critical	bug	2026-01-20	2026-02-10	2026-02-12	2h	frontend,auth		5	E-10
+T-103	Dark mode	todo	carol	Dark theme in settings	medium	feature	2026-02-01	2026-02-01	2026-03-01	13h	frontend,ui		0	E-11
+T-104	Rate limiter	in-progress	alice	API rate limiting	high	task	2026-01-15	2026-02-08	2026-02-20	5h	backend,api		2	E-10
+T-105	Update docs	done	dave	Refresh API docs	low	task	2026-01-10	2026-01-25	2026-02-28	3h	docs		1	E-12
+T-106	DB migration	blocked	bob	Postgres 15 upgrade	high	task	2026-01-08	2026-02-05	2026-02-18	8h	backend,db	T-120	4	E-13
+T-107	Cache layer	todo	carol	Redis caching	medium	feature	2026-02-03	2026-02-03	2026-03-15	13h	backend,perf		0	E-13
+T-108	CI pipeline	done	eve	GitHub Actions setup	medium	task	2026-01-12	2026-01-30	2026-02-10	5h	devops,ci		2	E-12
+T-109	Search	in-progress	alice	Elasticsearch FTS	high	feature	2026-01-25	2026-02-09	2026-02-25	21h	backend,search		7	E-11
+T-110	Mobile nav	todo	dave	Fix nav drawer	low	bug	2026-02-05	2026-02-05	2026-03-10	3h	frontend,mobile		0	E-11
+T-111	Perf audit	blocked	eve	Perf profiling	medium	task	2026-02-01	2026-02-07	2026-02-28	8h	perf,backend	T-108	3	E-13
+T-112	Onboarding	done	bob	User onboarding wizard	high	feature	2026-01-18	2026-02-04	2026-02-10	13h	frontend,ux		6	E-11

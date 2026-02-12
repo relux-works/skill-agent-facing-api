@@ -26,6 +26,23 @@ Writes stay as regular CLI commands. No new processes, no session overhead, no e
 
 See [references/comparison-example.md](references/comparison-example.md) for a detailed measurement on a real 346-element board.
 
+## Design Principle: Format Is a Transport Concern
+
+The source of data (Schema, database, API) must never decide how that data is serialized. The **caller** declares the format — always, at every layer.
+
+This is the only correct way to pipe data from any source to any consumer. If you bake the format into the source, you lock out every other consumer:
+
+| Layer | How the caller declares format |
+|-------|-------------------------------|
+| CLI | `--format compact` / `--format json` (required flag, no default) |
+| SDK (per-call) | `QueryJSONWithMode(query, LLMReadable)` |
+| REST API | `Accept: application/json` header |
+| gRPC | Request field: `output_format: COMPACT` |
+
+The source stays format-agnostic. It returns structured data; the transport layer serializes it for the consumer. A TUI app, an AI agent, and a human all call the same CLI — they only differ in `--format`.
+
+**Anti-pattern:** configuring output format at schema/source initialization (e.g., `NewSchema(WithOutputMode(...))`). This couples the data model to a single consumer. When a second consumer appears with different needs, you're stuck.
+
 ## Output Modes
 
 The `--format` flag (required on CLI commands) controls output serialization:
@@ -82,6 +99,14 @@ ln -s ~/src/skill-agent-facing-api ~/.claude/skills/agent-facing-api
 mkdir -p ~/.codex/skills
 ln -s ~/src/skill-agent-facing-api ~/.codex/skills/agent-facing-api
 ```
+
+## Articles
+
+Research on agent-facing output optimization:
+
+| Article | Summary |
+|---------|---------|
+| [Field Name Aliases in Schema-Once Output: Do They Save Tokens?](articles/field-alias-compression-study.md) | Three-part empirical study showing that field name abbreviations are architecturally redundant when compact tabular (schema-once) format already eliminates key repetition. Aliases save a fixed 5 tokens regardless of payload size, while schema discovery costs 85 tokens per roundtrip — a net loss in 75% of scenarios. |
 
 ## References
 

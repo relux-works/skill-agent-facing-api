@@ -1,0 +1,12 @@
+## Questions (Level 3 — 30 fields)
+
+Q1 [direct-lookup]: What is the reviewer (rv) and reporter (r) for T-206?
+Q2 [direct-lookup]: What sprint (sp) and scope (sc) does T-209 belong to?
+Q3 [filtering]: List all items in milestone M-4.
+Q4 [filtering]: How many items have source "customer"?
+Q5 [cross-reference]: What is the rank (rn) of the item with the most story-points (st)? What is that item's name?
+Q6 [cross-reference]: T-202 depends on (dp) which item? What is that item's version (v) and environment (en)?
+Q7 [aggregation]: What is the total story-points for all items in sprint S-15?
+Q8 [aggregation]: How many items have category "engineering"?
+Q9 [multi-field]: List items where scope=backend AND sprint=S-16 AND status is NOT done. Show name, status, and label.
+Q10 [multi-field]: Which item was closed (cl) most recently, has label "team-b", and what is its milestone?

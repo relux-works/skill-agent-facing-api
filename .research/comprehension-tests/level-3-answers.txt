@@ -1,0 +1,12 @@
+## Correct Answers (Level 3)
+
+A1: reviewer=alice, reporter=grace
+A2: sprint=S-15, scope=backend
+A3: T-203, T-207, T-209, T-210, T-211 (all with milestone M-4)
+A4: 3 (T-202, T-209, T-210)
+A5: T-209 (Search) has 13 story-points (highest). Its rank is 5.
+A6: T-202 depends on T-201. T-201: version=2.1, environment=prod.
+A7: 23 (T-202:2 + T-204:3 + T-206:5 + T-209:13)
+A8: 8 (T-201, T-202, T-204, T-206, T-207, T-209, T-210, T-211)
+A9: T-207 Cache layer (todo, team-a), T-211 Perf audit (blocked, team-a). Note: T-209 is scope=backend, sprint=S-15 (not S-16).
+A10: T-212 Onboarding, closed 2026-02-04, label=team-b, milestone=M-3.

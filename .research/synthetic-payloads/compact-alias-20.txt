@@ -1,0 +1,21 @@
+i,n,s,a,d,p,c,u
+TASK-0001,Review role-based access control,review,liam,The our caching layer has issues when large payloads. We should simplify it to pass the security audit.,high,2025-11-22,2025-12-18
+TASK-0002,Deploy metrics dashboard endpoint,blocked,heidi,the worker pool needs attention: high traffic spikes causes returns stale data. Plan: refactor and meet SLA requirements.,medium,2025-03-25,2025-04-08
+TASK-0003,Validate OAuth2 token refresh flow,in-progress,pat,"As discussed in standup, wrap the API gateway. cold starts is blocking reduce latency by 40%.",medium,2025-02-03,2025-02-09
+TASK-0004,Investigate stale cache purge mechanism,done,liam,The the middleware stack has issues when concurrent writes. We should patch it to improve reliability.,high,2026-01-18,2026-02-05
+TASK-0005,Upgrade background job scheduler,blocked,carol,"As discussed in standup, decouple the middleware stack. cold starts is blocking improve reliability.",critical,2025-11-18,2025-11-23
+TASK-0006,Replace metrics dashboard endpoint,review,dave,the API gateway needs attention: failover events causes silently drops requests. Plan: decouple and pass the security audit.,medium,2025-12-16,2026-01-13
+TASK-0007,Remove pagination cursor encoding,open,judy,Follow-up from incident: the API gateway failed during schema changes. Must extend to prevent leaks memory over time.,critical,2025-09-14,2025-10-08
+TASK-0008,Integrate database connection pooling,open,liam,the auth module needs attention: network partitions causes fails without retry. Plan: extend and improve reliability.,critical,2025-11-03,2025-11-13
+TASK-0009,Refactor CORS preflight handling,in-progress,eve,"As discussed in standup, patch the event bus. token expiration is blocking unblock the frontend team.",high,2026-01-10,2026-01-25
+TASK-0010,Deploy timezone handling utilities,done,quinn,"As discussed in standup, rewrite the worker pool. network partitions is blocking support horizontal scaling.",critical,2026-01-01,2026-01-10
+TASK-0011,Optimize stale cache purge mechanism,in-progress,alice,Need to refactor the the worker pool to handle concurrent writes. Current implementation silently drops requests.,critical,2025-10-29,2025-11-15
+TASK-0012,Configure memory leak in worker pool,in-progress,rosa,The the worker pool has issues when failover events. We should wrap it to reduce latency by 40%.,critical,2025-09-21,2025-09-28
+TASK-0013,Investigate audit trail logging,done,nick,"As discussed in standup, refactor our caching layer. high traffic spikes is blocking pass the security audit.",medium,2025-02-19,2025-03-12
+TASK-0014,Migrate CI/CD pipeline configuration,blocked,olivia,The the API gateway has issues when cold starts. We should decouple it to reduce latency by 40%.,critical,2025-02-25,2025-03-04
+TASK-0015,Replace session management logic,open,rosa,Need to rewrite the the worker pool to handle large payloads. Current implementation times out under load.,low,2025-08-15,2025-09-09
+TASK-0016,Deploy search indexing pipeline,in-progress,mona,Need to decouple the the event bus to handle failover events. Current implementation returns stale data.,low,2025-04-20,2025-05-17
+TASK-0017,Document load balancer health checks,open,sam,Follow-up from incident: the ORM layer failed during high traffic spikes. Must refactor to prevent silently drops requests.,low,2025-03-21,2025-03-27
+TASK-0018,Extract role-based access control,open,quinn,Need to patch the our caching layer to handle concurrent writes. Current implementation corrupts state on restart.,low,2025-09-15,2025-10-14
+TASK-0019,Validate email template rendering,blocked,tina,Need to rewrite the the config loader to handle schema changes. Current implementation returns stale data.,medium,2025-03-03,2025-04-02
+TASK-0020,Deploy error logging infrastructure,review,olivia,the auth module needs attention: failover events causes fails without retry. Plan: rewrite and unblock the frontend team.,critical,2025-05-03,2025-05-11

@@ -1,0 +1,1058 @@
+[
+  {
+    "session_length": 10,
+    "eviction_rate": "10",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 40,
+    "net_balance": -45,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 5,
+        "total_savings": 25
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 5,
+        "total_savings": 15
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "10",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 105,
+    "net_balance": 20,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 3,
+        "total_savings": 15
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 30,
+        "total_savings": 90
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "20",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 40,
+    "net_balance": -45,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 5,
+        "total_savings": 25
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 5,
+        "total_savings": 15
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "20",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 105,
+    "net_balance": 20,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 3,
+        "total_savings": 15
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 30,
+        "total_savings": 90
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "50",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 40,
+    "net_balance": -45,
+    "break_even_queries": 21.25,
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 5,
+        "total_savings": 25
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 5,
+        "total_savings": 15
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "50",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 105,
+    "net_balance": 20,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 3,
+        "total_savings": 15
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 30,
+        "total_savings": 90
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "never",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 40,
+    "net_balance": -45,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 5,
+        "total_savings": 25
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 5,
+        "total_savings": 15
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 10,
+    "eviction_rate": "never",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 105,
+    "net_balance": 20,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 5,
+        "savings_per_query": 3,
+        "total_savings": 15
+      },
+      "list": {
+        "count": 3,
+        "savings_per_query": 30,
+        "total_savings": 90
+      },
+      "summary": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 1,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "10",
+    "output_format": "compact",
+    "schema_calls": 2,
+    "total_schema_cost": 170,
+    "total_alias_savings": 80,
+    "net_balance": -90,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 5,
+        "total_savings": 50
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 5,
+        "total_savings": 30
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "10",
+    "output_format": "json",
+    "schema_calls": 2,
+    "total_schema_cost": 170,
+    "total_alias_savings": 210,
+    "net_balance": 40,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 3,
+        "total_savings": 30
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 30,
+        "total_savings": 180
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "20",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 80,
+    "net_balance": -5,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 5,
+        "total_savings": 50
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 5,
+        "total_savings": 30
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "20",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 210,
+    "net_balance": 125,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 3,
+        "total_savings": 30
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 30,
+        "total_savings": 180
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "50",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 80,
+    "net_balance": -5,
+    "break_even_queries": 21.25,
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 5,
+        "total_savings": 50
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 5,
+        "total_savings": 30
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "50",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 210,
+    "net_balance": 125,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 3,
+        "total_savings": 30
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 30,
+        "total_savings": 180
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "never",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 80,
+    "net_balance": -5,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 5,
+        "total_savings": 50
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 5,
+        "total_savings": 30
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 20,
+    "eviction_rate": "never",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 210,
+    "net_balance": 125,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 10,
+        "savings_per_query": 3,
+        "total_savings": 30
+      },
+      "list": {
+        "count": 6,
+        "savings_per_query": 30,
+        "total_savings": 180
+      },
+      "summary": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 2,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "10",
+    "output_format": "compact",
+    "schema_calls": 5,
+    "total_schema_cost": 425,
+    "total_alias_savings": 200,
+    "net_balance": -225,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 5,
+        "total_savings": 125
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 5,
+        "total_savings": 75
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "10",
+    "output_format": "json",
+    "schema_calls": 5,
+    "total_schema_cost": 425,
+    "total_alias_savings": 525,
+    "net_balance": 100,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 3,
+        "total_savings": 75
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 30,
+        "total_savings": 450
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "20",
+    "output_format": "compact",
+    "schema_calls": 3,
+    "total_schema_cost": 255,
+    "total_alias_savings": 200,
+    "net_balance": -55,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 5,
+        "total_savings": 125
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 5,
+        "total_savings": 75
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "20",
+    "output_format": "json",
+    "schema_calls": 3,
+    "total_schema_cost": 255,
+    "total_alias_savings": 525,
+    "net_balance": 270,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 3,
+        "total_savings": 75
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 30,
+        "total_savings": 450
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "50",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 200,
+    "net_balance": 115,
+    "break_even_queries": 21.25,
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 5,
+        "total_savings": 125
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 5,
+        "total_savings": 75
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "50",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 525,
+    "net_balance": 440,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 3,
+        "total_savings": 75
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 30,
+        "total_savings": 450
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "never",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 200,
+    "net_balance": 115,
+    "break_even_queries": 21.25,
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 5,
+        "total_savings": 125
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 5,
+        "total_savings": 75
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 50,
+    "eviction_rate": "never",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 525,
+    "net_balance": 440,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 25,
+        "savings_per_query": 3,
+        "total_savings": 75
+      },
+      "list": {
+        "count": 15,
+        "savings_per_query": 30,
+        "total_savings": 450
+      },
+      "summary": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 5,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "10",
+    "output_format": "compact",
+    "schema_calls": 10,
+    "total_schema_cost": 850,
+    "total_alias_savings": 400,
+    "net_balance": -450,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 5,
+        "total_savings": 250
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 5,
+        "total_savings": 150
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "10",
+    "output_format": "json",
+    "schema_calls": 10,
+    "total_schema_cost": 850,
+    "total_alias_savings": 1050,
+    "net_balance": 200,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 3,
+        "total_savings": 150
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 30,
+        "total_savings": 900
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "20",
+    "output_format": "compact",
+    "schema_calls": 5,
+    "total_schema_cost": 425,
+    "total_alias_savings": 400,
+    "net_balance": -25,
+    "break_even_queries": "never",
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 5,
+        "total_savings": 250
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 5,
+        "total_savings": 150
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "20",
+    "output_format": "json",
+    "schema_calls": 5,
+    "total_schema_cost": 425,
+    "total_alias_savings": 1050,
+    "net_balance": 625,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 3,
+        "total_savings": 150
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 30,
+        "total_savings": 900
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "50",
+    "output_format": "compact",
+    "schema_calls": 2,
+    "total_schema_cost": 170,
+    "total_alias_savings": 400,
+    "net_balance": 230,
+    "break_even_queries": 21.25,
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 5,
+        "total_savings": 250
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 5,
+        "total_savings": 150
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "50",
+    "output_format": "json",
+    "schema_calls": 2,
+    "total_schema_cost": 170,
+    "total_alias_savings": 1050,
+    "net_balance": 880,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 3,
+        "total_savings": 150
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 30,
+        "total_savings": 900
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "never",
+    "output_format": "compact",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 400,
+    "net_balance": 315,
+    "break_even_queries": 21.25,
+    "avg_saving_per_query": 4.0,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 5,
+        "total_savings": 250
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 5,
+        "total_savings": 150
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  },
+  {
+    "session_length": 100,
+    "eviction_rate": "never",
+    "output_format": "json",
+    "schema_calls": 1,
+    "total_schema_cost": 85,
+    "total_alias_savings": 1050,
+    "net_balance": 965,
+    "break_even_queries": 8.095238095238095,
+    "avg_saving_per_query": 10.5,
+    "query_breakdown": {
+      "get": {
+        "count": 50,
+        "savings_per_query": 3,
+        "total_savings": 150
+      },
+      "list": {
+        "count": 30,
+        "savings_per_query": 30,
+        "total_savings": 900
+      },
+      "summary": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      },
+      "other": {
+        "count": 10,
+        "savings_per_query": 0,
+        "total_savings": 0
+      }
+    }
+  }
+]

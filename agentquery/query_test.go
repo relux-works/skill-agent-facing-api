@@ -27,9 +27,14 @@ func newQuerySchema() *Schema[*testItem] {
 		return items, nil
 	})
 
-	// "list" — returns all items projected through the selector
+	// "list" — returns all items projected through the selector, with optional skip/take
 	s.Operation("list", func(ctx OperationContext[*testItem]) (any, error) {
 		data, err := ctx.Items()
+		if err != nil {
+			return nil, err
+		}
+		// Apply skip/take pagination before field projection
+		data, err = PaginateSlice(data, ctx.Statement.Args)
 		if err != nil {
 			return nil, err
 		}
@@ -961,6 +966,10 @@ func newLLMQuerySchema() *Schema[*testItem] {
 
 	s.Operation("list", func(ctx OperationContext[*testItem]) (any, error) {
 		data, err := ctx.Items()
+		if err != nil {
+			return nil, err
+		}
+		data, err = PaginateSlice(data, ctx.Statement.Args)
 		if err != nil {
 			return nil, err
 		}

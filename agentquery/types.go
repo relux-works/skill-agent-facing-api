@@ -50,6 +50,25 @@ type Pos struct {
 	Column int `json:"column"`
 }
 
+// ParameterDef describes a single parameter accepted by an operation.
+// Used in OperationMetadata for schema introspection, so agents can discover
+// valid parameters without external docs.
+type ParameterDef struct {
+	Name        string `json:"name"`
+	Type        string `json:"type"`                  // "string", "int", "bool"
+	Optional    bool   `json:"optional"`
+	Default     any    `json:"default,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+// OperationMetadata provides human/agent-readable documentation for an operation.
+// Registered via Schema.OperationWithMetadata and surfaced by the built-in schema() operation.
+type OperationMetadata struct {
+	Description string         `json:"description,omitempty"`
+	Parameters  []ParameterDef `json:"parameters,omitempty"`
+	Examples    []string       `json:"examples,omitempty"`
+}
+
 // OperationHandler is the function signature for operation implementations.
 // It receives context with the parsed statement, field selector, and lazy item loader,
 // and returns a JSON-serializable result or an error.

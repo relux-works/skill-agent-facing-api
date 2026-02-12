@@ -9,6 +9,11 @@
 //   value     = ident | quoted_string
 //
 // Adapt the valid operations, fields, and presets to your domain.
+//
+// Standard operations: get (by ID), list (with filters + skip/take pagination),
+// count (with filters), summary (aggregates). The grammar supports key=value
+// params natively, so pagination (skip=10, take=5) and filters (status=done)
+// use the same arg syntax.
 
 package query
 
@@ -195,6 +200,7 @@ func (p *parser) expect(typ tokenType) (token, error) {
 var validOperations = map[string]bool{
 	"get":     true,
 	"list":    true,
+	"count":   true,
 	"summary": true,
 }
 

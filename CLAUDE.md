@@ -29,7 +29,13 @@ cd example && go build -o taskdemo .
 # Run the example (--format is required: "json" or "compact"/"llm")
 ./example/taskdemo q 'schema()' --format json
 ./example/taskdemo q 'summary()' --format json
+./example/taskdemo q 'count()' --format json
+./example/taskdemo q 'count(status=done)' --format json
 ./example/taskdemo grep "TODO" --format json
+
+# Pagination
+./example/taskdemo q 'list(skip=2, take=3) { overview }' --format json
+./example/taskdemo q 'list(status=done, skip=0, take=2) { minimal }' --format json
 
 # Compact output for LLM agents
 ./example/taskdemo q 'list() { overview }' --format compact
@@ -49,20 +55,22 @@ The core is a generic `Schema[T]` type parameterized on the domain item type. Us
 
 Key files in `agentquery/`:
 
-- **`schema.go`** — Central `Schema[T]` type. Registers fields, presets, operations, loader. Builds `ParserConfig`. Has a built-in `schema` introspection operation. `QueryJSONWithMode()` and `SearchJSONWithMode()` for caller-specified output format.
+- **`schema.go`** — Central `Schema[T]` type. Registers fields, presets, operations, loader. `OperationWithMetadata()` registers operations with metadata (parameters, examples) for schema introspection. Built-in `schema` operation returns operations, fields, presets, defaults, and `operationMetadata` (when present). `QueryJSONWithMode()` and `SearchJSONWithMode()` for caller-specified output format.
 - **`parser.go`** — Tokenizer + recursive descent parser. Grammar: `operation(params) { fields }` with `;` batching. Validates operations and resolves fields (including preset expansion) at parse time via `ParserConfig`.
 - **`selector.go`** — `FieldSelector[T]` applies field projection to domain items. Created internally by Schema from parsed field lists. Lazy — only calls accessors for selected fields. `ApplyValues()` returns ordered values without keys (used by compact formatter).
 - **`query.go`** — `Schema.Query()` and `QueryJSON()`. Executes parsed statements, handles batching (single result unwrapped, multiple → `[]any`). Per-statement errors don't abort the batch. `formatLLMReadable()` handles compact output for single and batch queries.
 - **`format.go`** — `FormatCompact()` tabular formatter. Lists → CSV-style header + value rows. Single objects → key:value pairs. Falls back to JSON for complex/error types. Handles CSV escaping and value formatting.
 - **`search.go`** — `Search()` does recursive regex search with file extension filtering, glob filtering, case-insensitive flag, and context lines. Independent of Schema but also available as `Schema.Search()`. `FormatSearchCompact()` produces grouped-by-file text output.
 - **`ast.go`** — AST types: `Query`, `Statement`, `Arg`.
-- **`types.go`** — Shared types: `FieldAccessor[T]`, `OperationHandler[T]`, `OperationContext[T]`, `SearchResult`, `SearchOptions`, `OutputMode` (`HumanReadable`, `LLMReadable`).
+- **`types.go`** — Shared types: `FieldAccessor[T]`, `OperationHandler[T]`, `OperationContext[T]`, `SearchResult`, `SearchOptions`, `OutputMode` (`HumanReadable`, `LLMReadable`), `ParameterDef` (parameter name/type/optional/default/description), `OperationMetadata` (description/parameters/examples for schema introspection).
+- **`helpers.go`** — Generic convenience functions for operation handlers: `FilterItems[T]` (filter by predicate), `CountItems[T]` (count matching items without allocating), `MatchAll[T]` (default predicate).
+- **`paginate.go`** — `PaginateSlice[T]` extracts `skip`/`take` from args and slices items. `ParseSkipTake` for manual control. Conventions: skip defaults to 0, take=0 means no limit.
 - **`error.go`** — `ParseError` (syntax) and `Error` (runtime, with code/message/details).
 - **`cobraext/command.go`** — Cobra command factories (`QueryCommand`, `SearchCommand`, `AddCommands`). Isolated sub-package so non-Cobra users don't import it. `--format` flag on both commands (`json` default, `compact`/`llm` for token-efficient output).
 
 ### Example (`example/`)
 
-Separate Go module (`example/go.mod`) with a `taskdemo` CLI that wires up a `Task` domain type against the library. Shows how to register fields, presets, operations (`get`, `list`, `summary`), and use `cobraext.AddCommands`.
+Separate Go module (`example/go.mod`) with a `taskdemo` CLI that wires up a `Task` domain type against the library. Shows how to register fields, presets, operations (`get`, `list`, `count`, `summary`) with metadata, and use `cobraext.AddCommands`.
 
 ### Assets (`assets/`)
 
@@ -88,4 +96,6 @@ Identifiers: letters, digits, underscore, hyphen. Values can also be quoted stri
 - **Lazy item loading**: `OperationContext.Items` is a `func() ([]T, error)` — only called if the operation needs the dataset.
 - **Batch error isolation**: In a batch query `a(); b(); c()`, if `b()` fails, `a()` and `c()` still return results. The error is inlined as `{"error": {"message": "..."}}`.
 - **cobraext is optional**: The Cobra integration lives in a sub-package. Core library has zero dependencies beyond stdlib.
+- **Operation metadata is optional and backwards compatible**: `OperationWithMetadata()` adds parameter/example metadata for schema introspection. Plain `Operation()` still works — those operations just won't have metadata in `schema()` output. No migration needed.
+- **Pagination and counting are library helpers, not framework mandates**: `PaginateSlice`, `FilterItems`, `CountItems` are generic convenience functions that operation handlers opt into. The framework doesn't enforce pagination — handlers decide if/how to use these.
 - **Output format is a transport concern, not a schema concern**: Schema stays format-agnostic. `QueryJSON()` / `SearchJSON()` always produce JSON. `QueryJSONWithMode()` / `SearchJSONWithMode()` accept an explicit `OutputMode` for callers that need compact output. The `--format` CLI flag (`json` default, `compact`/`llm`) puts the format decision where it belongs — at the call site. Same CLI tool serves humans (JSON), TUI apps (JSON), and LLM agents (`--format compact`).

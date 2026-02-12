@@ -4,6 +4,28 @@
 // Shared between DSL and any future MCP server — guarantees identical output.
 //
 // Adapt ValidFields, Presets, and Apply() to your domain model.
+//
+// When using the agentquery library, register operations with metadata
+// for schema introspection:
+//
+//   // ADAPT THIS: register operations with OperationWithMetadata
+//   schema.OperationWithMetadata("list", opList, agentquery.OperationMetadata{
+//       Description: "List items with optional filters and pagination",
+//       Parameters: []agentquery.ParameterDef{
+//           {Name: "status", Type: "string", Optional: true, Description: "Filter by status"},
+//           {Name: "skip", Type: "int", Optional: true, Default: 0, Description: "Skip first N items"},
+//           {Name: "take", Type: "int", Optional: true, Description: "Return at most N items"},
+//       },
+//       Examples: []string{"list() { overview }", "list(status=done, skip=0, take=5) { minimal }"},
+//   })
+//
+//   schema.OperationWithMetadata("count", opCount, agentquery.OperationMetadata{
+//       Description: "Count items matching optional filters",
+//       Parameters: []agentquery.ParameterDef{
+//           {Name: "status", Type: "string", Optional: true, Description: "Filter by status"},
+//       },
+//       Examples: []string{"count()", "count(status=done)"},
+//   })
 
 package fields
 
@@ -103,4 +125,54 @@ func (s *Selector) Include(field string) bool {
 //           result["children"] = loadChildren(elem)
 //       }
 //       return result
+//   }
+
+// --- Operation handler patterns using agentquery helpers ---
+//
+// ADAPT THIS: list operation with filtering + skip/take pagination
+//
+//   func opList(ctx agentquery.OperationContext[Item]) (any, error) {
+//       items, err := ctx.Items()
+//       if err != nil {
+//           return nil, err
+//       }
+//       filtered := agentquery.FilterItems(items, filterFromArgs(ctx.Statement.Args))
+//       page, err := agentquery.PaginateSlice(filtered, ctx.Statement.Args)
+//       if err != nil {
+//           return nil, err
+//       }
+//       results := make([]map[string]any, 0, len(page))
+//       for _, item := range page {
+//           results = append(results, ctx.Selector.Apply(item))
+//       }
+//       return results, nil
+//   }
+//
+// ADAPT THIS: count operation with filtering
+//
+//   func opCount(ctx agentquery.OperationContext[Item]) (any, error) {
+//       items, err := ctx.Items()
+//       if err != nil {
+//           return nil, err
+//       }
+//       n := agentquery.CountItems(items, filterFromArgs(ctx.Statement.Args))
+//       return map[string]any{"count": n}, nil
+//   }
+//
+// ADAPT THIS: shared filter builder from keyword args
+//
+//   func filterFromArgs(args []agentquery.Arg) func(Item) bool {
+//       var filterStatus string
+//       for _, arg := range args {
+//           switch arg.Key {
+//           case "status":
+//               filterStatus = arg.Value
+//           }
+//       }
+//       if filterStatus == "" {
+//           return agentquery.MatchAll[Item]()
+//       }
+//       return func(item Item) bool {
+//           return strings.EqualFold(item.Status, filterStatus)
+//       }
 //   }

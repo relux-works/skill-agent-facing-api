@@ -11,13 +11,14 @@ import (
 // All fields, presets, operations, and defaults are registered on the Schema
 // before the first query.
 type Schema[T any] struct {
-	fields         map[string]FieldAccessor[T]    // registered field accessors
-	fieldOrder     []string                       // field names in registration order
-	presets        map[string][]string            // named field bundles
-	defaultFields  []string                       // fields used when no projection specified
-	operations     map[string]OperationHandler[T] // registered operation handlers
-	loader         func() ([]T, error)            // lazy data loader
-	searchProvider SearchProvider // pluggable search backend
+	fields             map[string]FieldAccessor[T]    // registered field accessors
+	fieldOrder         []string                       // field names in registration order
+	presets            map[string][]string            // named field bundles
+	defaultFields      []string                       // fields used when no projection specified
+	operations         map[string]OperationHandler[T] // registered operation handlers
+	operationMetadata  map[string]OperationMetadata   // optional metadata for operations
+	loader             func() ([]T, error)            // lazy data loader
+	searchProvider     SearchProvider                 // pluggable search backend
 }
 
 // schemaConfig holds configuration set via functional options.
@@ -78,10 +79,11 @@ func NewSchema[T any](opts ...Option) *Schema[T] {
 	}
 
 	s := &Schema[T]{
-		fields:         make(map[string]FieldAccessor[T]),
-		presets:        make(map[string][]string),
-		operations:     make(map[string]OperationHandler[T]),
-		searchProvider: sp,
+		fields:            make(map[string]FieldAccessor[T]),
+		presets:           make(map[string][]string),
+		operations:        make(map[string]OperationHandler[T]),
+		operationMetadata: make(map[string]OperationMetadata),
+		searchProvider:    sp,
 	}
 
 	// Register built-in "schema" introspection operation.
@@ -118,6 +120,15 @@ func (s *Schema[T]) DefaultFields(fields ...string) {
 // The handler is called when the operation name appears in a query.
 func (s *Schema[T]) Operation(name string, handler OperationHandler[T]) {
 	s.operations[name] = handler
+}
+
+// OperationWithMetadata registers a named operation with its handler and metadata.
+// The handler is stored in the operations map (same as Operation), and the metadata
+// is stored separately for schema introspection. Backwards compatible — calling
+// Operation() still works unchanged, those operations just won't have metadata.
+func (s *Schema[T]) OperationWithMetadata(name string, handler OperationHandler[T], meta OperationMetadata) {
+	s.operations[name] = handler
+	s.operationMetadata[name] = meta
 }
 
 // SetLoader sets the function used to load domain items for query execution.
@@ -211,12 +222,24 @@ func (s *Schema[T]) introspect() map[string]any {
 	defaults := make([]string, len(s.defaultFields))
 	copy(defaults, s.defaultFields)
 
-	return map[string]any{
+	result := map[string]any{
 		"operations":    ops,
 		"fields":        fields,
 		"presets":       presets,
 		"defaultFields": defaults,
 	}
+
+	// Include operationMetadata only if at least one operation has metadata registered
+	// via OperationWithMetadata. Operations registered with plain Operation() are omitted.
+	if len(s.operationMetadata) > 0 {
+		meta := make(map[string]OperationMetadata, len(s.operationMetadata))
+		for name, m := range s.operationMetadata {
+			meta[name] = m
+		}
+		result["operationMetadata"] = meta
+	}
+
+	return result
 }
 
 // parserConfig builds a ParserConfig from the schema's registered operations and fields.

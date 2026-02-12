@@ -66,6 +66,11 @@ func buildIntegrationSchema(t *testing.T, dataDir string) *Schema[*project] {
 		if err != nil {
 			return nil, err
 		}
+		// Apply skip/take pagination before field projection
+		data, err = PaginateSlice(data, ctx.Statement.Args)
+		if err != nil {
+			return nil, err
+		}
 		var out []map[string]any
 		for _, item := range data {
 			out = append(out, ctx.Selector.Apply(item))

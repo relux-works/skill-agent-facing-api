@@ -70,8 +70,8 @@ The primary read interface for agents. A single CLI subcommand that accepts a co
 <operation>(<params>) { <fields or preset> }
 ```
 
-- **Operation** — what to query: `get`, `list`, `summary`, `agents`, etc.
-- **Params** — filters: `type=task, status=done`, `stale=60`, an ID, etc.
+- **Operation** — what to query: `get`, `list`, `count`, `summary`, `agents`, etc.
+- **Params** — filters: `type=task, status=done`, pagination: `skip=10, take=5`, an ID, etc.
 - **Fields** — explicit: `{ id name status }` or preset: `{ overview }`
 - **Omitted fields** — default to a sensible minimal set
 
@@ -86,6 +86,7 @@ When adding a DSL to an existing CLI:
 - [ ] Always output JSON (no `--json` flag needed — DSL is agent-only)
 - [ ] Parse the query string in the CLI, not via shell eval (security)
 - [ ] Error responses as JSON too: `{"error": "element not found"}`
+- [ ] Register operation metadata (parameters, examples) for schema introspection — agents discover the API via `schema()` without external docs
 
 ### Example: Task Board DSL
 
@@ -102,10 +103,62 @@ mytool q 'list(type=task, status=development) { overview }'
 mytool q 'get(T1) { status }; get(T2) { status }; get(T3) { status }'
 # → [{"id":"T1","status":"done"}, {"id":"T2","status":"development"}, {"id":"T3","status":"blocked"}]
 
+# Paginated list — skip first 10, return next 5
+mytool q 'list(type=task, skip=10, take=5) { overview }'
+# → [{"id":"TASK-53","name":"...","status":"todo","assignee":"agent-ui"}, ...]
+
+# Pagination with filters
+mytool q 'list(status=done, skip=0, take=3) { minimal }'
+# → [{"id":"TASK-03","status":"done"}, {"id":"TASK-07","status":"done"}, {"id":"TASK-12","status":"done"}]
+
+# Count (no field projection needed)
+mytool q 'count()'
+# → {"count": 48}
+
+# Count with filter
+mytool q 'count(status=done)'
+# → {"count": 31}
+
 # Summary (no field projection needed)
 mytool q 'summary()'
 # → {"epics":5,"stories":12,"tasks":48,"done":31,"in_progress":10,"blocked":2}
 ```
+
+### Schema Introspection
+
+Every schema has a built-in `schema()` operation. When operations are registered with `OperationWithMetadata`, the introspection output includes `operationMetadata` — parameter definitions (name, type, optional, default) and usage examples per operation. Agents call `schema()` once to discover the full API contract:
+
+```bash
+mytool q 'schema()'
+```
+```json
+{
+  "operations": ["count", "get", "list", "schema", "summary"],
+  "fields": ["id", "name", "status", "assignee", "description"],
+  "presets": {"minimal": ["id", "status"], "overview": ["id", "name", "status", "assignee"]},
+  "defaultFields": ["default"],
+  "operationMetadata": {
+    "list": {
+      "description": "List tasks with optional filters and pagination",
+      "parameters": [
+        {"name": "status", "type": "string", "optional": true},
+        {"name": "skip", "type": "int", "optional": true, "default": 0, "description": "Skip first N items"},
+        {"name": "take", "type": "int", "optional": true, "description": "Return at most N items"}
+      ],
+      "examples": ["list() { overview }", "list(status=done, skip=0, take=2) { overview }"]
+    },
+    "count": {
+      "description": "Count tasks matching optional filters",
+      "parameters": [
+        {"name": "status", "type": "string", "optional": true}
+      ],
+      "examples": ["count()", "count(status=done)"]
+    }
+  }
+}
+```
+
+Operation metadata is optional and backwards compatible — operations registered with plain `Operation()` still work, they just won't appear in `operationMetadata`.
 
 ### Output Modes
 
@@ -163,6 +216,8 @@ Typical per-query costs (input + output + ~80 tok framing):
 | Element lookup (minimal) | ~110 | ID + 2-3 fields |
 | Element lookup (full) | ~380 | All fields |
 | Filtered list (overview) | ~150-300 | Scales with result count |
+| Paginated list (take=5) | ~150-200 | Bounded by take param |
+| Count | ~90 | Fixed size: `{"count": N}` |
 | Summary | ~450 | Fixed size, scales with board |
 | Batch of 3 (status only) | ~140 | Single call, 3 results |
 
@@ -292,10 +347,12 @@ The DSL grammar is trivial — don't over-engineer it:
 ```
 query     = operation "(" params ")" [ "{" fields "}" ]
 params    = param ("," param)*
-param     = key "=" value | value   (positional for IDs)
+param     = key "=" value | value   (positional for IDs, key=value for filters/pagination)
 fields    = field+ | preset
 batch     = query (";" query)*
 ```
+
+Pagination uses `skip`/`take` keyword params: `list(skip=10, take=5) { overview }`. Count is a separate operation: `count(status=done)`. No grammar changes needed — `key=value` params handle both filters and pagination.
 
 A hand-written parser in 100-200 lines of Go handles this. No need for yacc, ANTLR, or parser combinators.
 

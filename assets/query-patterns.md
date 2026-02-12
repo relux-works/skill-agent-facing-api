@@ -95,11 +95,6 @@ list(parent=GROUP-05, type=task) { minimal }
 }
 ```
 
-**With limit:**
-```
-list(type=task, status=pending, limit=5) { default }
-```
-
 **Blocked items:**
 ```
 list(blocked=true) { id name status }
@@ -107,7 +102,96 @@ list(blocked=true) { id name status }
 
 ---
 
-## 3. Summary / Overview
+## 3. Pagination
+
+Pagination uses `skip` and `take` keyword params on list operations. Applied after filtering, before field projection.
+
+**First page:**
+```
+list(take=5) { overview }
+```
+```json
+[
+  {"id": "ITEM-01", "name": "first-task", "status": "active", "assignee": "alice"},
+  {"id": "ITEM-02", "name": "second-task", "status": "pending", "assignee": "bob"},
+  {"id": "ITEM-03", "name": "third-task", "status": "done", "assignee": "alice"},
+  {"id": "ITEM-04", "name": "fourth-task", "status": "active", "assignee": "carol"},
+  {"id": "ITEM-05", "name": "fifth-task", "status": "pending", "assignee": "bob"}
+]
+```
+
+**Next page (skip first 5, take next 5):**
+```
+list(skip=5, take=5) { overview }
+```
+
+**Pagination with filters:**
+```
+list(status=active, skip=0, take=3) { id name assignee }
+```
+```json
+[
+  {"id": "ITEM-01", "name": "first-task", "assignee": "alice"},
+  {"id": "ITEM-04", "name": "fourth-task", "assignee": "carol"},
+  {"id": "ITEM-09", "name": "ninth-task", "assignee": "dave"}
+]
+```
+
+**Skip past all items (returns empty):**
+```
+list(skip=1000) { minimal }
+```
+```json
+[]
+```
+
+---
+
+## 4. Count
+
+Count returns `{"count": N}` — the cheapest way to know how many items match. No field projection needed.
+
+**Count all:**
+```
+count()
+```
+```json
+{"count": 48}
+```
+
+**Count with filter:**
+```
+count(status=done)
+```
+```json
+{"count": 31}
+```
+
+**Count with multiple filters:**
+```
+count(status=active, assignee=alice)
+```
+```json
+{"count": 3}
+```
+
+**Batch: count + paginated list (know total before paging):**
+```
+count(status=active); list(status=active, take=5) { overview }
+```
+```json
+[
+  {"count": 12},
+  [
+    {"id": "ITEM-01", "name": "first-task", "status": "active", "assignee": "alice"},
+    {"id": "ITEM-04", "name": "fourth-task", "status": "active", "assignee": "carol"}
+  ]
+]
+```
+
+---
+
+## 5. Summary / Overview
 
 ```
 summary()
@@ -132,7 +216,7 @@ summary()
 
 ---
 
-## 4. Batch Queries
+## 6. Batch Queries
 
 **Multiple lookups in one call:**
 ```
@@ -171,7 +255,7 @@ get(ITEM-42) { status }; get(NONEXISTENT) { status }; get(ITEM-50) { status }
 
 ---
 
-## 5. Grep Patterns
+## 7. Grep Patterns
 
 **Simple text search:**
 ```bash
@@ -203,7 +287,61 @@ mytool grep "error" -C 2 --file progress.md
 
 ---
 
-## 6. Anti-Patterns
+## 8. Schema Introspection
+
+The built-in `schema()` operation returns the full API contract. When operations are registered with metadata, `operationMetadata` is included with parameter definitions and examples:
+
+```
+schema()
+```
+```json
+{
+  "operations": ["count", "get", "list", "schema", "summary"],
+  "fields": ["id", "name", "status", "assignee", "description"],
+  "presets": {
+    "minimal": ["id", "status"],
+    "default": ["id", "name", "status"],
+    "overview": ["id", "name", "status", "assignee"],
+    "full": ["id", "name", "status", "assignee", "description"]
+  },
+  "defaultFields": ["default"],
+  "operationMetadata": {
+    "get": {
+      "description": "Find a single item by ID",
+      "parameters": [
+        {"name": "id", "type": "string", "optional": false, "description": "Item ID (positional)"}
+      ],
+      "examples": ["get(ITEM-42) { overview }"]
+    },
+    "list": {
+      "description": "List items with optional filters and pagination",
+      "parameters": [
+        {"name": "status", "type": "string", "optional": true, "description": "Filter by status"},
+        {"name": "skip", "type": "int", "optional": true, "default": 0, "description": "Skip first N items"},
+        {"name": "take", "type": "int", "optional": true, "description": "Return at most N items"}
+      ],
+      "examples": ["list() { overview }", "list(status=done, skip=0, take=5) { minimal }"]
+    },
+    "count": {
+      "description": "Count items matching optional filters",
+      "parameters": [
+        {"name": "status", "type": "string", "optional": true, "description": "Filter by status"}
+      ],
+      "examples": ["count()", "count(status=done)"]
+    },
+    "summary": {
+      "description": "Return counts grouped by status",
+      "examples": ["summary()"]
+    }
+  }
+}
+```
+
+Agents call `schema()` once at the start of a session to discover available operations, fields, and usage patterns — no external documentation needed.
+
+---
+
+## 9. Anti-Patterns
 
 ### Bad: Multiple calls for data available in one query
 

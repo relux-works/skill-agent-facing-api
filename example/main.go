@@ -10,6 +10,13 @@
 //	./taskdemo q 'summary()'
 //	./taskdemo q 'get(task-1) { overview }'
 //	./taskdemo q 'list(status=done) { minimal }'
+//	./taskdemo q 'count()'
+//	./taskdemo q 'count(status=done)'
+//	./taskdemo q 'count(assignee=alice)'
+//	./taskdemo q 'count(status=todo, assignee=bob)'
+//	./taskdemo q 'list(skip=2, take=3) { overview }'
+//	./taskdemo q 'list(status=done, skip=0, take=2) { minimal }'
+//	./taskdemo q 'list(take=1) { full }'
 //	./taskdemo grep "TODO"
 package main
 
@@ -89,10 +96,53 @@ func main() {
 		return sampleTasks(), nil
 	})
 
-	// Register operations.
-	schema.Operation("get", opGet)
-	schema.Operation("list", opList)
-	schema.Operation("summary", opSummary)
+	// Register operations with metadata for schema introspection.
+	schema.OperationWithMetadata("get", opGet, agentquery.OperationMetadata{
+		Description: "Find a single task by ID",
+		Parameters: []agentquery.ParameterDef{
+			{Name: "id", Type: "string", Optional: false, Description: "Task ID (positional)"},
+		},
+		Examples: []string{
+			"get(task-1) { overview }",
+			"get(task-3) { full }",
+		},
+	})
+
+	schema.OperationWithMetadata("list", opList, agentquery.OperationMetadata{
+		Description: "List tasks with optional filters and pagination",
+		Parameters: []agentquery.ParameterDef{
+			{Name: "status", Type: "string", Optional: true, Description: "Filter by status"},
+			{Name: "assignee", Type: "string", Optional: true, Description: "Filter by assignee"},
+			{Name: "skip", Type: "int", Optional: true, Default: 0, Description: "Skip first N items"},
+			{Name: "take", Type: "int", Optional: true, Description: "Return at most N items"},
+		},
+		Examples: []string{
+			"list() { overview }",
+			"list(status=done) { minimal }",
+			"list(status=done, skip=0, take=2) { overview }",
+			"list(assignee=alice) { full }",
+		},
+	})
+
+	schema.OperationWithMetadata("count", opCount, agentquery.OperationMetadata{
+		Description: "Count tasks matching optional filters",
+		Parameters: []agentquery.ParameterDef{
+			{Name: "status", Type: "string", Optional: true, Description: "Filter by status"},
+			{Name: "assignee", Type: "string", Optional: true, Description: "Filter by assignee"},
+		},
+		Examples: []string{
+			"count()",
+			"count(status=done)",
+			"count(assignee=alice)",
+		},
+	})
+
+	schema.OperationWithMetadata("summary", opSummary, agentquery.OperationMetadata{
+		Description: "Return counts grouped by status",
+		Examples: []string{
+			"summary()",
+		},
+	})
 
 	// Wire up Cobra root command with q and grep subcommands.
 	root := &cobra.Command{
@@ -134,16 +184,11 @@ func opGet(ctx agentquery.OperationContext[Task]) (any, error) {
 	}
 }
 
-// opList returns tasks filtered by optional status and assignee keyword args.
-func opList(ctx agentquery.OperationContext[Task]) (any, error) {
-	items, err := ctx.Items()
-	if err != nil {
-		return nil, err
-	}
-
-	// Extract optional filters from keyword arguments.
+// taskFilterFromArgs builds a predicate from keyword arguments (status, assignee).
+// Used by both list and count operations to share filtering logic.
+func taskFilterFromArgs(args []agentquery.Arg) func(Task) bool {
 	var filterStatus, filterAssignee string
-	for _, arg := range ctx.Statement.Args {
+	for _, arg := range args {
 		switch arg.Key {
 		case "status":
 			filterStatus = arg.Value
@@ -152,21 +197,53 @@ func opList(ctx agentquery.OperationContext[Task]) (any, error) {
 		}
 	}
 
-	var results []map[string]any
-	for _, task := range items {
-		if filterStatus != "" && !strings.EqualFold(task.Status, filterStatus) {
-			continue
+	return func(t Task) bool {
+		if filterStatus != "" && !strings.EqualFold(t.Status, filterStatus) {
+			return false
 		}
-		if filterAssignee != "" && !strings.EqualFold(task.Assignee, filterAssignee) {
-			continue
+		if filterAssignee != "" && !strings.EqualFold(t.Assignee, filterAssignee) {
+			return false
 		}
-		results = append(results, ctx.Selector.Apply(task))
+		return true
+	}
+}
+
+// opList returns tasks filtered by optional status and assignee keyword args.
+// Supports skip/take pagination:
+//
+//	list(skip=2, take=3) { overview }
+//	list(status=done, skip=0, take=5)
+func opList(ctx agentquery.OperationContext[Task]) (any, error) {
+	items, err := ctx.Items()
+	if err != nil {
+		return nil, err
 	}
 
-	if results == nil {
-		results = []map[string]any{}
+	filtered := agentquery.FilterItems(items, taskFilterFromArgs(ctx.Statement.Args))
+
+	// Apply skip/take pagination after filtering, before field projection
+	page, err := agentquery.PaginateSlice(filtered, ctx.Statement.Args)
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]map[string]any, 0, len(page))
+	for _, task := range page {
+		results = append(results, ctx.Selector.Apply(task))
 	}
 	return results, nil
+}
+
+// opCount returns the count of tasks matching optional status and assignee filters.
+// Accepts the same keyword args as list (status, assignee). Returns {"count": N}.
+func opCount(ctx agentquery.OperationContext[Task]) (any, error) {
+	items, err := ctx.Items()
+	if err != nil {
+		return nil, err
+	}
+
+	n := agentquery.CountItems(items, taskFilterFromArgs(ctx.Statement.Args))
+	return map[string]any{"count": n}, nil
 }
 
 // opSummary returns counts grouped by status. Ignores field projections.

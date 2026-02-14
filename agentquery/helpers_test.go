@@ -551,3 +551,251 @@ func TestCountFiltered_JSON(t *testing.T) {
 		t.Errorf("count = %v, want 2", m["count"])
 	}
 }
+
+// --- Distinct tests ---
+
+func TestDistinct_Empty(t *testing.T) {
+	var items []*testItem
+	result := Distinct(items, func(item *testItem) string { return item.Status })
+	if len(result) != 0 {
+		t.Errorf("expected empty result, got %v", result)
+	}
+}
+
+func TestDistinct_Single(t *testing.T) {
+	items := []*testItem{{ID: "T1", Status: "open"}}
+	result := Distinct(items, func(item *testItem) string { return item.Status })
+	if len(result) != 1 || result[0] != "open" {
+		t.Errorf("expected [open], got %v", result)
+	}
+}
+
+func TestDistinct_AllSameValue(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "open"},
+		{ID: "T3", Status: "open"},
+	}
+	result := Distinct(items, func(item *testItem) string { return item.Status })
+	if len(result) != 1 || result[0] != "open" {
+		t.Errorf("expected [open], got %v", result)
+	}
+}
+
+func TestDistinct_MultipleUnique(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "closed"},
+		{ID: "T3", Status: "in-progress"},
+	}
+	result := Distinct(items, func(item *testItem) string { return item.Status })
+	if len(result) != 3 {
+		t.Fatalf("expected 3 distinct values, got %d: %v", len(result), result)
+	}
+	expected := []string{"open", "closed", "in-progress"}
+	for i, v := range expected {
+		if result[i] != v {
+			t.Errorf("result[%d] = %q, want %q", i, result[i], v)
+		}
+	}
+}
+
+func TestDistinct_FirstSeenOrder(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "a"},
+		{ID: "T2", Status: "b"},
+		{ID: "T3", Status: "a"},
+		{ID: "T4", Status: "c"},
+		{ID: "T5", Status: "b"},
+	}
+	result := Distinct(items, func(item *testItem) string { return item.Status })
+	if len(result) != 3 {
+		t.Fatalf("expected 3 distinct values, got %d: %v", len(result), result)
+	}
+	expected := []string{"a", "b", "c"}
+	for i, v := range expected {
+		if result[i] != v {
+			t.Errorf("result[%d] = %q, want %q", i, result[i], v)
+		}
+	}
+}
+
+func TestDistinct_EmptyStringKey(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: ""},
+		{ID: "T2", Status: "open"},
+		{ID: "T3", Status: ""},
+	}
+	result := Distinct(items, func(item *testItem) string { return item.Status })
+	if len(result) != 2 {
+		t.Fatalf("expected 2 distinct values, got %d: %v", len(result), result)
+	}
+	if result[0] != "" {
+		t.Errorf("result[0] = %q, want empty string", result[0])
+	}
+	if result[1] != "open" {
+		t.Errorf("result[1] = %q, want %q", result[1], "open")
+	}
+}
+
+// --- DistinctCount tests ---
+
+func TestDistinctCount_Empty(t *testing.T) {
+	var items []*testItem
+	result := DistinctCount(items, func(item *testItem) string { return item.Status })
+	if len(result) != 0 {
+		t.Errorf("expected empty map, got %v", result)
+	}
+}
+
+func TestDistinctCount_Single(t *testing.T) {
+	items := []*testItem{{ID: "T1", Status: "open"}}
+	result := DistinctCount(items, func(item *testItem) string { return item.Status })
+	if len(result) != 1 || result["open"] != 1 {
+		t.Errorf("expected {open: 1}, got %v", result)
+	}
+}
+
+func TestDistinctCount_MultipleSameValue(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "open"},
+		{ID: "T3", Status: "open"},
+	}
+	result := DistinctCount(items, func(item *testItem) string { return item.Status })
+	if len(result) != 1 || result["open"] != 3 {
+		t.Errorf("expected {open: 3}, got %v", result)
+	}
+}
+
+func TestDistinctCount_MixedValues(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "closed"},
+		{ID: "T3", Status: "open"},
+		{ID: "T4", Status: "closed"},
+		{ID: "T5", Status: "open"},
+	}
+	result := DistinctCount(items, func(item *testItem) string { return item.Status })
+	if len(result) != 2 {
+		t.Fatalf("expected 2 keys, got %d: %v", len(result), result)
+	}
+	if result["open"] != 3 {
+		t.Errorf("open count = %d, want 3", result["open"])
+	}
+	if result["closed"] != 2 {
+		t.Errorf("closed count = %d, want 2", result["closed"])
+	}
+}
+
+func TestDistinctCount_EmptyStringKey(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: ""},
+		{ID: "T2", Status: "open"},
+		{ID: "T3", Status: ""},
+	}
+	result := DistinctCount(items, func(item *testItem) string { return item.Status })
+	if result[""] != 2 {
+		t.Errorf("empty string count = %d, want 2", result[""])
+	}
+	if result["open"] != 1 {
+		t.Errorf("open count = %d, want 1", result["open"])
+	}
+}
+
+// --- GroupBy tests ---
+
+func TestGroupBy_Empty(t *testing.T) {
+	var items []*testItem
+	result := GroupBy(items, func(item *testItem) string { return item.Status })
+	if len(result) != 0 {
+		t.Errorf("expected empty map, got %v", result)
+	}
+}
+
+func TestGroupBy_Single(t *testing.T) {
+	items := []*testItem{{ID: "T1", Status: "open"}}
+	result := GroupBy(items, func(item *testItem) string { return item.Status })
+	if len(result) != 1 {
+		t.Fatalf("expected 1 group, got %d", len(result))
+	}
+	if len(result["open"]) != 1 || result["open"][0].ID != "T1" {
+		t.Errorf("expected {open: [T1]}, got %v", result)
+	}
+}
+
+func TestGroupBy_AllSameKey(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "open"},
+		{ID: "T3", Status: "open"},
+	}
+	result := GroupBy(items, func(item *testItem) string { return item.Status })
+	if len(result) != 1 {
+		t.Fatalf("expected 1 group, got %d", len(result))
+	}
+	if len(result["open"]) != 3 {
+		t.Errorf("expected 3 items in 'open' group, got %d", len(result["open"]))
+	}
+}
+
+func TestGroupBy_MultipleGroups(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "closed"},
+		{ID: "T3", Status: "open"},
+		{ID: "T4", Status: "closed"},
+		{ID: "T5", Status: "in-progress"},
+	}
+	result := GroupBy(items, func(item *testItem) string { return item.Status })
+	if len(result) != 3 {
+		t.Fatalf("expected 3 groups, got %d", len(result))
+	}
+	if len(result["open"]) != 2 {
+		t.Errorf("open group has %d items, want 2", len(result["open"]))
+	}
+	if len(result["closed"]) != 2 {
+		t.Errorf("closed group has %d items, want 2", len(result["closed"]))
+	}
+	if len(result["in-progress"]) != 1 {
+		t.Errorf("in-progress group has %d items, want 1", len(result["in-progress"]))
+	}
+}
+
+func TestGroupBy_WithinGroupOrder(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: "open"},
+		{ID: "T2", Status: "closed"},
+		{ID: "T3", Status: "open"},
+		{ID: "T4", Status: "open"},
+	}
+	result := GroupBy(items, func(item *testItem) string { return item.Status })
+	openGroup := result["open"]
+	if len(openGroup) != 3 {
+		t.Fatalf("expected 3 items in open group, got %d", len(openGroup))
+	}
+	expectedIDs := []string{"T1", "T3", "T4"}
+	for i, id := range expectedIDs {
+		if openGroup[i].ID != id {
+			t.Errorf("open group[%d].ID = %q, want %q", i, openGroup[i].ID, id)
+		}
+	}
+}
+
+func TestGroupBy_EmptyStringKey(t *testing.T) {
+	items := []*testItem{
+		{ID: "T1", Status: ""},
+		{ID: "T2", Status: "open"},
+		{ID: "T3", Status: ""},
+	}
+	result := GroupBy(items, func(item *testItem) string { return item.Status })
+	if len(result) != 2 {
+		t.Fatalf("expected 2 groups, got %d", len(result))
+	}
+	if len(result[""]) != 2 {
+		t.Errorf("empty string group has %d items, want 2", len(result[""]))
+	}
+	if len(result["open"]) != 1 {
+		t.Errorf("open group has %d items, want 1", len(result["open"]))
+	}
+}

@@ -128,6 +128,7 @@ func (s *Schema[T]) executeStatement(stmt Statement) (any, error) {
 		Statement: stmt,
 		Selector:  selector,
 		Items:     s.loader,
+		Predicate: s.buildPredicate(stmt.Args),
 	}
 
 	return handler(ctx)

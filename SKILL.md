@@ -71,7 +71,7 @@ The primary read interface for agents. A single CLI subcommand that accepts a co
 ```
 
 - **Operation** — what to query: `get`, `list`, `count`, `summary`, `agents`, etc.
-- **Params** — filters: `type=task, status=done`, pagination: `skip=10, take=5`, an ID, etc.
+- **Params** — filters: `type=task, status=done`, pagination: `skip=10, take=5`, sorting: `sort_name=asc, sort_priority=desc`, an ID, etc.
 - **Fields** — explicit: `{ id name status }` or preset: `{ overview }`
 - **Omitted fields** — default to a sensible minimal set
 
@@ -87,6 +87,8 @@ When adding a DSL to an existing CLI:
 - [ ] Parse the query string in the CLI, not via shell eval (security)
 - [ ] Error responses as JSON too: `{"error": "element not found"}`
 - [ ] Register operation metadata (parameters, examples) for schema introspection — agents discover the API via `schema()` without external docs
+- [ ] Register filterable fields (`FilterableField`) for declarative predicate building and auto `distinct` operation
+- [ ] Register sortable fields (`SortableField`) for `sort_<field>=asc|desc` arg convention
 
 ### Example: Task Board DSL
 
@@ -119,6 +121,14 @@ mytool q 'count()'
 mytool q 'count(status=done)'
 # → {"count": 31}
 
+# Sorted list — multi-field sort
+mytool q 'list(sort_priority=desc, sort_name=asc) { overview }'
+# → [{...priority:high, name:"A"...}, {priority:high, name:"B"...}, {priority:low, ...}]
+
+# Distinct values for a filterable field
+mytool q 'distinct(status)'
+# → ["todo", "in-progress", "done", "blocked"]
+
 # Summary (no field projection needed)
 mytool q 'summary()'
 # → {"epics":5,"stories":12,"tasks":48,"done":31,"in_progress":10,"blocked":2}
@@ -133,10 +143,12 @@ mytool q 'schema()'
 ```
 ```json
 {
-  "operations": ["count", "get", "list", "schema", "summary"],
+  "operations": ["count", "distinct", "get", "list", "schema", "summary"],
   "fields": ["id", "name", "status", "assignee", "description"],
   "presets": {"minimal": ["id", "status"], "overview": ["id", "name", "status", "assignee"]},
   "defaultFields": ["default"],
+  "filterableFields": ["status", "assignee"],
+  "sortableFields": ["name", "status", "priority"],
   "operationMetadata": {
     "list": {
       "description": "List tasks with optional filters and pagination",
@@ -153,6 +165,13 @@ mytool q 'schema()'
         {"name": "status", "type": "string", "optional": true}
       ],
       "examples": ["count()", "count(status=done)"]
+    },
+    "distinct": {
+      "description": "Returns unique values for a filterable field.",
+      "parameters": [
+        {"name": "field", "type": "string", "optional": false, "description": "Name of a registered filterable field."}
+      ],
+      "examples": ["distinct(status)", "distinct(assignee)"]
     }
   }
 }
@@ -352,7 +371,7 @@ fields    = field+ | preset
 batch     = query (";" query)*
 ```
 
-Pagination uses `skip`/`take` keyword params: `list(skip=10, take=5) { overview }`. Count is a separate operation: `count(status=done)`. No grammar changes needed — `key=value` params handle both filters and pagination.
+Pagination uses `skip`/`take` keyword params: `list(skip=10, take=5) { overview }`. Count is a separate operation: `count(status=done)`. Sorting uses `sort_<field>=asc|desc` params: `list(sort_name=asc, sort_priority=desc) { overview }`. No grammar changes needed — `key=value` params handle filters, pagination, and sorting.
 
 A hand-written parser in 100-200 lines of Go handles this. No need for yacc, ANTLR, or parser combinators.
 

@@ -19,6 +19,10 @@ type Schema[T any] struct {
 	operationMetadata  map[string]OperationMetadata   // optional metadata for operations
 	loader             func() ([]T, error)            // lazy data loader
 	searchProvider     SearchProvider                 // pluggable search backend
+	filters            map[string]func(T) string      // filterable field string accessors
+	filterOrder        []string                       // filterable field names in registration order
+	sortFields         map[string]SortComparator[T]   // registered sort comparators
+	sortFieldNames     []string                       // sort field names in registration order
 }
 
 // schemaConfig holds configuration set via functional options.
@@ -137,6 +141,25 @@ func (s *Schema[T]) SetLoader(fn func() ([]T, error)) {
 	s.loader = fn
 }
 
+// SortField registers a named sortable field with its comparator.
+// The comparator defines the ascending order. Descending is handled
+// by the framework (negating the result).
+func (s *Schema[T]) SortField(name string, cmpFn SortComparator[T]) {
+	if s.sortFields == nil {
+		s.sortFields = make(map[string]SortComparator[T])
+	}
+	if _, exists := s.sortFields[name]; !exists {
+		s.sortFieldNames = append(s.sortFieldNames, name)
+	}
+	s.sortFields[name] = cmpFn
+}
+
+// SortFields returns the registered sort comparators map.
+// Used by operation handlers that call SortSlice.
+func (s *Schema[T]) SortFields() map[string]SortComparator[T] {
+	return s.sortFields
+}
+
 // ResolveField implements the FieldResolver interface.
 // If name matches a preset, it returns the expanded field list.
 // If name matches a registered field, it returns []string{name}.
@@ -237,6 +260,22 @@ func (s *Schema[T]) introspect() map[string]any {
 			meta[name] = m
 		}
 		result["operationMetadata"] = meta
+	}
+
+	// Include filterableFields only if at least one filterable field is registered
+	// via FilterableField. Field names are in registration order.
+	if len(s.filters) > 0 {
+		filterableFields := make([]string, len(s.filterOrder))
+		copy(filterableFields, s.filterOrder)
+		result["filterableFields"] = filterableFields
+	}
+
+	// Include sortableFields only if at least one sortable field is registered
+	// via SortField / SortableField. Field names are in registration order.
+	if len(s.sortFields) > 0 {
+		sortableFields := make([]string, len(s.sortFieldNames))
+		copy(sortableFields, s.sortFieldNames)
+		result["sortableFields"] = sortableFields
 	}
 
 	return result

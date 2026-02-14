@@ -37,6 +37,13 @@ cd example && go build -o taskdemo .
 ./example/taskdemo q 'list(skip=2, take=3) { overview }' --format json
 ./example/taskdemo q 'list(status=done, skip=0, take=2) { minimal }' --format json
 
+# Sorting
+./example/taskdemo q 'list(sort_name=asc) { overview }' --format json
+./example/taskdemo q 'list(sort_priority=desc, sort_name=asc) { overview }' --format json
+
+# Distinct values for a filterable field
+./example/taskdemo q 'distinct(status)' --format json
+
 # Compact output for LLM agents
 ./example/taskdemo q 'list() { overview }' --format compact
 ./example/taskdemo q 'get(task-1) { overview }' --format compact
@@ -55,15 +62,17 @@ The core is a generic `Schema[T]` type parameterized on the domain item type. Us
 
 Key files in `agentquery/`:
 
-- **`schema.go`** — Central `Schema[T]` type. Registers fields, presets, operations, loader. `OperationWithMetadata()` registers operations with metadata (parameters, examples) for schema introspection. Built-in `schema` operation returns operations, fields, presets, defaults, and `operationMetadata` (when present). `QueryJSONWithMode()` and `SearchJSONWithMode()` for caller-specified output format.
+- **`schema.go`** — Central `Schema[T]` type. Registers fields, presets, operations, loader. `OperationWithMetadata()` registers operations with metadata (parameters, examples) for schema introspection. Built-in `schema` operation returns operations, fields, presets, defaults, `operationMetadata` (when present), `filterableFields`, and `sortableFields`. `SortField()` registers a comparator, `SortFields()` exposes the map for `SortSlice()`. `QueryJSONWithMode()` and `SearchJSONWithMode()` for caller-specified output format.
 - **`parser.go`** — Tokenizer + recursive descent parser. Grammar: `operation(params) { fields }` with `;` batching. Validates operations and resolves fields (including preset expansion) at parse time via `ParserConfig`.
 - **`selector.go`** — `FieldSelector[T]` applies field projection to domain items. Created internally by Schema from parsed field lists. Lazy — only calls accessors for selected fields. `ApplyValues()` returns ordered values without keys (used by compact formatter).
 - **`query.go`** — `Schema.Query()` and `QueryJSON()`. Executes parsed statements, handles batching (single result unwrapped, multiple → `[]any`). Per-statement errors don't abort the batch. `formatLLMReadable()` handles compact output for single and batch queries.
 - **`format.go`** — `FormatCompact()` tabular formatter. Lists → CSV-style header + value rows. Single objects → key:value pairs. Falls back to JSON for complex/error types. Handles CSV escaping and value formatting.
 - **`search.go`** — `Search()` does recursive regex search with file extension filtering, glob filtering, case-insensitive flag, and context lines. Independent of Schema but also available as `Schema.Search()`. `FormatSearchCompact()` produces grouped-by-file text output.
 - **`ast.go`** — AST types: `Query`, `Statement`, `Arg`.
-- **`types.go`** — Shared types: `FieldAccessor[T]`, `OperationHandler[T]`, `OperationContext[T]`, `SearchResult`, `SearchOptions`, `OutputMode` (`HumanReadable`, `LLMReadable`), `ParameterDef` (parameter name/type/optional/default/description), `OperationMetadata` (description/parameters/examples for schema introspection).
-- **`helpers.go`** — Generic convenience functions for operation handlers: `FilterItems[T]` (filter by predicate), `CountItems[T]` (count matching items without allocating), `MatchAll[T]` (default predicate).
+- **`types.go`** — Shared types: `FieldAccessor[T]`, `OperationHandler[T]`, `OperationContext[T]` (includes `Predicate` — auto-built from filterable fields), `SearchResult`, `SearchOptions`, `OutputMode` (`HumanReadable`, `LLMReadable`), `ParameterDef`, `OperationMetadata`, `SortComparator[T]`, `SortSpec`, `SortDirection` (`Asc`, `Desc`).
+- **`helpers.go`** — Generic convenience functions for operation handlers: `FilterItems[T]` (filter by predicate), `CountItems[T]` (count matching items without allocating), `MatchAll[T]` (default predicate), `Distinct[T]` (unique values in first-seen order), `DistinctCount[T]` (count per unique value), `GroupBy[T]` (group items by key function).
+- **`filter.go`** — `FilterableField[T]()` registers a string accessor for case-insensitive equality filtering. Schema auto-builds `ctx.Predicate` from registered filters + query args. On first registration, auto-registers a built-in `distinct` operation: `distinct(field_name)` → unique values.
+- **`sort.go`** — `SortFieldOf[T,V]()` creates a comparator from a `cmp.Ordered` accessor. `SortableField[T,V]()` and `SortableFieldFunc[T]()` register sort fields on Schema. `ParseSortSpecs()` extracts `sort_<field>=asc|desc` from args. `BuildSortFunc()` chains multi-field comparators. `SortSlice()` is the one-liner for operation handlers.
 - **`paginate.go`** — `PaginateSlice[T]` extracts `skip`/`take` from args and slices items. `ParseSkipTake` for manual control. Conventions: skip defaults to 0, take=0 means no limit.
 - **`error.go`** — `ParseError` (syntax) and `Error` (runtime, with code/message/details).
 - **`cobraext/command.go`** — Cobra command factories (`QueryCommand`, `SearchCommand`, `AddCommands`). Isolated sub-package so non-Cobra users don't import it. `--format` flag on both commands (`json` default, `compact`/`llm` for token-efficient output).
@@ -88,6 +97,11 @@ fields    = identifier+
 
 Identifiers: letters, digits, underscore, hyphen. Values can also be quoted strings (`"..."`).
 
+**Conventions (no grammar changes needed):**
+- **Filter args**: any `key=value` where `key` is a registered filterable field. Case-insensitive equality. Multiple filters are AND-ed. Auto-injected into `ctx.Predicate`.
+- **Sort args**: `sort_<field>=asc|desc` (e.g. `sort_name=asc, sort_priority=desc`). Parsed by `SortSlice()` in handlers.
+- **Distinct operation**: `distinct(field_name)` — auto-registered when any `FilterableField` is registered. Returns unique values for the field.
+
 ## Key Design Decisions
 
 - **Generics over interfaces**: `Schema[T]` is parameterized on the domain type. Field accessors are `func(T) any`, not reflection-based.
@@ -99,3 +113,8 @@ Identifiers: letters, digits, underscore, hyphen. Values can also be quoted stri
 - **Operation metadata is optional and backwards compatible**: `OperationWithMetadata()` adds parameter/example metadata for schema introspection. Plain `Operation()` still works — those operations just won't have metadata in `schema()` output. No migration needed.
 - **Pagination and counting are library helpers, not framework mandates**: `PaginateSlice`, `FilterItems`, `CountItems` are generic convenience functions that operation handlers opt into. The framework doesn't enforce pagination — handlers decide if/how to use these.
 - **Output format is a transport concern, not a schema concern**: Schema stays format-agnostic. `QueryJSON()` / `SearchJSON()` always produce JSON. `QueryJSONWithMode()` / `SearchJSONWithMode()` accept an explicit `OutputMode` for callers that need compact output. The `--format` CLI flag (`json` default, `compact`/`llm`) puts the format decision where it belongs — at the call site. Same CLI tool serves humans (JSON), TUI apps (JSON), and LLM agents (`--format compact`).
+- **FilterableField is a standalone function, not a Schema method**: Go methods cannot introduce additional type parameters beyond the receiver's. `FilterableField[T]()` needs only `T`, but `SortableField[T,V]()` needs `V cmp.Ordered` too. Package-level functions sidestep this constraint.
+- **ctx.Predicate is auto-injected**: Schema builds a predicate from registered filterable fields and query args before calling the handler. Handlers use `ctx.Predicate` directly — no manual arg parsing for filters. Defaults to `MatchAll` when no args match registered filters.
+- **Sort uses `sort_<field>=asc|desc` arg convention**: Zero parser changes — sort directives piggyback on the existing `key=value` param syntax. `ParseSortSpecs()` extracts them by the `sort_` prefix. Multi-field sort uses first-non-zero chaining.
+- **distinct is auto-registered via FilterableField**: The first `FilterableField()` call auto-registers a built-in `distinct` operation with full metadata. No manual registration needed. Keeps the filter and distinct APIs coupled — if a field is filterable, you can always get its distinct values.
+- **Filter accessors are string-only**: `FilterableField` takes `func(T) string`, not `func(T) any`. Case-insensitive string equality (via `strings.EqualFold`) covers 95%+ of agent filter use-cases (status, assignee, type, priority). Avoids type-switching complexity in the predicate builder.

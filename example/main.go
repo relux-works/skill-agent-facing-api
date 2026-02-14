@@ -10,6 +10,8 @@
 //	./taskdemo q 'summary()'
 //	./taskdemo q 'get(task-1) { overview }'
 //	./taskdemo q 'list(status=done) { minimal }'
+//	./taskdemo q 'list(sort_name=asc) { overview }'
+//	./taskdemo q 'list(status=done, sort_name=desc) { overview }'
 //	./taskdemo q 'count()'
 //	./taskdemo q 'count(status=done)'
 //	./taskdemo q 'count(assignee=alice)'
@@ -17,6 +19,8 @@
 //	./taskdemo q 'list(skip=2, take=3) { overview }'
 //	./taskdemo q 'list(status=done, skip=0, take=2) { minimal }'
 //	./taskdemo q 'list(take=1) { full }'
+//	./taskdemo q 'distinct(status)'
+//	./taskdemo q 'distinct(assignee)'
 //	./taskdemo grep "TODO"
 package main
 
@@ -25,7 +29,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/ivalx1s/skill-agent-facing-api/agentquery"
 	"github.com/ivalx1s/skill-agent-facing-api/agentquery/cobraext"
@@ -91,6 +94,17 @@ func main() {
 	// Default fields used when no projection is specified.
 	schema.DefaultFields("default")
 
+	// Register filterable fields — enables declarative filtering via query args
+	// and auto-registers the built-in "distinct" operation.
+	agentquery.FilterableField(schema, "status", func(t Task) string { return t.Status })
+	agentquery.FilterableField(schema, "assignee", func(t Task) string { return t.Assignee })
+
+	// Register sortable fields — enables sort_<field>=asc|desc in query args.
+	agentquery.SortableField(schema, "id", func(t Task) string { return t.ID })
+	agentquery.SortableField(schema, "name", func(t Task) string { return t.Name })
+	agentquery.SortableField(schema, "status", func(t Task) string { return t.Status })
+	agentquery.SortableField(schema, "assignee", func(t Task) string { return t.Assignee })
+
 	// Set the data loader — called lazily when an operation needs the item list.
 	schema.SetLoader(func() ([]Task, error) {
 		return sampleTasks(), nil
@@ -108,18 +122,47 @@ func main() {
 		},
 	})
 
+	// opList is registered as a closure to capture schema for SortSlice access.
+	opList := func(ctx agentquery.OperationContext[Task]) (any, error) {
+		items, err := ctx.Items()
+		if err != nil {
+			return nil, err
+		}
+
+		filtered := agentquery.FilterItems(items, ctx.Predicate)
+
+		// Sort after filtering, before pagination.
+		if err := agentquery.SortSlice(filtered, ctx.Statement.Args, schema.SortFields()); err != nil {
+			return nil, err
+		}
+
+		// Apply skip/take pagination after filtering and sorting, before field projection.
+		page, err := agentquery.PaginateSlice(filtered, ctx.Statement.Args)
+		if err != nil {
+			return nil, err
+		}
+
+		results := make([]map[string]any, 0, len(page))
+		for _, task := range page {
+			results = append(results, ctx.Selector.Apply(task))
+		}
+		return results, nil
+	}
+
 	schema.OperationWithMetadata("list", opList, agentquery.OperationMetadata{
-		Description: "List tasks with optional filters and pagination",
+		Description: "List tasks with optional filters, sorting, and pagination",
 		Parameters: []agentquery.ParameterDef{
 			{Name: "status", Type: "string", Optional: true, Description: "Filter by status"},
 			{Name: "assignee", Type: "string", Optional: true, Description: "Filter by assignee"},
+			{Name: "sort_<field>", Type: "asc|desc", Optional: true, Description: "Sort by field (id, name, status, assignee)"},
 			{Name: "skip", Type: "int", Optional: true, Default: 0, Description: "Skip first N items"},
 			{Name: "take", Type: "int", Optional: true, Description: "Return at most N items"},
 		},
 		Examples: []string{
 			"list() { overview }",
 			"list(status=done) { minimal }",
-			"list(status=done, skip=0, take=2) { overview }",
+			"list(sort_name=asc) { overview }",
+			"list(status=done, sort_name=desc, skip=0, take=2) { overview }",
 			"list(assignee=alice) { full }",
 		},
 	})
@@ -184,65 +227,15 @@ func opGet(ctx agentquery.OperationContext[Task]) (any, error) {
 	}
 }
 
-// taskFilterFromArgs builds a predicate from keyword arguments (status, assignee).
-// Used by both list and count operations to share filtering logic.
-func taskFilterFromArgs(args []agentquery.Arg) func(Task) bool {
-	var filterStatus, filterAssignee string
-	for _, arg := range args {
-		switch arg.Key {
-		case "status":
-			filterStatus = arg.Value
-		case "assignee":
-			filterAssignee = arg.Value
-		}
-	}
-
-	return func(t Task) bool {
-		if filterStatus != "" && !strings.EqualFold(t.Status, filterStatus) {
-			return false
-		}
-		if filterAssignee != "" && !strings.EqualFold(t.Assignee, filterAssignee) {
-			return false
-		}
-		return true
-	}
-}
-
-// opList returns tasks filtered by optional status and assignee keyword args.
-// Supports skip/take pagination:
-//
-//	list(skip=2, take=3) { overview }
-//	list(status=done, skip=0, take=5)
-func opList(ctx agentquery.OperationContext[Task]) (any, error) {
-	items, err := ctx.Items()
-	if err != nil {
-		return nil, err
-	}
-
-	filtered := agentquery.FilterItems(items, taskFilterFromArgs(ctx.Statement.Args))
-
-	// Apply skip/take pagination after filtering, before field projection
-	page, err := agentquery.PaginateSlice(filtered, ctx.Statement.Args)
-	if err != nil {
-		return nil, err
-	}
-
-	results := make([]map[string]any, 0, len(page))
-	for _, task := range page {
-		results = append(results, ctx.Selector.Apply(task))
-	}
-	return results, nil
-}
-
-// opCount returns the count of tasks matching optional status and assignee filters.
-// Accepts the same keyword args as list (status, assignee). Returns {"count": N}.
+// opCount returns the count of tasks matching optional filters.
+// Filtering is handled by ctx.Predicate (auto-built from registered filterable fields).
 func opCount(ctx agentquery.OperationContext[Task]) (any, error) {
 	items, err := ctx.Items()
 	if err != nil {
 		return nil, err
 	}
 
-	n := agentquery.CountItems(items, taskFilterFromArgs(ctx.Statement.Args))
+	n := agentquery.CountItems(items, ctx.Predicate)
 	return map[string]any{"count": n}, nil
 }
 

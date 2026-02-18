@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ivalx1s/skill-agent-facing-api/agentquery"
+	"github.com/relux-works/skill-agent-facing-api/agentquery"
 	"github.com/spf13/cobra"
 )
 

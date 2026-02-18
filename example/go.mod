@@ -1,9 +1,9 @@
-module github.com/ivalx1s/skill-agent-facing-api/example
+module github.com/relux-works/skill-agent-facing-api/example
 
 go 1.21
 
 require (
-	github.com/ivalx1s/skill-agent-facing-api/agentquery v0.0.0
+	github.com/relux-works/skill-agent-facing-api/agentquery v0.0.0
 	github.com/spf13/cobra v1.10.2
 )
 
@@ -12,4 +12,4 @@ require (
 	github.com/spf13/pflag v1.0.9 // indirect
 )
 
-replace github.com/ivalx1s/skill-agent-facing-api/agentquery => ../agentquery
+replace github.com/relux-works/skill-agent-facing-api/agentquery => ../agentquery

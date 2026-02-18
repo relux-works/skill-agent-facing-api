@@ -23,6 +23,8 @@ type Schema[T any] struct {
 	filterOrder        []string                       // filterable field names in registration order
 	sortFields         map[string]SortComparator[T]   // registered sort comparators
 	sortFieldNames     []string                       // sort field names in registration order
+	mutations          map[string]MutationHandler[T]  // registered mutation handlers
+	mutationMetadata   map[string]MutationMetadata    // optional metadata for mutations
 }
 
 // schemaConfig holds configuration set via functional options.
@@ -88,6 +90,8 @@ func NewSchema[T any](opts ...Option) *Schema[T] {
 		operations:        make(map[string]OperationHandler[T]),
 		operationMetadata: make(map[string]OperationMetadata),
 		searchProvider:    sp,
+		mutations:         make(map[string]MutationHandler[T]),
+		mutationMetadata:  make(map[string]MutationMetadata),
 	}
 
 	// Register built-in "schema" introspection operation.
@@ -222,10 +226,12 @@ func (s *Schema[T]) QueryJSONWithMode(input string, mode OutputMode) ([]byte, er
 // It lists all operations (sorted), fields (in registration order),
 // presets (with expanded field lists), and default fields.
 func (s *Schema[T]) introspect() map[string]any {
-	// Collect operation names and sort them for deterministic output.
+	// Collect operation names (excluding mutations) and sort for deterministic output.
 	ops := make([]string, 0, len(s.operations))
 	for name := range s.operations {
-		ops = append(ops, name)
+		if _, isMutation := s.mutations[name]; !isMutation {
+			ops = append(ops, name)
+		}
 	}
 	sort.Strings(ops)
 
@@ -276,6 +282,25 @@ func (s *Schema[T]) introspect() map[string]any {
 		sortableFields := make([]string, len(s.sortFieldNames))
 		copy(sortableFields, s.sortFieldNames)
 		result["sortableFields"] = sortableFields
+	}
+
+	// Include mutations list (sorted) if any mutations are registered.
+	if len(s.mutations) > 0 {
+		muts := make([]string, 0, len(s.mutations))
+		for name := range s.mutations {
+			muts = append(muts, name)
+		}
+		sort.Strings(muts)
+		result["mutations"] = muts
+	}
+
+	// Include mutationMetadata if any mutations have metadata registered.
+	if len(s.mutationMetadata) > 0 {
+		meta := make(map[string]MutationMetadata, len(s.mutationMetadata))
+		for name, m := range s.mutationMetadata {
+			meta[name] = m
+		}
+		result["mutationMetadata"] = meta
 	}
 
 	return result

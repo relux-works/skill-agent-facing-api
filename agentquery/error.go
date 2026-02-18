@@ -8,6 +8,13 @@ const (
 	ErrNotFound   = "NOT_FOUND"
 	ErrValidation = "VALIDATION_ERROR"
 	ErrInternal   = "INTERNAL_ERROR"
+
+	// Mutation-specific error codes.
+	ErrConflict     = "CONFLICT"           // duplicate key, unique constraint violation
+	ErrForbidden    = "FORBIDDEN"          // authorization failure
+	ErrPrecondition = "PRECONDITION_FAILED" // optimistic concurrency check failed
+	ErrRequired     = "REQUIRED"           // required parameter missing
+	ErrInvalidValue = "INVALID_VALUE"      // enum/type mismatch
 )
 
 // ParseError represents a syntax or semantic error found during parsing.

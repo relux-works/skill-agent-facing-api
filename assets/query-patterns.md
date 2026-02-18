@@ -341,7 +341,144 @@ Agents call `schema()` once at the start of a session to discover available oper
 
 ---
 
-## 9. Anti-Patterns
+## 9. Mutations (Write Operations)
+
+Mutations use the same DSL grammar as queries. Registered via `Mutation()`/`MutationWithMetadata()` and accessed through the `m` subcommand with safety flags.
+
+### Create
+
+**Basic create:**
+```
+create(title="Fix login bug", status=todo)
+```
+```json
+{"ok": true, "result": {"id": "ITEM-09", "title": "Fix login bug", "status": "todo", "priority": "medium"}}
+```
+
+**Create with all fields:**
+```
+create(title="New feature", status=in-progress, assignee=alice, priority=high)
+```
+```json
+{"ok": true, "result": {"id": "ITEM-10", "title": "New feature", "status": "in-progress", "assignee": "alice", "priority": "high"}}
+```
+
+**Create with dry run (preview):**
+```
+create(title="Test task", dry_run=true)
+```
+```json
+{"ok": true, "result": {"dry_run": true, "would_create": {"title": "Test task", "status": "todo", "priority": "medium"}}}
+```
+
+### Update
+
+**Update a single field:**
+```
+update(ITEM-42, status=done)
+```
+```json
+{"ok": true, "result": {"id": "ITEM-42", "title": "fix-auth-bug", "status": "done", "assignee": "alice", "priority": "high"}}
+```
+
+**Update multiple fields:**
+```
+update(ITEM-42, title="New title", assignee=bob)
+```
+```json
+{"ok": true, "result": {"id": "ITEM-42", "title": "New title", "status": "active", "assignee": "bob", "priority": "high"}}
+```
+
+**Update with dry run:**
+```
+update(ITEM-42, status=done, dry_run=true)
+```
+```json
+{"ok": true, "result": {"dry_run": true, "id": "ITEM-42", "would_update": {"status": "done"}}}
+```
+
+### Delete
+
+**Delete (destructive — requires `--confirm` on CLI):**
+```
+delete(ITEM-42)
+```
+```json
+{"ok": true, "result": {"deleted": true, "id": "ITEM-42", "title": "fix-auth-bug"}}
+```
+
+**Delete with dry run:**
+```
+delete(ITEM-42, dry_run=true)
+```
+```json
+{"ok": true, "result": {"dry_run": true, "would_delete": {"id": "ITEM-42", "title": "fix-auth-bug", "status": "active"}}}
+```
+
+### Validation Errors
+
+**Missing required parameter:**
+```
+create()
+```
+```json
+{"ok": false, "errors": [{"field": "title", "message": "required parameter \"title\" is missing", "code": "REQUIRED"}]}
+```
+
+**Invalid enum value:**
+```
+create(title="Test", status=invalid)
+```
+```json
+{"ok": false, "errors": [{"field": "status", "message": "invalid value \"invalid\" for status, must be one of: todo, in-progress, done", "code": "INVALID_VALUE"}]}
+```
+
+**Not found:**
+```
+update(NONEXISTENT, status=done)
+```
+```json
+{"ok": false, "errors": [{"message": "task \"NONEXISTENT\" not found"}]}
+```
+
+### Schema Introspection with Mutations
+
+When mutations are registered, `schema()` includes separate `mutations` and `mutationMetadata` sections:
+
+```
+schema()
+```
+```json
+{
+  "operations": ["count", "get", "list", "schema", "summary"],
+  "mutations": ["create", "delete", "update"],
+  "mutationMetadata": {
+    "create": {
+      "description": "Create a new task",
+      "parameters": [
+        {"name": "title", "type": "string", "required": true, "description": "Task title"},
+        {"name": "status", "type": "string", "enum": ["todo", "in-progress", "done"], "default": "todo"}
+      ],
+      "destructive": false,
+      "idempotent": false,
+      "examples": ["create(title=\"Fix login bug\")"]
+    },
+    "delete": {
+      "description": "Delete a task by ID",
+      "parameters": [
+        {"name": "id", "type": "string", "required": true, "description": "Task ID (positional)"}
+      ],
+      "destructive": true,
+      "idempotent": true,
+      "examples": ["delete(ITEM-42)"]
+    }
+  }
+}
+```
+
+---
+
+## 10. Anti-Patterns
 
 ### Bad: Multiple calls for data available in one query
 

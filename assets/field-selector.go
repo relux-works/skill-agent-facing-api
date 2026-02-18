@@ -127,6 +127,45 @@ func (s *Selector) Include(field string) bool {
 //       return result
 //   }
 
+// --- Mutation registration patterns using agentquery ---
+//
+// ADAPT THIS: register mutations with MutationWithMetadata
+//
+//   schema.MutationWithMetadata("create", mutCreate, agentquery.MutationMetadata{
+//       Description: "Create a new item",
+//       Parameters: []agentquery.ParameterDef{
+//           {Name: "title", Type: "string", Required: true, Description: "Item title"},
+//           {Name: "status", Type: "string", Enum: []string{"todo", "in-progress", "done"}, Default: "todo"},
+//       },
+//       Destructive: false,
+//       Idempotent:  false,
+//       Examples:    []string{`create(title="Fix bug")`},
+//   })
+//
+//   schema.MutationWithMetadata("delete", mutDelete, agentquery.MutationMetadata{
+//       Description: "Delete an item by ID",
+//       Parameters: []agentquery.ParameterDef{
+//           {Name: "id", Type: "string", Required: true, Description: "Item ID (positional)"},
+//       },
+//       Destructive: true,
+//       Idempotent:  true,
+//       Examples:    []string{`delete(ITEM-42)`},
+//   })
+//
+// ADAPT THIS: mutation handler pattern
+//
+//   func mutCreate(ctx agentquery.MutationContext[Item]) (any, error) {
+//       title := ctx.ArgMap["title"]
+//       if title == "" {
+//           return nil, &agentquery.Error{Code: agentquery.ErrValidation, Message: "title is required"}
+//       }
+//       if ctx.DryRun {
+//           return map[string]any{"dry_run": true, "would_create": map[string]any{"title": title}}, nil
+//       }
+//       item := createItem(title, ctx.ArgMap["status"])
+//       return map[string]any{"id": item.ID, "title": item.Name}, nil
+//   }
+
 // --- Operation handler patterns using agentquery helpers ---
 //
 // ADAPT THIS: list operation with filtering + skip/take pagination

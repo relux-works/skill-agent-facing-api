@@ -13,9 +13,10 @@ Two read layers on top of your existing CLI:
 | Layer | Purpose | Output | Example |
 |-------|---------|--------|---------|
 | **Mini-Query DSL** | Structured reads | JSON or compact tabular | `mytool q 'get(ID) { status assignee }'` |
+| **Mutations** | Structured writes | JSON or compact tabular | `mytool m 'update(ID, status=done)' --confirm` |
 | **Scoped Grep** | Full-text search | JSON or grouped-by-file text | `mytool grep "pattern" --file progress.md` |
 
-Writes stay as regular CLI commands. No new processes, no session overhead, no extra tool definitions.
+Writes use the same DSL grammar via a dedicated `m` subcommand with safety flags (`--confirm`, `--dry-run`). No new processes, no session overhead, no extra tool definitions.
 
 ### Why Not MCP?
 
@@ -82,6 +83,45 @@ Read `SKILL.md` for the full pattern specification:
 - **Layer 3: CLI** — writes stay as commands
 - **Anti-patterns** — common mistakes and their costs
 - **Implementation guide** — architecture, parser tips, Go project structure
+
+## Mutations (Write Operations)
+
+Mutations use the same DSL grammar as queries — no new syntax. They're registered separately via `Mutation()`/`MutationWithMetadata()` and accessed through the `m` subcommand:
+
+```bash
+# Create
+mytool m 'create(title="Fix bug", status=todo)' --format json
+
+# Update (positional ID)
+mytool m 'update(item-1, status=done)' --format json
+
+# Delete (destructive — requires --confirm)
+mytool m 'delete(item-1)' --format json --confirm
+
+# Dry run (preview without applying)
+mytool m 'delete(item-1)' --format json --dry-run
+```
+
+**Safety flags:**
+- `--confirm` — required for mutations marked `Destructive: true`
+- `--dry-run` — injects `dry_run=true` into the mutation; handler returns a preview
+
+**Schema introspection** includes separate `mutations` and `mutationMetadata` sections, so agents clearly see the read/write boundary:
+
+```json
+{
+  "operations": ["count", "get", "list", "schema", "summary"],
+  "mutations": ["create", "delete", "update"],
+  "mutationMetadata": {
+    "delete": {
+      "description": "Delete an item by ID",
+      "destructive": true,
+      "idempotent": true,
+      "parameters": [{"name": "id", "type": "string", "required": true}]
+    }
+  }
+}
+```
 
 ## AI Agent Skill Setup
 

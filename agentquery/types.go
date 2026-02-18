@@ -54,11 +54,13 @@ type Pos struct {
 // Used in OperationMetadata for schema introspection, so agents can discover
 // valid parameters without external docs.
 type ParameterDef struct {
-	Name        string `json:"name"`
-	Type        string `json:"type"`                  // "string", "int", "bool"
-	Optional    bool   `json:"optional"`
-	Default     any    `json:"default,omitempty"`
-	Description string `json:"description,omitempty"`
+	Name        string   `json:"name"`
+	Type        string   `json:"type"`                  // "string", "int", "bool"
+	Optional    bool     `json:"optional"`
+	Default     any      `json:"default,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Enum        []string `json:"enum,omitempty"`         // allowed values (validated by framework for mutations)
+	Required    bool     `json:"required,omitempty"`     // explicit required flag (for mutation parameters)
 }
 
 // OperationMetadata provides human/agent-readable documentation for an operation.
@@ -102,4 +104,50 @@ type OperationContext[T any] struct {
 	Selector  *FieldSelector[T]
 	Items     func() ([]T, error)
 	Predicate func(T) bool
+}
+
+// MutationHandler is the function signature for mutation implementations.
+// It receives a MutationContext and returns a result object and/or error.
+// The result should be a JSON-serializable representation of the affected entity
+// (or a confirmation map for destructive operations like delete).
+type MutationHandler[T any] func(ctx MutationContext[T]) (any, error)
+
+// MutationContext provides data to mutation handlers during execution.
+// Unlike OperationContext, it does not include Selector (no field projection)
+// but adds ArgMap for convenient key-value access and DryRun flag.
+type MutationContext[T any] struct {
+	Mutation   string            // mutation operation name
+	Statement  Statement         // full parsed statement (for positional args)
+	Args       []Arg             // parsed arguments
+	ArgMap     map[string]string // key=value args as map (convenience)
+	Items      func() ([]T, error) // lazy item loader (for lookups/validation)
+	DryRun     bool              // true when dry_run=true was passed
+}
+
+// MutationResult wraps a mutation's outcome for consistent response shape.
+// Handlers return (any, error) — the framework wraps into MutationResult
+// before serialization.
+type MutationResult struct {
+	Ok     bool            `json:"ok"`
+	Result any             `json:"result,omitempty"`
+	Errors []MutationError `json:"errors,omitempty"`
+}
+
+// MutationError describes a validation or domain error from a mutation.
+// Field pinpoints which input argument caused the error (empty for general errors).
+type MutationError struct {
+	Field   string `json:"field,omitempty"`
+	Message string `json:"message"`
+	Code    string `json:"code,omitempty"`
+}
+
+// MutationMetadata extends OperationMetadata with mutation-specific annotations.
+// These are surfaced by schema() introspection and used by agents for
+// safety decisions (confirm before destructive, skip confirm for idempotent).
+type MutationMetadata struct {
+	Description string         `json:"description,omitempty"`
+	Parameters  []ParameterDef `json:"parameters,omitempty"`
+	Examples    []string       `json:"examples,omitempty"`
+	Destructive bool           `json:"destructive"`
+	Idempotent  bool           `json:"idempotent"`
 }

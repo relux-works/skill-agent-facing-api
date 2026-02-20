@@ -106,6 +106,17 @@ mytool m 'delete(item-1)' --format json --dry-run
 - `--confirm` — required for mutations marked `Destructive: true`
 - `--dry-run` — injects `dry_run=true` into the mutation; handler returns a preview
 
+**MutationContext convenience methods** reduce handler boilerplate:
+
+```go
+func myHandler(ctx agentquery.MutationContext[Item]) (any, error) {
+    id := ctx.PositionalArg()           // first keyless arg (e.g. "item-1" from "update(item-1, ...)")
+    status, err := ctx.RequireArg("status") // named arg, error if missing
+    priority := ctx.ArgDefault("priority", "medium") // named arg with default
+    // ...
+}
+```
+
 **Schema introspection** includes separate `mutations` and `mutationMetadata` sections, so agents clearly see the read/write boundary:
 
 ```json

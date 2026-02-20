@@ -612,6 +612,123 @@ func TestMutation_ParseErrorStillReturned(t *testing.T) {
 	}
 }
 
+// --- MutationContext convenience methods ---
+
+func TestMutationContext_PositionalArg(t *testing.T) {
+	s := newTestSchema()
+	s.SetLoader(func() ([]*testItem, error) { return testData(), nil })
+
+	var got string
+	s.Mutation("pos", func(ctx MutationContext[*testItem]) (any, error) {
+		got = ctx.PositionalArg()
+		return "ok", nil
+	})
+
+	_, err := s.Query(`pos(T1, status=done)`)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != "T1" {
+		t.Errorf("PositionalArg() = %q, want T1", got)
+	}
+}
+
+func TestMutationContext_PositionalArg_Empty(t *testing.T) {
+	s := newTestSchema()
+	s.SetLoader(func() ([]*testItem, error) { return testData(), nil })
+
+	var got string
+	s.Mutation("pos", func(ctx MutationContext[*testItem]) (any, error) {
+		got = ctx.PositionalArg()
+		return "ok", nil
+	})
+
+	_, err := s.Query(`pos(status=done)`)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != "" {
+		t.Errorf("PositionalArg() = %q, want empty", got)
+	}
+}
+
+func TestMutationContext_RequireArg_Named(t *testing.T) {
+	s := newTestSchema()
+	s.SetLoader(func() ([]*testItem, error) { return testData(), nil })
+
+	var gotStatus string
+	var gotErr error
+	s.Mutation("req", func(ctx MutationContext[*testItem]) (any, error) {
+		gotStatus, gotErr = ctx.RequireArg("status")
+		return "ok", nil
+	})
+
+	_, _ = s.Query(`req(status=done)`)
+	if gotErr != nil {
+		t.Fatalf("RequireArg(status) error: %v", gotErr)
+	}
+	if gotStatus != "done" {
+		t.Errorf("RequireArg(status) = %q, want done", gotStatus)
+	}
+}
+
+func TestMutationContext_RequireArg_Missing(t *testing.T) {
+	s := newTestSchema()
+	s.SetLoader(func() ([]*testItem, error) { return testData(), nil })
+
+	var gotErr error
+	s.Mutation("req", func(ctx MutationContext[*testItem]) (any, error) {
+		_, gotErr = ctx.RequireArg("status")
+		return "ok", nil
+	})
+
+	_, _ = s.Query(`req()`)
+	if gotErr == nil {
+		t.Fatal("RequireArg(status) should return error when missing")
+	}
+	if !strings.Contains(gotErr.Error(), "status") {
+		t.Errorf("error should mention 'status', got: %v", gotErr)
+	}
+}
+
+func TestMutationContext_RequireArg_PositionalNotChecked(t *testing.T) {
+	// RequireArg only checks ArgMap, not positional args.
+	s := newTestSchema()
+	s.SetLoader(func() ([]*testItem, error) { return testData(), nil })
+
+	var gotErr error
+	s.Mutation("req", func(ctx MutationContext[*testItem]) (any, error) {
+		_, gotErr = ctx.RequireArg("id")
+		return "ok", nil
+	})
+
+	// T1 is positional, not key=value. RequireArg should NOT find it.
+	_, _ = s.Query(`req(T1)`)
+	if gotErr == nil {
+		t.Fatal("RequireArg(id) should return error for positional-only arg")
+	}
+}
+
+func TestMutationContext_ArgDefault(t *testing.T) {
+	s := newTestSchema()
+	s.SetLoader(func() ([]*testItem, error) { return testData(), nil })
+
+	var gotStatus, gotPriority string
+	s.Mutation("def", func(ctx MutationContext[*testItem]) (any, error) {
+		gotStatus = ctx.ArgDefault("status", "todo")
+		gotPriority = ctx.ArgDefault("priority", "medium")
+		return "ok", nil
+	})
+
+	_, _ = s.Query(`def(status=done)`)
+	if gotStatus != "done" {
+		t.Errorf("ArgDefault(status) = %q, want done", gotStatus)
+	}
+	if gotPriority != "medium" {
+		t.Errorf("ArgDefault(priority) = %q, want medium (default)", gotPriority)
+	}
+}
+
 // --- validateMutationArgs unit tests ---
 
 func TestValidateMutationArgs_RequiredPresent(t *testing.T) {

@@ -379,19 +379,13 @@ func opSummary(ctx agentquery.OperationContext[Task]) (any, error) {
 // mutCreate returns a handler that creates a new task in the store.
 func mutCreate(store *taskStore) agentquery.MutationHandler[Task] {
 	return func(ctx agentquery.MutationContext[Task]) (any, error) {
-		title := ctx.ArgMap["title"]
-		if title == "" {
-			return nil, &agentquery.Error{Code: agentquery.ErrValidation, Message: "title is required"}
+		title, err := ctx.RequireArg("title")
+		if err != nil {
+			return nil, &agentquery.Error{Code: agentquery.ErrValidation, Message: err.Error()}
 		}
 
-		status := ctx.ArgMap["status"]
-		if status == "" {
-			status = "todo"
-		}
-		priority := ctx.ArgMap["priority"]
-		if priority == "" {
-			priority = "medium"
-		}
+		status := ctx.ArgDefault("status", "todo")
+		priority := ctx.ArgDefault("priority", "medium")
 
 		if ctx.DryRun {
 			return map[string]any{
@@ -427,10 +421,10 @@ func mutCreate(store *taskStore) agentquery.MutationHandler[Task] {
 // mutUpdate returns a handler that updates an existing task by ID.
 func mutUpdate(store *taskStore) agentquery.MutationHandler[Task] {
 	return func(ctx agentquery.MutationContext[Task]) (any, error) {
-		if len(ctx.Args) == 0 {
+		targetID := ctx.PositionalArg()
+		if targetID == "" {
 			return nil, &agentquery.Error{Code: agentquery.ErrValidation, Message: "update requires a task ID"}
 		}
-		targetID := ctx.Args[0].Value
 
 		if ctx.DryRun {
 			// Preview: show what fields would change.
@@ -478,10 +472,10 @@ func mutUpdate(store *taskStore) agentquery.MutationHandler[Task] {
 // mutDelete returns a handler that removes a task by ID.
 func mutDelete(store *taskStore) agentquery.MutationHandler[Task] {
 	return func(ctx agentquery.MutationContext[Task]) (any, error) {
-		if len(ctx.Args) == 0 {
+		targetID := ctx.PositionalArg()
+		if targetID == "" {
 			return nil, &agentquery.Error{Code: agentquery.ErrValidation, Message: "delete requires a task ID"}
 		}
-		targetID := ctx.Args[0].Value
 
 		if ctx.DryRun {
 			// Preview: verify the task exists and show what would be deleted.

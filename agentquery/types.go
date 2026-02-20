@@ -1,5 +1,7 @@
 package agentquery
 
+import "fmt"
+
 // OutputMode controls how query and search results are serialized.
 // HumanReadable (default) produces standard JSON.
 // LLMReadable produces a compact tabular format optimized for LLM token efficiency.
@@ -122,6 +124,34 @@ type MutationContext[T any] struct {
 	ArgMap     map[string]string // key=value args as map (convenience)
 	Items      func() ([]T, error) // lazy item loader (for lookups/validation)
 	DryRun     bool              // true when dry_run=true was passed
+}
+
+// PositionalArg returns the value of the first positional (keyless) argument,
+// or empty string if none exists. Use for mutations where the first arg is an ID.
+func (ctx MutationContext[T]) PositionalArg() string {
+	for _, arg := range ctx.Args {
+		if arg.Key == "" {
+			return arg.Value
+		}
+	}
+	return ""
+}
+
+// RequireArg returns the named argument value from ArgMap, or an error if missing/empty.
+// For positional args, use PositionalArg() instead.
+func (ctx MutationContext[T]) RequireArg(name string) (string, error) {
+	if v, ok := ctx.ArgMap[name]; ok && v != "" {
+		return v, nil
+	}
+	return "", fmt.Errorf("required parameter %q is missing", name)
+}
+
+// ArgDefault returns the named argument value, or defaultValue if missing/empty.
+func (ctx MutationContext[T]) ArgDefault(name, defaultValue string) string {
+	if v, ok := ctx.ArgMap[name]; ok && v != "" {
+		return v
+	}
+	return defaultValue
 }
 
 // MutationResult wraps a mutation's outcome for consistent response shape.

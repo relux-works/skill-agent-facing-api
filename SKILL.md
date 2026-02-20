@@ -13,7 +13,7 @@ triggers:
 
 # Agent-Facing API Pattern
 
-A design pattern for building CLI tools that AI agents query efficiently. Two read layers — structured DSL and full-text grep — plus CLI commands for writes.
+A design pattern for building CLI tools that AI agents use efficiently. Three layers — structured DSL for reads, scoped grep for full-text search, DSL mutations for writes — all through one CLI binary.
 
 ---
 
@@ -32,9 +32,9 @@ A design pattern for building CLI tools that AI agents query efficiently. Two re
 ┌─────────────────────────────────────────────┐
 │                Agent Context                │
 │                                             │
-│  Structured read ──► DSL  (compact JSON)    │
-│  Text search     ──► Grep (scoped ripgrep)  │
-│  Write/mutate    ──► CLI  (regular commands) │
+│  Structured read ──► q   (query DSL)        │
+│  Text search     ──► grep (scoped ripgrep)  │
+│  Write/mutate    ──► m   (mutation DSL)      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -50,9 +50,9 @@ See [references/comparison-example.md](references/comparison-example.md) for a r
 
 ---
 
-## Layer 1: Mini-Query DSL
+## Layer 1: Query DSL (Reads)
 
-The primary read interface for agents. A single CLI subcommand that accepts a compact query string and returns structured JSON.
+The primary read interface for agents. A single `q` subcommand that accepts a compact query string and returns structured JSON.
 
 ### Design Principles
 
@@ -244,26 +244,28 @@ Compare to CLI text output for the same data: 1.5-5x more tokens (ANSI codes, fo
 
 ---
 
-## Layer 2: Scoped Grep
+## Layer 2: Full-Text Search
 
 Full-text search across the data store. For when the agent needs to find content by text pattern rather than by structured fields.
 
+The library provides a `SearchProvider` interface — consumers implement search however they want (filesystem walk, database FTS, external search service). A built-in `FileSystemSearchProvider` handles the common case of searching `.md` files in a directory.
+
 ### Design Principles
 
-1. **Scoped to the data directory** — don't search the whole filesystem
+1. **Scoped to the data source** — don't search the whole filesystem
 2. **Regex support** — agents build patterns dynamically
 3. **File filter** — narrow search to specific file types (`--file progress.md`)
 4. **Case-insensitive flag** — `-i`
 5. **Context lines** — `-C N` for surrounding context
-6. **Compact output** — `file:line:content` format (like ripgrep)
+6. **Pluggable backend** — implement `SearchProvider` interface for custom search
 
 ### Implementation Checklist
 
-- [ ] Subcommand: `mytool grep <pattern>` (or `mytool search`)
-- [ ] Scope: only search within the tool's data directory
-- [ ] Flags: `--file <glob>`, `-i`, `-C <N>`
-- [ ] Output: `relative/path:line_number:matched_line`
-- [ ] No JSON needed — grep output is inherently line-oriented
+- [ ] Implement `SearchProvider` interface or use built-in `FileSystemSearchProvider`
+- [ ] Subcommand: `mytool grep <pattern>` (auto-wired by `cobraext.AddCommands`)
+- [ ] Scope: only search within the tool's data source
+- [ ] Flags: `--file <glob>`, `-i`, `-C <N>`, `--format`
+- [ ] Support both JSON and compact output (grouped-by-file text)
 
 ### When to Use Grep (vs DSL)
 
@@ -283,17 +285,106 @@ Grep output scales with matches. A narrow search (specific term + file filter) i
 
 ---
 
-## Layer 3: CLI Commands (Writes)
+## Layer 3: Mutations (Writes)
 
-All mutations stay as regular CLI commands. No DSL needed for writes — they're infrequent and the confirmation output is small.
+Writes use the same DSL grammar as reads, accessed through a separate `m` subcommand with safety flags:
 
 ```bash
-mytool create item --name "something" --description "..."
-mytool update ITEM-42 --status done
-mytool link ITEM-42 --blocked-by ITEM-41
+# Create
+mytool m 'create(title="Fix bug", status=todo)' --format json
+
+# Update (positional ID + named params)
+mytool m 'update(item-1, status=done)' --format json
+
+# Delete (destructive — requires --confirm)
+mytool m 'delete(item-1)' --format json --confirm
+
+# Preview without applying (dry run)
+mytool m 'delete(item-1)' --format json --dry-run
+
+# Batch mutations
+mytool m 'update(item-1, status=done); update(item-2, status=done)' --format json
 ```
 
-Write commands return human-readable confirmation (~100 tokens). This is fine — writes are rare compared to reads.
+### Safety Flags
+
+- `--confirm` — required for mutations marked `Destructive: true` in metadata
+- `--dry-run` — injects `dry_run=true`; handler returns a preview without applying changes
+- Non-destructive mutations need neither flag
+
+### Mutation Registration
+
+Mutations are registered via `Mutation()` or `MutationWithMetadata()`. Metadata provides parameter definitions, examples, and safety annotations for schema introspection:
+
+```go
+schema.MutationWithMetadata("update", handler, agentquery.MutationMetadata{
+    Description: "Update item fields by ID",
+    Parameters: []agentquery.ParameterDef{
+        {Name: "id", Type: "string", Required: true, Description: "Item ID (positional)"},
+        {Name: "status", Type: "string", Enum: []string{"todo", "in-progress", "done"}},
+    },
+    Destructive: false,
+    Idempotent:  true,
+    Examples:    []string{`update(item-1, status=done)`},
+})
+```
+
+### MutationContext Convenience Methods
+
+Handlers receive `MutationContext` with built-in helpers to reduce boilerplate:
+
+```go
+func myHandler(ctx agentquery.MutationContext[Item]) (any, error) {
+    // First positional (keyless) arg — e.g. "item-1" from "update(item-1, ...)"
+    id := ctx.PositionalArg()
+
+    // Named arg with error if missing/empty
+    status, err := ctx.RequireArg("status")
+
+    // Named arg with default value
+    priority := ctx.ArgDefault("priority", "medium")
+
+    // Full arg map and dry-run flag also available
+    _ = ctx.ArgMap["custom_field"]
+    _ = ctx.DryRun
+}
+```
+
+### Mutation Validation (Two Layers)
+
+1. **Framework (Layer 1)** — validates required params and enum constraints from `MutationMetadata` before calling the handler. Automatic, no code needed.
+2. **Domain (Layer 2)** — business logic validation inside the handler itself (e.g., "cannot delete item with children").
+
+### Schema Introspection with Mutations
+
+`schema()` output includes separate `mutations` and `mutationMetadata` sections alongside read operations:
+
+```json
+{
+  "operations": ["count", "get", "list", "schema", "summary"],
+  "mutations": ["create", "delete", "update"],
+  "mutationMetadata": {
+    "delete": {
+      "description": "Delete an item by ID",
+      "destructive": true,
+      "idempotent": true,
+      "parameters": [{"name": "id", "type": "string", "required": true}]
+    }
+  }
+}
+```
+
+Agents clearly see the read/write boundary.
+
+### Implementation Checklist (Mutations)
+
+- [ ] Register mutations with metadata (description, parameters, examples, destructive/idempotent flags)
+- [ ] Use `ctx.PositionalArg()` for ID-based mutations
+- [ ] Use `ctx.RequireArg()` / `ctx.ArgDefault()` to reduce boilerplate
+- [ ] Handle `ctx.DryRun` — return preview without side effects
+- [ ] Mark destructive mutations (`Destructive: true`) — CLI enforces `--confirm`
+- [ ] Error responses as `MutationResult{Ok: false, Errors: [...]}`
+- [ ] Use `cobraext.AddCommands()` to auto-wire `q`, `grep`, and `m` subcommands
 
 ---
 
@@ -301,9 +392,9 @@ Write commands return human-readable confirmation (~100 tokens). This is fine �
 
 ```
 Need data from the tool?
-  Structured query (status, filter, lookup)?  ──► DSL
+  Structured query (status, filter, lookup)?  ──► DSL (q subcommand)
   Text search across content?                 ──► Grep
-  Mutation (create, update, delete)?          ──► CLI command
+  Mutation (create, update, delete)?          ──► DSL (m subcommand)
   Human reading the output?                   ──► CLI command (text + colors)
 ```
 
@@ -328,36 +419,30 @@ Need data from the tool?
 ### Recommended Stack
 
 - **Language:** Go (single binary, fast startup, good for CLI tools)
-- **CLI framework:** Cobra (standard Go CLI library)
-- **DSL parser:** Hand-written recursive descent (queries are simple, no need for parser generators)
-- **Field selection:** Shared package used by DSL (and MCP if you ever add one)
-- **Grep:** Shell out to `grep -rn` or implement with Go's `regexp` + `filepath.Walk`
+- **Library:** `agentquery` (this repo — generic Schema[T] with fields, operations, mutations, search)
+- **CLI framework:** Cobra (standard Go CLI library), with `cobraext.AddCommands()` auto-wiring
+- **DSL parser:** Built into `agentquery` — hand-written recursive descent
+- **Field selection:** Built into `agentquery` — `FieldSelector[T]` with presets, lazy evaluation
+- **Search:** Implement `SearchProvider` interface or use built-in filesystem search
 
 ### Architecture
 
+With `agentquery`, the architecture is simpler — the library handles parsing, field projection, validation, and serialization:
+
 ```
 cmd/
-├── root.go          # Main CLI entry
-├── query.go         # DSL subcommand: parses query string, dispatches to operations
-├── grep.go          # Grep subcommand: scoped regex search
-├── create.go        # Write: create elements
-├── update.go        # Write: update elements
-└── ...
+├── root.go          # Main CLI entry + cobraext.AddCommands(root, schema)
+└── ...              # Any additional CLI-specific commands
 
 internal/
 ├── domain/          # Core data model
-├── fields/          # Field selection & projection (shared between DSL and any future MCP)
-│   ├── selector.go  # Field whitelist, preset definitions
-│   └── project.go   # Apply projection to domain objects
-├── query/           # DSL parser & executor
-│   ├── parser.go    # Tokenizer + recursive descent
-│   ├── ops.go       # Operation handlers (get, list, summary, etc.)
-│   └── batch.go     # Semicolon splitting, multi-query execution
-└── search/          # Grep implementation
-    └── grep.go      # Scoped regex search
+└── query/           # Schema wiring
+    ├── schema.go    # agentquery.NewSchema[T](), register fields/presets/operations/mutations
+    ├── operations.go # Read operation handlers (get, list, summary, etc.)
+    └── mutations.go  # Write mutation handlers (create, update, delete, etc.)
 ```
 
-Key: `internal/fields/` is the shared package. If you later add MCP, it imports the same field selection logic — guaranteeing identical output.
+Key: `agentquery.Schema[T]` is the single source of truth for fields, presets, operations, and mutations. If you add MCP later, it uses the same Schema — identical output guaranteed.
 
 ### Parser Tips
 

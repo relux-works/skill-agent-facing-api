@@ -225,9 +225,9 @@ func isIdentStart(ch byte) bool {
 }
 
 // isIdentChar checks if a byte can appear in an identifier (after the first character).
-// Permissive: letters, digits, underscore, hyphen.
+// Permissive: letters, digits, underscore, hyphen, dot, slash.
 func isIdentChar(ch byte) bool {
-	return isIdentStart(ch) || ch == '-'
+	return isIdentStart(ch) || ch == '-' || ch == '.' || ch == '/'
 }
 
 // --- Recursive Descent Parser ---

@@ -155,6 +155,33 @@ func TestParse(t *testing.T) {
 			}}},
 		},
 		{
+			name:  "identifier with dots (filename)",
+			input: "set(name=test.md)",
+			want: &Query{Statements: []Statement{{
+				Operation: "set",
+				Args:      []Arg{{Key: "name", Value: "test.md", Pos: Pos{Offset: 4, Line: 1, Column: 5}}},
+				Pos:       Pos{Offset: 0, Line: 1, Column: 1},
+			}}},
+		},
+		{
+			name:  "identifier with multiple dots (version)",
+			input: "set(version=v1.2.3)",
+			want: &Query{Statements: []Statement{{
+				Operation: "set",
+				Args:      []Arg{{Key: "version", Value: "v1.2.3", Pos: Pos{Offset: 4, Line: 1, Column: 5}}},
+				Pos:       Pos{Offset: 0, Line: 1, Column: 1},
+			}}},
+		},
+		{
+			name:  "identifier with slashes (path)",
+			input: "set(path=src/main/file.go)",
+			want: &Query{Statements: []Statement{{
+				Operation: "set",
+				Args:      []Arg{{Key: "path", Value: "src/main/file.go", Pos: Pos{Offset: 4, Line: 1, Column: 5}}},
+				Pos:       Pos{Offset: 0, Line: 1, Column: 1},
+			}}},
+		},
+		{
 			name:  "trailing semicolons ignored",
 			input: "get(T1);",
 			want: &Query{Statements: []Statement{{

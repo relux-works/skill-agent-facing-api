@@ -95,7 +95,7 @@ mytool m 'create(title="Fix bug", status=todo)' --format json
 # Update (positional ID)
 mytool m 'update(item-1, status=done)' --format json
 
-# Delete (destructive — requires --confirm)
+# Delete (destructive, requires --confirm)
 mytool m 'delete(item-1)' --format json --confirm
 
 # Dry run (preview without applying)

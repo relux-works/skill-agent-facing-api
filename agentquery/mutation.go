@@ -57,12 +57,12 @@ func (s *Schema[T]) wrapMutation(name string, handler MutationHandler[T]) Operat
 		}
 
 		mctx := MutationContext[T]{
-			Mutation:   name,
-			Statement:  ctx.Statement,
-			Args:       ctx.Statement.Args,
-			ArgMap:     argMap,
-			Items:      ctx.Items,
-			DryRun:     dryRun,
+			Mutation:  name,
+			Statement: ctx.Statement,
+			Args:      ctx.Statement.Args,
+			ArgMap:    argMap,
+			Items:     ctx.Items,
+			DryRun:    dryRun,
 		}
 
 		// Framework-level validation from metadata (if registered).
@@ -84,24 +84,56 @@ func (s *Schema[T]) wrapMutation(name string, handler MutationHandler[T]) Operat
 	}
 }
 
-// validateMutationArgs checks required params and enum constraints from metadata.
+// validateMutationArgs checks argument names, positional shape, required params,
+// and enum constraints from metadata.
 // Returns nil if all checks pass. This is structural (Layer 1) validation;
 // domain (Layer 2) validation belongs in the handler.
 func validateMutationArgs(argMap map[string]string, args []Arg, params []ParameterDef) []MutationError {
 	var errs []MutationError
+	parameterByName := make(map[string]ParameterDef, len(params))
+	for _, parameter := range params {
+		parameterByName[parameter.Name] = parameter
+	}
+
+	positionalValues := make(map[string]string)
+	positionalIndex := 0
+	for _, arg := range args {
+		if arg.Key != "" {
+			if arg.Key == "dry_run" {
+				continue
+			}
+			if _, ok := parameterByName[arg.Key]; !ok {
+				errs = append(errs, MutationError{
+					Field:   arg.Key,
+					Message: fmt.Sprintf("unknown argument %q", arg.Key),
+					Code:    ErrUnknownArgument,
+				})
+			}
+			continue
+		}
+
+		if positionalIndex >= len(params) {
+			errs = append(errs, unexpectedPositionalError(arg, positionalIndex))
+			positionalIndex++
+			continue
+		}
+		parameter := params[positionalIndex]
+		positionalIndex++
+		if _, named := argMap[parameter.Name]; named {
+			errs = append(errs, MutationError{
+				Field:   parameter.Name,
+				Message: fmt.Sprintf("unexpected positional argument %q: parameter %q is already provided by name", arg.Value, parameter.Name),
+				Code:    ErrUnexpectedArgument,
+			})
+			continue
+		}
+		positionalValues[parameter.Name] = arg.Value
+	}
+
 	for _, p := range params {
 		if p.Required {
 			if _, ok := argMap[p.Name]; !ok {
-				// Check positional args — a positional arg might satisfy
-				// a required parameter if it's the first one (e.g. ID).
-				found := false
-				for _, a := range args {
-					if a.Key == "" && a.Value != "" {
-						found = true
-						break
-					}
-				}
-				if !found {
+				if positionalValues[p.Name] == "" {
 					errs = append(errs, MutationError{
 						Field:   p.Name,
 						Message: fmt.Sprintf("required parameter %q is missing", p.Name),
@@ -132,4 +164,12 @@ func validateMutationArgs(argMap map[string]string, args []Arg, params []Paramet
 		}
 	}
 	return errs
+}
+
+func unexpectedPositionalError(arg Arg, index int) MutationError {
+	return MutationError{
+		Field:   fmt.Sprintf("$%d", index+1),
+		Message: fmt.Sprintf("unexpected positional argument %q", arg.Value),
+		Code:    ErrUnexpectedArgument,
+	}
 }

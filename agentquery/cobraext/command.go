@@ -117,19 +117,22 @@ func MutateCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
 				return err
 			}
 
-			input := args[0]
+			ast, err := schema.Parse(args[0])
+			if err != nil {
+				return err
+			}
 
-			// If --dry-run, inject dry_run=true into the mutation string.
+			// If --dry-run, inject dry_run=true into the parsed statements.
 			if dryRun {
-				input = injectDryRun(input)
+				injectDryRunAST(ast)
 			}
 
 			// If not --confirm and not --dry-run, check destructive mutations.
-			if !confirm && !dryRun && needsConfirm(schema, args[0]) {
+			if !confirm && !dryRun && needsConfirmAST(schema, ast) {
 				return fmt.Errorf("destructive mutation requires --confirm flag (or use --dry-run to preview)")
 			}
 
-			data, err := schema.QueryJSONWithMode(input, mode)
+			data, err := schema.QueryJSONASTWithMode(ast, mode)
 			if err != nil {
 				return err
 			}
@@ -149,58 +152,43 @@ func MutateCommand[T any](schema *agentquery.Schema[T]) *cobra.Command {
 // injectDryRun injects dry_run=true into each statement of a mutation string.
 // For batched mutations separated by ";", it injects into each statement.
 func injectDryRun(input string) string {
-	parts := strings.Split(input, ";")
-	for i, part := range parts {
-		parts[i] = injectDryRunSingle(strings.TrimSpace(part))
+	ast, err := agentquery.Parse(input, nil)
+	if err != nil {
+		return input
 	}
-	return strings.Join(parts, "; ")
+	injectDryRunAST(ast)
+	return agentquery.Render(ast)
 }
 
-// injectDryRunSingle injects dry_run=true into a single mutation statement.
-// Examples:
-//
-//	"create(title=\"X\")" → "create(title=\"X\", dry_run=true)"
-//	"delete(task-1)"      → "delete(task-1, dry_run=true)"
-//	"operation()"         → "operation(dry_run=true)"
-func injectDryRunSingle(s string) string {
-	// Find the last ')' in the statement.
-	idx := strings.LastIndex(s, ")")
-	if idx < 0 {
-		return s
+func injectDryRunAST(ast *agentquery.Query) {
+	for i := range ast.Statements {
+		found := false
+		for j := range ast.Statements[i].Args {
+			if ast.Statements[i].Args[j].Key == "dry_run" {
+				ast.Statements[i].Args[j].Value = "true"
+				found = true
+			}
+		}
+		if !found {
+			ast.Statements[i].Args = append(ast.Statements[i].Args, agentquery.Arg{Key: "dry_run", Value: "true"})
+		}
 	}
-
-	// Find the matching '(' to check if args are empty.
-	openIdx := strings.Index(s, "(")
-	if openIdx < 0 {
-		return s
-	}
-
-	inner := strings.TrimSpace(s[openIdx+1 : idx])
-	if inner == "" {
-		return s[:openIdx+1] + "dry_run=true" + s[idx:]
-	}
-	return s[:idx] + ", dry_run=true" + s[idx:]
 }
 
 // needsConfirm checks whether any mutation in the input requires --confirm.
 // Returns true if any statement references a destructive mutation.
 func needsConfirm[T any](schema *agentquery.Schema[T], input string) bool {
-	for _, part := range strings.Split(input, ";") {
-		name := extractOperationName(strings.TrimSpace(part))
-		if name != "" && schema.IsMutationDestructive(name) {
+	ast, err := agentquery.Parse(input, nil)
+	return err == nil && needsConfirmAST(schema, ast)
+}
+
+func needsConfirmAST[T any](schema *agentquery.Schema[T], ast *agentquery.Query) bool {
+	for _, statement := range ast.Statements {
+		if schema.IsMutationDestructive(statement.Operation) {
 			return true
 		}
 	}
 	return false
-}
-
-// extractOperationName returns the operation name (first identifier before "(") from a statement.
-func extractOperationName(s string) string {
-	idx := strings.Index(s, "(")
-	if idx <= 0 {
-		return ""
-	}
-	return strings.TrimSpace(s[:idx])
 }
 
 // AddCommands adds the "q" and "grep" commands as subcommands of parent.

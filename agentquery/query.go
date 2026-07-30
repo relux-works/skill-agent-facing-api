@@ -3,6 +3,7 @@ package agentquery
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 )
 
 // Query parses and executes the input query string against the schema.
@@ -12,11 +13,32 @@ import (
 // Per-statement errors do not abort the batch — remaining statements
 // continue executing.
 func (s *Schema[T]) Query(input string) (any, error) {
-	q, err := Parse(input, s.parserConfig())
+	q, err := s.Parse(input)
 	if err != nil {
 		return nil, err
 	}
+	return s.QueryAST(q)
+}
 
+// Parse parses input with this schema's operation and field validation.
+func (s *Schema[T]) Parse(input string) (*Query, error) {
+	return Parse(input, s.parserConfig())
+}
+
+// QueryAST executes an already parsed query without parsing the DSL again.
+// Callers that need to inspect or transform statements before execution can
+// therefore keep one AST as the source of truth.
+func (s *Schema[T]) QueryAST(q *Query) (any, error) {
+	if q == nil || len(q.Statements) == 0 {
+		return nil, &ParseError{
+			Message: "empty query",
+			Pos:     Pos{Line: 1, Column: 1},
+			Got:     "end of input",
+		}
+	}
+	if err := s.ValidateAST(q); err != nil {
+		return nil, err
+	}
 	results := make([]any, 0, len(q.Statements))
 	for _, stmt := range q.Statements {
 		result, execErr := s.executeStatement(stmt)
@@ -39,6 +61,30 @@ func (s *Schema[T]) Query(input string) (any, error) {
 	return results, nil
 }
 
+// ValidateAST applies the schema's operation and field contract to an AST that
+// may have been parsed permissively before the concrete schema was selected.
+func (s *Schema[T]) ValidateAST(q *Query) error {
+	if q == nil || len(q.Statements) == 0 {
+		return &ParseError{Message: "empty query", Pos: Pos{Line: 1, Column: 1}, Got: "end of input"}
+	}
+	for _, statement := range q.Statements {
+		if _, ok := s.operations[statement.Operation]; !ok {
+			return &ParseError{
+				Message: "unknown operation " + fmt.Sprintf("%q", statement.Operation),
+				Pos:     statement.Pos,
+				Got:     statement.Operation,
+			}
+		}
+		if _, err := s.newSelector(statement.Fields); err != nil {
+			return &ParseError{
+				Message: err.Error(),
+				Pos:     statement.Pos,
+			}
+		}
+	}
+	return nil
+}
+
 // QueryJSON is a convenience method that executes the query and marshals
 // the result to JSON bytes.
 func (s *Schema[T]) QueryJSON(input string) ([]byte, error) {
@@ -49,14 +95,19 @@ func (s *Schema[T]) QueryJSON(input string) ([]byte, error) {
 	return json.Marshal(result)
 }
 
+// QueryJSONAST executes an already parsed query and marshals the result.
+func (s *Schema[T]) QueryJSONAST(q *Query) ([]byte, error) {
+	result, err := s.QueryAST(q)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(result)
+}
+
 // formatLLMReadable formats query results in compact tabular format.
 // For batch queries, each statement result is formatted individually
 // and separated by a blank line.
-func (s *Schema[T]) formatLLMReadable(input string, result any) ([]byte, error) {
-	// Re-parse to extract field order from the query.
-	// This is cheap (no execution) and gives us the explicit field projection.
-	q, _ := Parse(input, s.parserConfig())
-
+func (s *Schema[T]) formatLLMReadableAST(q *Query, result any) ([]byte, error) {
 	// Single statement: format with field order from the first (only) statement.
 	if q != nil && len(q.Statements) == 1 {
 		fieldOrder := s.fieldOrderFromStatement(q.Statements[0])

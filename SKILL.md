@@ -309,7 +309,7 @@ mytool m 'update(item-1, status=done); update(item-2, status=done)' --format jso
 ### Safety Flags
 
 - `--confirm` — required for mutations marked `Destructive: true` in metadata
-- `--dry-run` — injects `dry_run=true`; handler returns a preview without applying changes
+- `--dry-run` — injects `dry_run=true` into parsed AST statements; quoted semicolons remain payload text
 - Non-destructive mutations need neither flag
 
 ### Mutation Registration
@@ -352,7 +352,7 @@ func myHandler(ctx agentquery.MutationContext[Item]) (any, error) {
 
 ### Mutation Validation (Two Layers)
 
-1. **Framework (Layer 1)** — validates required params and enum constraints from `MutationMetadata` before calling the handler. Automatic, no code needed.
+1. **Framework (Layer 1)** — rejects unknown named arguments and unexpected positional fragments, then validates required params and enum constraints from `MutationMetadata` before calling the handler. Errors identify the argument with stable codes such as `UNKNOWN_ARGUMENT` and `UNEXPECTED_ARGUMENT`.
 2. **Domain (Layer 2)** — business logic validation inside the handler itself (e.g., "cannot delete item with children").
 
 ### Schema Introspection with Mutations
@@ -443,6 +443,12 @@ internal/
 ```
 
 Key: `agentquery.Schema[T]` is the single source of truth for fields, presets, operations, and mutations. If you add MCP later, it uses the same Schema — identical output guaranteed.
+
+Call `Schema.Parse()` when a transport needs to inspect or transform a request,
+then execute that same AST with `QueryAST()`, `QueryJSONAST()`, or
+`QueryJSONASTWithMode()`. Use `agentquery.Render()` only when the AST must cross
+a text transport. Confirm guards and dry-run rewriting must inspect AST
+statements, never split raw input on semicolons or commas.
 
 ### Parser Tips
 

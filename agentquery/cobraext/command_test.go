@@ -553,7 +553,7 @@ func TestAddCommands_WithoutMutations(t *testing.T) {
 
 func TestInjectDryRun_EmptyArgs(t *testing.T) {
 	got := injectDryRun("create()")
-	want := "create(dry_run=true)"
+	want := `create(dry_run="true")`
 	if got != want {
 		t.Errorf("injectDryRun(\"create()\") = %q, want %q", got, want)
 	}
@@ -561,7 +561,7 @@ func TestInjectDryRun_EmptyArgs(t *testing.T) {
 
 func TestInjectDryRun_WithArgs(t *testing.T) {
 	got := injectDryRun(`create(title="X")`)
-	want := `create(title="X", dry_run=true)`
+	want := `create(title="X", dry_run="true")`
 	if got != want {
 		t.Errorf("injectDryRun = %q, want %q", got, want)
 	}
@@ -569,7 +569,7 @@ func TestInjectDryRun_WithArgs(t *testing.T) {
 
 func TestInjectDryRun_PositionalArg(t *testing.T) {
 	got := injectDryRun("delete(task-1)")
-	want := "delete(task-1, dry_run=true)"
+	want := `delete("task-1", dry_run="true")`
 	if got != want {
 		t.Errorf("injectDryRun = %q, want %q", got, want)
 	}
@@ -577,7 +577,7 @@ func TestInjectDryRun_PositionalArg(t *testing.T) {
 
 func TestInjectDryRun_Batch(t *testing.T) {
 	got := injectDryRun(`create(title="A"); delete(task-1)`)
-	want := `create(title="A", dry_run=true); delete(task-1, dry_run=true)`
+	want := `create(title="A", dry_run="true"); delete("task-1", dry_run="true")`
 	if got != want {
 		t.Errorf("injectDryRun batch = %q, want %q", got, want)
 	}
@@ -603,6 +603,39 @@ func TestNeedsConfirm_BatchWithDestructive(t *testing.T) {
 	s := newMutationTestSchema(t)
 	if !needsConfirm(s, `create(title="X"); delete(T1)`) {
 		t.Error("needsConfirm should return true if ANY mutation in batch is destructive")
+	}
+}
+
+func TestMutateCommand_DryRunQuotedSemicolon(t *testing.T) {
+	s := newMutationTestSchema(t)
+	cmd := MutateCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{`create(title="must not; persist")`, "--format", "json", "--dry-run"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+
+	var mr agentquery.MutationResult
+	if err := json.Unmarshal(buf.Bytes(), &mr); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	result := mr.Result.(map[string]any)
+	if result["dry_run"] != true || result["title"] != "must not; persist" {
+		t.Fatalf("quoted-semicolon dry-run result = %#v", result)
+	}
+}
+
+func TestMutateCommand_ConfirmIgnoresQuotedDestructiveText(t *testing.T) {
+	s := newMutationTestSchema(t)
+	cmd := MutateCommand(s)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetArgs([]string{`create(title="literal; delete(T1)")`, "--format", "json"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("quoted text caused confirm false positive: %v", err)
 	}
 }
 

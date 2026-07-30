@@ -104,7 +104,13 @@ mytool m 'delete(item-1)' --format json --dry-run
 
 **Safety flags:**
 - `--confirm` — required for mutations marked `Destructive: true`
-- `--dry-run` — injects `dry_run=true` into the mutation; handler returns a preview
+- `--dry-run` — injects `dry_run=true` into parsed AST statements; quoted separators remain payload text
+- Schema validation rejects unknown named arguments and unexpected positional fragments with typed mutation errors before handlers run.
+
+For transports that inspect a request before execution, parse once with
+`Schema.Parse()` and execute the same AST through `QueryAST()` or
+`QueryJSONASTWithMode()`. `Render()` provides canonical DSL text when an AST
+must be forwarded to another process or service.
 
 **MutationContext convenience methods** reduce handler boilerplate:
 

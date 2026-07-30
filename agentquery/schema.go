@@ -11,20 +11,20 @@ import (
 // All fields, presets, operations, and defaults are registered on the Schema
 // before the first query.
 type Schema[T any] struct {
-	fields             map[string]FieldAccessor[T]    // registered field accessors
-	fieldOrder         []string                       // field names in registration order
-	presets            map[string][]string            // named field bundles
-	defaultFields      []string                       // fields used when no projection specified
-	operations         map[string]OperationHandler[T] // registered operation handlers
-	operationMetadata  map[string]OperationMetadata   // optional metadata for operations
-	loader             func() ([]T, error)            // lazy data loader
-	searchProvider     SearchProvider                 // pluggable search backend
-	filters            map[string]func(T) string      // filterable field string accessors
-	filterOrder        []string                       // filterable field names in registration order
-	sortFields         map[string]SortComparator[T]   // registered sort comparators
-	sortFieldNames     []string                       // sort field names in registration order
-	mutations          map[string]MutationHandler[T]  // registered mutation handlers
-	mutationMetadata   map[string]MutationMetadata    // optional metadata for mutations
+	fields            map[string]FieldAccessor[T]    // registered field accessors
+	fieldOrder        []string                       // field names in registration order
+	presets           map[string][]string            // named field bundles
+	defaultFields     []string                       // fields used when no projection specified
+	operations        map[string]OperationHandler[T] // registered operation handlers
+	operationMetadata map[string]OperationMetadata   // optional metadata for operations
+	loader            func() ([]T, error)            // lazy data loader
+	searchProvider    SearchProvider                 // pluggable search backend
+	filters           map[string]func(T) string      // filterable field string accessors
+	filterOrder       []string                       // filterable field names in registration order
+	sortFields        map[string]SortComparator[T]   // registered sort comparators
+	sortFieldNames    []string                       // sort field names in registration order
+	mutations         map[string]MutationHandler[T]  // registered mutation handlers
+	mutationMetadata  map[string]MutationMetadata    // optional metadata for mutations
 }
 
 // schemaConfig holds configuration set via functional options.
@@ -212,12 +212,22 @@ func (s *Schema[T]) SearchJSONWithMode(pattern string, opts SearchOptions, mode 
 // QueryJSONWithMode executes a query and serializes with the specified output mode,
 // overriding the schema's default mode.
 func (s *Schema[T]) QueryJSONWithMode(input string, mode OutputMode) ([]byte, error) {
-	result, err := s.Query(input)
+	q, err := s.Parse(input)
+	if err != nil {
+		return nil, err
+	}
+	return s.QueryJSONASTWithMode(q, mode)
+}
+
+// QueryJSONASTWithMode executes an already parsed query and serializes it with
+// the specified output mode without reparsing for execution or field ordering.
+func (s *Schema[T]) QueryJSONASTWithMode(q *Query, mode OutputMode) ([]byte, error) {
+	result, err := s.QueryAST(q)
 	if err != nil {
 		return nil, err
 	}
 	if mode == LLMReadable {
-		return s.formatLLMReadable(input, result)
+		return s.formatLLMReadableAST(q, result)
 	}
 	return json.Marshal(result)
 }

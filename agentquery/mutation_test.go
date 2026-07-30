@@ -820,3 +820,51 @@ func TestValidateMutationArgs_MultipleErrors(t *testing.T) {
 		t.Error("expected INVALID_VALUE error")
 	}
 }
+
+func TestMutationValidationRejectsUnknownNamedArgument(t *testing.T) {
+	called := false
+	s := NewSchema[struct{}]()
+	s.MutationWithMetadata("update", func(ctx MutationContext[struct{}]) (any, error) {
+		called = true
+		return nil, nil
+	}, MutationMetadata{Parameters: []ParameterDef{
+		{Name: "id", Type: "string", Required: true},
+		{Name: "status", Type: "string", Required: true},
+	}})
+
+	result, err := s.Query("update(TASK-1, status=done, bogus=dropped)")
+	if err != nil {
+		t.Fatalf("Query: %v", err)
+	}
+	mr := result.(MutationResult)
+	if mr.Ok || called {
+		t.Fatalf("unknown argument reached handler: result=%#v called=%v", mr, called)
+	}
+	if len(mr.Errors) != 1 || mr.Errors[0].Code != ErrUnknownArgument || mr.Errors[0].Field != "bogus" {
+		t.Fatalf("unknown argument error = %#v", mr.Errors)
+	}
+}
+
+func TestMutationValidationRejectsUnexpectedPositionalFragment(t *testing.T) {
+	called := false
+	s := NewSchema[struct{}]()
+	s.MutationWithMetadata("set_notes", func(ctx MutationContext[struct{}]) (any, error) {
+		called = true
+		return nil, nil
+	}, MutationMetadata{Parameters: []ParameterDef{
+		{Name: "id", Type: "string", Required: true},
+		{Name: "text", Type: "string", Required: true},
+	}})
+
+	result, err := s.Query("set_notes(TASK-1, text=hello, world)")
+	if err != nil {
+		t.Fatalf("Query: %v", err)
+	}
+	mr := result.(MutationResult)
+	if mr.Ok || called {
+		t.Fatalf("unexpected positional fragment reached handler: result=%#v called=%v", mr, called)
+	}
+	if len(mr.Errors) != 1 || mr.Errors[0].Code != ErrUnexpectedArgument {
+		t.Fatalf("unexpected positional error = %#v", mr.Errors)
+	}
+}

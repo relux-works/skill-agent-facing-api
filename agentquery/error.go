@@ -10,11 +10,13 @@ const (
 	ErrInternal   = "INTERNAL_ERROR"
 
 	// Mutation-specific error codes.
-	ErrConflict     = "CONFLICT"           // duplicate key, unique constraint violation
-	ErrForbidden    = "FORBIDDEN"          // authorization failure
-	ErrPrecondition = "PRECONDITION_FAILED" // optimistic concurrency check failed
-	ErrRequired     = "REQUIRED"           // required parameter missing
-	ErrInvalidValue = "INVALID_VALUE"      // enum/type mismatch
+	ErrConflict           = "CONFLICT"            // duplicate key, unique constraint violation
+	ErrForbidden          = "FORBIDDEN"           // authorization failure
+	ErrPrecondition       = "PRECONDITION_FAILED" // optimistic concurrency check failed
+	ErrRequired           = "REQUIRED"            // required parameter missing
+	ErrInvalidValue       = "INVALID_VALUE"       // enum/type mismatch
+	ErrUnknownArgument    = "UNKNOWN_ARGUMENT"    // named argument is absent from mutation metadata
+	ErrUnexpectedArgument = "UNEXPECTED_ARGUMENT" // positional argument cannot map to mutation metadata
 )
 
 // ParseError represents a syntax or semantic error found during parsing.

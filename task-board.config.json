@@ -26,6 +26,17 @@
         "claude",
         "codex"
       ]
+    },
+    "worktree_isolation": {
+      "integration_base_branch": "main",
+      "validation": {
+        "commands": [
+          "cd agentquery && go vet ./...",
+          "cd agentquery && test -z \"$(gofmt -l .)\"",
+          "cd agentquery && go test ./... -count=1",
+          "cd example && go build ./... && go vet ./..."
+        ]
+      }
     }
   }
 }

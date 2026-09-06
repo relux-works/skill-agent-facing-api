@@ -34,7 +34,7 @@
           "cd agentquery && go vet ./...",
           "cd agentquery && test -z \"$(gofmt -l .)\"",
           "cd agentquery && go test ./... -count=1",
-          "cd example && go build ./... && go vet ./..."
+          "cd example && go vet ./..."
         ]
       }
     }

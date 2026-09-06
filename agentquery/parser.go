@@ -1,6 +1,7 @@
 package agentquery
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 )
@@ -30,7 +31,7 @@ func Parse(input string, config *ParserConfig) (*Query, error) {
 	tok := newTokenizer(input)
 	tokens, err := tok.tokenize()
 	if err != nil {
-		return nil, err
+		return nil, attributeTokenizeError(err, tok, config)
 	}
 	p := &parser{
 		tokens: tokens,
@@ -38,6 +39,53 @@ func Parse(input string, config *ParserConfig) (*Query, error) {
 		tzer:   tok,
 	}
 	return p.parseQuery()
+}
+
+// attributeTokenizeError names the statement a tokenizer error happened in,
+// using the tokens emitted before the failure. When the parser is configured
+// with Operations and that statement names an unknown one, the unknown-
+// operation verdict wins: an agent that wrote `items(status in [a])` needs to
+// hear that `items` does not exist before it hears that `[` is not a token.
+func attributeTokenizeError(err error, tok *tokenizer, config *ParserConfig) error {
+	pe, ok := err.(*ParseError)
+	if !ok {
+		return err
+	}
+	var (
+		name    string
+		namePos Pos
+		found   bool
+		atStart = true
+	)
+	for _, t := range tok.tokens {
+		if t.pos > pe.Pos.Offset {
+			break
+		}
+		switch {
+		case t.typ == tokenSemicolon:
+			atStart = true
+		case atStart && t.typ == tokenIdent:
+			name, namePos, found = t.val, tok.posAt(t.pos), true
+			atStart = false
+		default:
+			atStart = false
+		}
+	}
+	if !found {
+		return pe
+	}
+	if config != nil && config.Operations != nil && !config.Operations[name] {
+		known := make([]string, 0, len(config.Operations))
+		for op, accepted := range config.Operations {
+			if accepted {
+				known = append(known, op)
+			}
+		}
+		return NewUnknownOperationError(name, namePos, known)
+	}
+	pe.Operation = name
+	pe.OperationPos = &Pos{Offset: namePos.Offset, Line: namePos.Line, Column: namePos.Column}
+	return pe
 }
 
 // --- Token types ---
@@ -181,14 +229,9 @@ func (t *tokenizer) readString() error {
 		if ch == '\\' && t.pos+1 < len(t.input) {
 			// Backslash escaping
 			next := t.input[t.pos+1]
-			switch next {
-			case '"', '\\':
-				result = append(result, next)
-			case 'n':
-				result = append(result, '\n')
-			case 't':
-				result = append(result, '\t')
-			default:
+			if decoded, ok := stringEscapes[next]; ok {
+				result = append(result, decoded)
+			} else {
 				result = append(result, '\\', next)
 			}
 			t.pos += 2
@@ -347,16 +390,35 @@ func (p *parser) parseStatement() (*Statement, error) {
 	// Validate operation name if config restricts them
 	if p.config != nil && p.config.Operations != nil {
 		if !p.config.Operations[opTok.val] {
-			pos := p.tzer.posAt(opTok.pos)
-			return nil, &ParseError{
-				Message: fmt.Sprintf("unknown operation %q", opTok.val),
-				Pos:     pos,
-				Got:     opTok.val,
+			known := make([]string, 0, len(p.config.Operations))
+			for name, accepted := range p.config.Operations {
+				if accepted {
+					known = append(known, name)
+				}
 			}
+			return nil, NewUnknownOperationError(opTok.val, p.tzer.posAt(opTok.pos), known)
 		}
 	}
 
 	stmtPos := p.tzer.posAt(opTok.pos)
+	body, err := p.parseStatementBody(opTok.val, stmtPos)
+	if err != nil {
+		// Every error inside the statement body is attributed to its operation
+		// so a permissive host can decide whether the operation itself was the
+		// problem before it reports an argument position.
+		var parseErr *ParseError
+		if errors.As(err, &parseErr) && parseErr.Operation == "" {
+			parseErr.Operation = opTok.val
+			parseErr.OperationPos = &Pos{Offset: stmtPos.Offset, Line: stmtPos.Line, Column: stmtPos.Column}
+		}
+		return nil, err
+	}
+	return body, nil
+}
+
+// parseStatementBody parses everything after the operation name:
+// '(' args ')' ['{' fields '}'].
+func (p *parser) parseStatementBody(operation string, stmtPos Pos) (*Statement, error) {
 
 	// Expect '('
 	if _, err := p.expect(tokenLParen); err != nil {
@@ -388,7 +450,7 @@ func (p *parser) parseStatement() (*Statement, error) {
 	}
 
 	return &Statement{
-		Operation: opTok.val,
+		Operation: operation,
 		Args:      args,
 		Fields:    fields,
 		Pos:       stmtPos,

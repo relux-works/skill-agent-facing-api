@@ -42,17 +42,12 @@ func renderStatement(statement Statement) string {
 func writeQuotedValue(b *strings.Builder, value string) {
 	b.WriteByte('"')
 	for i := 0; i < len(value); i++ {
-		switch value[i] {
-		case '\\', '"':
+		if encoded, ok := stringUnescapes[value[i]]; ok {
 			b.WriteByte('\\')
-			b.WriteByte(value[i])
-		case '\n':
-			b.WriteString(`\n`)
-		case '\t':
-			b.WriteString(`\t`)
-		default:
-			b.WriteByte(value[i])
+			b.WriteByte(encoded)
+			continue
 		}
+		b.WriteByte(value[i])
 	}
 	b.WriteByte('"')
 }

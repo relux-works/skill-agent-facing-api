@@ -3,7 +3,6 @@ package agentquery
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 // Query parses and executes the input query string against the schema.
@@ -69,11 +68,7 @@ func (s *Schema[T]) ValidateAST(q *Query) error {
 	}
 	for _, statement := range q.Statements {
 		if _, ok := s.operations[statement.Operation]; !ok {
-			return &ParseError{
-				Message: "unknown operation " + fmt.Sprintf("%q", statement.Operation),
-				Pos:     statement.Pos,
-				Got:     statement.Operation,
-			}
+			return NewUnknownOperationError(statement.Operation, statement.Pos, s.operationNames())
 		}
 		if _, err := s.newSelector(statement.Fields); err != nil {
 			return &ParseError{

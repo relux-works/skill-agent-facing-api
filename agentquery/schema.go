@@ -266,6 +266,7 @@ func (s *Schema[T]) introspect() map[string]any {
 		"fields":        fields,
 		"presets":       presets,
 		"defaultFields": defaults,
+		"grammar":       DSLGrammar(),
 	}
 
 	// Include operationMetadata only if at least one operation has metadata registered
@@ -314,6 +315,16 @@ func (s *Schema[T]) introspect() map[string]any {
 	}
 
 	return result
+}
+
+// operationNames returns every registered operation name, mutations included,
+// in no particular order.
+func (s *Schema[T]) operationNames() []string {
+	names := make([]string, 0, len(s.operations))
+	for name := range s.operations {
+		names = append(names, name)
+	}
+	return names
 }
 
 // parserConfig builds a ParserConfig from the schema's registered operations and fields.

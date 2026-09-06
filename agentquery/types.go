@@ -57,12 +57,12 @@ type Pos struct {
 // valid parameters without external docs.
 type ParameterDef struct {
 	Name        string   `json:"name"`
-	Type        string   `json:"type"`                  // "string", "int", "bool"
+	Type        string   `json:"type"` // "string", "int", "bool"
 	Optional    bool     `json:"optional"`
 	Default     any      `json:"default,omitempty"`
 	Description string   `json:"description,omitempty"`
-	Enum        []string `json:"enum,omitempty"`         // allowed values (validated by framework for mutations)
-	Required    bool     `json:"required,omitempty"`     // explicit required flag (for mutation parameters)
+	Enum        []string `json:"enum,omitempty"`     // allowed values (validated by framework for mutations)
+	Required    bool     `json:"required,omitempty"` // explicit required flag (for mutation parameters)
 }
 
 // OperationMetadata provides human/agent-readable documentation for an operation.
@@ -88,7 +88,7 @@ type SortSpec struct {
 type SortDirection int
 
 const (
-	Asc  SortDirection = iota // default
+	Asc SortDirection = iota // default
 	Desc
 )
 
@@ -118,12 +118,12 @@ type MutationHandler[T any] func(ctx MutationContext[T]) (any, error)
 // Unlike OperationContext, it does not include Selector (no field projection)
 // but adds ArgMap for convenient key-value access and DryRun flag.
 type MutationContext[T any] struct {
-	Mutation   string            // mutation operation name
-	Statement  Statement         // full parsed statement (for positional args)
-	Args       []Arg             // parsed arguments
-	ArgMap     map[string]string // key=value args as map (convenience)
-	Items      func() ([]T, error) // lazy item loader (for lookups/validation)
-	DryRun     bool              // true when dry_run=true was passed
+	Mutation  string              // mutation operation name
+	Statement Statement           // full parsed statement (for positional args)
+	Args      []Arg               // parsed arguments
+	ArgMap    map[string]string   // key=value args as map (convenience)
+	Items     func() ([]T, error) // lazy item loader (for lookups/validation)
+	DryRun    bool                // true when dry_run=true was passed
 }
 
 // PositionalArg returns the value of the first positional (keyless) argument,

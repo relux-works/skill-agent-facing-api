@@ -82,10 +82,10 @@ func DSLGrammar() Grammar {
 	return Grammar{
 		Statement:  "OPERATION(ARGUMENTS) { PROJECTION }; the projection block is optional",
 		Batch:      "STATEMENT; STATEMENT — statements separated by ';', results keep source order",
-		Arguments:  "comma-separated key=value pairs, or bare positional values; no operators, no lists: key=value only (not key in [a,b], not key!=value)",
+		Arguments:  "comma-separated arguments: the first bare positional value is the element/identifier argument; remaining arguments use key=value; no operators or lists (not key in [a,b], not key!=value)",
 		Values:     "a bare identifier (letters, digits, '_', '-', '.', '/'), an int, a bool (true|false), or a \"double-quoted string\"; quote any value containing spaces, commas or parentheses",
 		Escapes:    escapes,
-		Projection: "{ field preset ... } — space-separated field names and preset names inside braces; omitted means the default fields",
+		Projection: "field projection: { field preset ... } — space-separated field names and preset names inside braces; omitted means the default fields",
 		Tokens:     tokens,
 		Examples:   examples,
 	}
@@ -95,6 +95,6 @@ func DSLGrammar() Grammar {
 // schema(operation=NAME) answer where the full block would drown the signature.
 func GrammarSyntax() string {
 	g := DSLGrammar()
-	return fmt.Sprintf("OPERATION(key=value, key=\"quoted string\") { field preset }; statements separated by ';'; arguments are comma-separated key=value only (no operators or lists); string escapes: %s",
+	return fmt.Sprintf("OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: %s",
 		strings.Join(g.Escapes, " "))
 }

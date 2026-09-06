@@ -1,0 +1,715 @@
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+new file mode 100644
+index 0000000..72bd060
+--- /dev/null
++++ b/LOGBOOK.md
+@@ -0,0 +1,19 @@
++# Flight Logbook
++
++> Institutional memory. Concise, factual, high-signal.
++> Newest entries first. One block per insight.
++
++## 2026-09-06
++
++### 1520 — gofmt drift already on main at 656ad0a
++- FINDING: `gofmt -l agentquery` reported `agentquery/types.go` at base commit `656ad0a`, before any of this task's changes. Comment-alignment drift in `ParameterDef`, `SortDirection` and `MutationContext`.
++- SCOPE: `agentquery/types.go:57`, `agentquery/types.go:88`, `agentquery/types.go:118`.
++- DECISION: fixed with `gofmt -w` under TASK-260906-1auqyl so the module's gofmt gate is green. Whitespace only; the exported API is unchanged.
++- NOTE: no formatting gate runs in CI (no CI exists), which is how the drift reached main.
++
++### 1515 — DSL error-guidance delta adopted into agentquery
++- MILESTONE: the BUG-260903-12avv2 delta (7 files, 469/37) applied onto `656ad0a` and validated in this repo. Adds `Grammar`/`DSLGrammar()`/`GrammarSyntax()` to `schema()`, and `NewUnknownOperationError`/`IsUnknownOperation`/`ParseError.Operation`/`OperationPos`.
++- FINDING: the exported board patch is byte-identical to the producer worktree state, so the resource and the worktree were one delta, not two variants.
++- DECISION: unknown operation outranks a positional argument error. `attributeTokenizeError` (`agentquery/parser.go:49`) walks the tokens emitted before a tokenizer failure so `items(status in [a,b])` reports the unknown operation and the known-operation list instead of `unexpected character "["`.
++- FINDING: the grammar text is derived from the tokenizer token table and escape map rather than restated, so it cannot drift. Pinned by `agentquery/grammar_test.go`; 9 narrowing mutants, 9 killed, no survivors.
++- STATUS: handed to review; landing on main and tagging `agentquery/v1.6.0` is the orchestrator's step.
+diff --git a/agentquery/error.go b/agentquery/error.go
+index bf0fb62..284ad7b 100644
+--- a/agentquery/error.go
++++ b/agentquery/error.go
+@@ -1,6 +1,10 @@
+ package agentquery
+ 
+-import "fmt"
++import (
++	"fmt"
++	"sort"
++	"strings"
++)
+ 
+ // Error code constants for categorizing errors.
+ const (
+@@ -25,19 +29,72 @@ type ParseError struct {
+ 	Pos      Pos    `json:"pos"`
+ 	Got      string `json:"got,omitempty"`
+ 	Expected string `json:"expected,omitempty"`
++
++	// Operation names the statement being parsed when the error arose, and
++	// OperationPos where that statement starts. They are set for every error
++	// raised inside a statement body so a host that parsed permissively can
++	// still attribute an argument or projection failure to its operation.
++	Operation    string `json:"operation,omitempty"`
++	OperationPos *Pos   `json:"operationPos,omitempty"`
++
++	// KnownOperations lists the operation names the schema accepts, sorted.
++	// Set on unknown-operation errors so a host can render the recovery path
++	// as data, not only as prose.
++	KnownOperations []string `json:"knownOperations,omitempty"`
++
++	// Hint is the recovery pointer rendered after the message, for example
++	// the schema() introspection call that lists the accepted contract.
++	Hint string `json:"hint,omitempty"`
++}
++
++// UnknownOperationHint is the recovery pointer attached to every
++// unknown-operation error: the introspection calls that expose the contract.
++const UnknownOperationHint = "see schema() for the contract and schema(operation=NAME) for one signature"
++
++// NewUnknownOperationError builds the canonical unknown-operation error: the
++// name is reported as unknown, the sorted known names are carried as data and
++// the schema() pointer is attached. Hosts that parse permissively and only
++// later select a schema use it so their verdict reads the same as the parser's.
++func NewUnknownOperationError(name string, pos Pos, known []string) *ParseError {
++	sorted := make([]string, len(known))
++	copy(sorted, known)
++	sort.Strings(sorted)
++	return &ParseError{
++		Message:         fmt.Sprintf("unknown operation %q", name),
++		Pos:             pos,
++		Got:             name,
++		Operation:       name,
++		OperationPos:    &Pos{Offset: pos.Offset, Line: pos.Line, Column: pos.Column},
++		KnownOperations: sorted,
++		Hint:            UnknownOperationHint,
++	}
++}
++
++// IsUnknownOperation reports whether the error is an unknown-operation verdict.
++func (e *ParseError) IsUnknownOperation() bool {
++	return e != nil && e.KnownOperations != nil && strings.HasPrefix(e.Message, "unknown operation ")
+ }
+ 
+ // Error implements the error interface for ParseError.
+ func (e *ParseError) Error() string {
+-	if e.Got != "" && e.Expected != "" {
+-		return fmt.Sprintf("parse error at %d:%d: %s (got %q, expected %s)",
++	var base string
++	switch {
++	case e.Got != "" && e.Expected != "":
++		base = fmt.Sprintf("parse error at %d:%d: %s (got %q, expected %s)",
+ 			e.Pos.Line, e.Pos.Column, e.Message, e.Got, e.Expected)
+-	}
+-	if e.Got != "" {
+-		return fmt.Sprintf("parse error at %d:%d: %s (got %q)",
++	case e.Got != "":
++		base = fmt.Sprintf("parse error at %d:%d: %s (got %q)",
+ 			e.Pos.Line, e.Pos.Column, e.Message, e.Got)
++	default:
++		base = fmt.Sprintf("parse error at %d:%d: %s", e.Pos.Line, e.Pos.Column, e.Message)
++	}
++	if len(e.KnownOperations) > 0 {
++		base += "; known operations: " + strings.Join(e.KnownOperations, ", ")
++	}
++	if e.Hint != "" {
++		base += "; " + e.Hint
+ 	}
+-	return fmt.Sprintf("parse error at %d:%d: %s", e.Pos.Line, e.Pos.Column, e.Message)
++	return base
+ }
+ 
+ // Error represents a structured error with a code, message, and optional details.
+diff --git a/agentquery/grammar.go b/agentquery/grammar.go
+new file mode 100644
+index 0000000..198adcc
+--- /dev/null
++++ b/agentquery/grammar.go
+@@ -0,0 +1,100 @@
++package agentquery
++
++import (
++	"fmt"
++	"sort"
++	"strings"
++)
++
++// stringEscapes maps the character after a backslash inside a quoted string
++// to the byte it decodes to. The tokenizer reads through it, Render writes
++// through its inverse and DSLGrammar publishes it, so the three cannot drift.
++var stringEscapes = map[byte]byte{
++	'"':  '"',
++	'\\': '\\',
++	'n':  '\n',
++	't':  '\t',
++}
++
++// stringUnescapes is the inverse of stringEscapes: decoded byte to the
++// character Render writes after the backslash.
++var stringUnescapes = func() map[byte]byte {
++	inverse := make(map[byte]byte, len(stringEscapes))
++	for encoded, decoded := range stringEscapes {
++		inverse[decoded] = encoded
++	}
++	return inverse
++}()
++
++// Grammar is the statement grammar of the query DSL as the parser accepts it.
++// It is surfaced by the built-in schema() operation so an agent can discover
++// the syntax through the facing API itself instead of a document outside it.
++type Grammar struct {
++	// Statement is the shape of one statement.
++	Statement string `json:"statement"`
++	// Batch describes how several statements are combined in one input.
++	Batch string `json:"batch"`
++	// Arguments describes the argument list between the parentheses.
++	Arguments string `json:"arguments"`
++	// Values describes the value forms an argument accepts.
++	Values string `json:"values"`
++	// Escapes lists the backslash escapes accepted inside a quoted string.
++	Escapes []string `json:"escapes"`
++	// Projection describes the optional field projection block.
++	Projection string `json:"projection"`
++	// Tokens lists every token the tokenizer produces, in tokenizer order.
++	Tokens []string `json:"tokens"`
++	// Examples are statement forms the parser accepts, one per form.
++	Examples []string `json:"examples"`
++}
++
++// grammarExamples enumerates one accepted input per statement form. The drift
++// test parses every one of them, so a form the parser stops accepting fails
++// the build instead of staying advertised.
++var grammarExamples = []string{
++	`op()`,
++	`op(key=value)`,
++	`op(key=value, other=42, flag=true)`,
++	`op(key="quoted value with \" \\ \n \t")`,
++	`op(positional)`,
++	`op() { field preset }`,
++	`op(key=value) { field }; other()`,
++}
++
++// DSLGrammar returns the statement grammar derived from the parser: the token
++// set comes from the tokenizer's token table and the escape list from the
++// table the tokenizer decodes through.
++func DSLGrammar() Grammar {
++	tokens := make([]string, 0, int(tokenEOF)+1)
++	for typ := tokenIdent; typ <= tokenEOF; typ++ {
++		tokens = append(tokens, tokenTypeName(typ))
++	}
++
++	escapes := make([]string, 0, len(stringEscapes))
++	for encoded := range stringEscapes {
++		escapes = append(escapes, `\`+string(encoded))
++	}
++	sort.Strings(escapes)
++
++	examples := make([]string, len(grammarExamples))
++	copy(examples, grammarExamples)
++
++	return Grammar{
++		Statement:  "OPERATION(ARGUMENTS) { PROJECTION }; the projection block is optional",
++		Batch:      "STATEMENT; STATEMENT — statements separated by ';', results keep source order",
++		Arguments:  "comma-separated key=value pairs, or bare positional values; no operators, no lists: key=value only (not key in [a,b], not key!=value)",
++		Values:     "a bare identifier (letters, digits, '_', '-', '.', '/'), an int, a bool (true|false), or a \"double-quoted string\"; quote any value containing spaces, commas or parentheses",
++		Escapes:    escapes,
++		Projection: "{ field preset ... } — space-separated field names and preset names inside braces; omitted means the default fields",
++		Tokens:     tokens,
++		Examples:   examples,
++	}
++}
++
++// GrammarSyntax is the one-line form of the grammar, meant for a scoped
++// schema(operation=NAME) answer where the full block would drown the signature.
++func GrammarSyntax() string {
++	g := DSLGrammar()
++	return fmt.Sprintf("OPERATION(key=value, key=\"quoted string\") { field preset }; statements separated by ';'; arguments are comma-separated key=value only (no operators or lists); string escapes: %s",
++		strings.Join(g.Escapes, " "))
++}
+diff --git a/agentquery/grammar_test.go b/agentquery/grammar_test.go
+new file mode 100644
+index 0000000..3a7135b
+--- /dev/null
++++ b/agentquery/grammar_test.go
+@@ -0,0 +1,212 @@
++package agentquery
++
++import (
++	"encoding/json"
++	"strings"
++	"testing"
++)
++
++// TestGrammarExamplesParse pins the grammar to the parser: every advertised
++// statement form must parse, and every token the tokenizer produces must be
++// named by the grammar. A form the parser drops, or a token added to the
++// tokenizer without a grammar entry, fails here.
++func TestGrammarExamplesParse(t *testing.T) {
++	g := DSLGrammar()
++	if len(g.Examples) == 0 {
++		t.Fatal("grammar advertises no examples")
++	}
++	for _, example := range g.Examples {
++		if _, err := Parse(example, nil); err != nil {
++			t.Errorf("grammar example %q does not parse: %v", example, err)
++		}
++	}
++
++	// Every token type the tokenizer knows is named exactly once.
++	for typ := tokenIdent; typ <= tokenEOF; typ++ {
++		name := tokenTypeName(typ)
++		if name == "unknown" {
++			t.Fatalf("token type %d has no name", typ)
++		}
++		count := 0
++		for _, listed := range g.Tokens {
++			if listed == name {
++				count++
++			}
++		}
++		if count != 1 {
++			t.Errorf("token %s listed %d times in grammar, want 1", name, count)
++		}
++	}
++	if len(g.Tokens) != int(tokenEOF)+1 {
++		t.Errorf("grammar lists %d tokens, tokenizer has %d", len(g.Tokens), int(tokenEOF)+1)
++	}
++
++	// Every punctuation token the grammar names is one the tokenizer emits.
++	for _, name := range g.Tokens {
++		if !strings.HasPrefix(name, "'") {
++			continue
++		}
++		literal := strings.Trim(name, "'")
++		tokens, err := newTokenizer(literal).tokenize()
++		if err != nil || len(tokens) != 2 || tokens[0].val != literal {
++			t.Errorf("grammar token %s is not tokenized as a single token: tokens=%v err=%v", name, tokens, err)
++		}
++	}
++}
++
++// TestGrammarEscapesRoundTrip pins the escape list to the tokenizer and the
++// renderer: each advertised escape decodes through the tokenizer, and a
++// value containing the decoded byte renders back through the same escape.
++func TestGrammarEscapesRoundTrip(t *testing.T) {
++	g := DSLGrammar()
++	if len(g.Escapes) != len(stringEscapes) {
++		t.Fatalf("grammar lists %d escapes, tokenizer accepts %d", len(g.Escapes), len(stringEscapes))
++	}
++	for _, escape := range g.Escapes {
++		if len(escape) != 2 || escape[0] != '\\' {
++			t.Fatalf("escape %q is not a backslash sequence", escape)
++		}
++		decoded, ok := stringEscapes[escape[1]]
++		if !ok {
++			t.Errorf("grammar escape %q is not one the tokenizer decodes", escape)
++			continue
++		}
++		q, err := Parse(`op(v="a`+escape+`b")`, nil)
++		if err != nil {
++			t.Errorf("escape %q does not parse: %v", escape, err)
++			continue
++		}
++		got := q.Statements[0].Args[0].Value
++		if got != "a"+string(decoded)+"b" {
++			t.Errorf("escape %q decoded to %q", escape, got)
++		}
++		if rendered := Render(q); !strings.Contains(rendered, escape) {
++			t.Errorf("Render(%q) = %q, want the %q escape", got, rendered, escape)
++		}
++	}
++	// An unlisted escape is preserved verbatim, so listing it would be a lie.
++	q, err := Parse(`op(v="a\qb")`, nil)
++	if err != nil || q.Statements[0].Args[0].Value != `a\qb` {
++		t.Errorf("unlisted escape should be kept verbatim, got %v %v", q, err)
++	}
++}
++
++// TestSchemaIntrospectionCarriesGrammar is the negative test for the
++// schema() contract: the grammar block must be present and serializable, and
++// the syntax line must name the batch separator and the escapes.
++func TestSchemaIntrospectionCarriesGrammar(t *testing.T) {
++	s := NewSchema[string]()
++	s.Field("id", func(v string) any { return v })
++	raw, err := s.Query("schema()")
++	if err != nil {
++		t.Fatal(err)
++	}
++	result := raw.(map[string]any)
++	grammar, ok := result["grammar"].(Grammar)
++	if !ok {
++		t.Fatalf("schema() grammar = %T, want Grammar", result["grammar"])
++	}
++	if grammar.Statement == "" || grammar.Batch == "" || grammar.Arguments == "" || grammar.Values == "" || grammar.Projection == "" {
++		t.Fatalf("grammar has empty sections: %+v", grammar)
++	}
++	if !strings.Contains(grammar.Arguments, "key=value") || !strings.Contains(grammar.Batch, "';'") {
++		t.Fatalf("grammar does not state argument syntax and batch separator: %+v", grammar)
++	}
++	encoded, err := json.Marshal(result)
++	if err != nil {
++		t.Fatal(err)
++	}
++	for _, key := range []string{`"grammar"`, `"statement"`, `"escapes"`, `"tokens"`, `"examples"`} {
++		if !strings.Contains(string(encoded), key) {
++			t.Errorf("schema() JSON lacks %s", key)
++		}
++	}
++
++	syntax := GrammarSyntax()
++	for _, want := range []string{"key=value", "';'", `\"`, `\\`, `\n`, `\t`, "{ field preset }"} {
++		if !strings.Contains(syntax, want) {
++			t.Errorf("GrammarSyntax() = %q, lacks %q", syntax, want)
++		}
++	}
++}
++
++// TestUnknownOperationWinsOverArgumentPosition is the negative test for the
++// recovery path: an unknown operation must be reported as unknown even when
++// its arguments do not parse, and must carry the known operations and the
++// schema() pointer both as data and in the rendered message.
++func TestUnknownOperationWinsOverArgumentPosition(t *testing.T) {
++	s := NewSchema[string]()
++	s.Operation("list", func(ctx OperationContext[string]) (any, error) { return nil, nil })
++	s.Operation("get", func(ctx OperationContext[string]) (any, error) { return nil, nil })
++
++	for _, input := range []string{
++		"items(status in [a,b]) { id }",
++		"items(status in a) { id }",
++		"items(status=x) { id }",
++		"list(); items(status in [a,b])",
++	} {
++		_, err := s.Parse(input)
++		pe, ok := err.(*ParseError)
++		if !ok {
++			t.Fatalf("%q: error = %T (%v), want *ParseError", input, err, err)
++		}
++		if !pe.IsUnknownOperation() || pe.Message != `unknown operation "items"` {
++			t.Fatalf("%q: verdict = %#v, want unknown operation", input, pe)
++		}
++		wantColumn := strings.Index(input, "items") + 1
++		if pe.Pos.Column != wantColumn || pe.Operation != "items" || pe.OperationPos == nil || pe.OperationPos.Column != wantColumn {
++			t.Fatalf("%q: position = %+v, want the operation at column %d", input, pe, wantColumn)
++		}
++		if strings.Join(pe.KnownOperations, ",") != "get,list,schema" {
++			t.Fatalf("%q: known operations = %v", input, pe.KnownOperations)
++		}
++		msg := pe.Error()
++		if !strings.Contains(msg, "known operations: get, list, schema") || !strings.Contains(msg, "schema(operation=NAME)") {
++			t.Fatalf("%q: message lacks recovery path: %s", input, msg)
++		}
++		if strings.Contains(msg, "expected ')'") || strings.Contains(msg, "unexpected character") {
++			t.Fatalf("%q: regressed to positional error: %s", input, msg)
++		}
++	}
++
++	// ValidateAST reaches the same verdict for a permissively parsed AST.
++	ast, err := Parse("items(status=x) { id }", nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	pe, ok := s.ValidateAST(ast).(*ParseError)
++	if !ok || !pe.IsUnknownOperation() || strings.Join(pe.KnownOperations, ",") != "get,list,schema" || pe.Hint == "" {
++		t.Fatalf("ValidateAST verdict = %#v", pe)
++	}
++}
++
++// TestPermissiveParseAttributesErrorsToOperation pins the field a permissive
++// host relies on: an argument error names the statement it happened in.
++func TestPermissiveParseAttributesErrorsToOperation(t *testing.T) {
++	_, err := Parse("list(ok=1); items(status in [a]) { id }", nil)
++	pe, ok := err.(*ParseError)
++	if !ok {
++		t.Fatalf("error = %T, want *ParseError", err)
++	}
++	if pe.Operation != "items" || pe.OperationPos == nil || pe.OperationPos.Column != 13 {
++		t.Fatalf("attribution = %q at %+v, want items at column 13", pe.Operation, pe.OperationPos)
++	}
++	if pe.KnownOperations != nil || pe.IsUnknownOperation() {
++		t.Fatalf("permissive parse must not claim an unknown operation: %#v", pe)
++	}
++	// A known operation with the same broken arguments keeps its positional
++	// error text, at both the tokenizer and the parser stage.
++	s := NewSchema[string]()
++	s.Operation("list", func(ctx OperationContext[string]) (any, error) { return nil, nil })
++	_, err = s.Parse("list(status in [a]) { id }")
++	if err == nil || !strings.HasPrefix(err.Error(), "parse error at 1:16: unexpected character \"[\" (got \"[\")") {
++		t.Fatalf("known operation tokenizer error changed: %v", err)
++	}
++	_, err = s.Parse("list(status in a) { id }")
++	if err == nil || !strings.HasPrefix(err.Error(), "parse error at 1:13: expected ')' (got \"in\", expected ')')") {
++		t.Fatalf("known operation positional error changed: %v", err)
++	}
++	if pe, ok := err.(*ParseError); !ok || pe.Operation != "list" {
++		t.Fatalf("known operation error is not attributed: %#v", err)
++	}
++}
+diff --git a/agentquery/parser.go b/agentquery/parser.go
+index 4ff7ed8..e621311 100644
+--- a/agentquery/parser.go
++++ b/agentquery/parser.go
+@@ -1,6 +1,7 @@
+ package agentquery
+ 
+ import (
++	"errors"
+ 	"fmt"
+ 	"sort"
+ )
+@@ -30,7 +31,7 @@ func Parse(input string, config *ParserConfig) (*Query, error) {
+ 	tok := newTokenizer(input)
+ 	tokens, err := tok.tokenize()
+ 	if err != nil {
+-		return nil, err
++		return nil, attributeTokenizeError(err, tok, config)
+ 	}
+ 	p := &parser{
+ 		tokens: tokens,
+@@ -40,6 +41,53 @@ func Parse(input string, config *ParserConfig) (*Query, error) {
+ 	return p.parseQuery()
+ }
+ 
++// attributeTokenizeError names the statement a tokenizer error happened in,
++// using the tokens emitted before the failure. When the parser is configured
++// with Operations and that statement names an unknown one, the unknown-
++// operation verdict wins: an agent that wrote `items(status in [a])` needs to
++// hear that `items` does not exist before it hears that `[` is not a token.
++func attributeTokenizeError(err error, tok *tokenizer, config *ParserConfig) error {
++	pe, ok := err.(*ParseError)
++	if !ok {
++		return err
++	}
++	var (
++		name    string
++		namePos Pos
++		found   bool
++		atStart = true
++	)
++	for _, t := range tok.tokens {
++		if t.pos > pe.Pos.Offset {
++			break
++		}
++		switch {
++		case t.typ == tokenSemicolon:
++			atStart = true
++		case atStart && t.typ == tokenIdent:
++			name, namePos, found = t.val, tok.posAt(t.pos), true
++			atStart = false
++		default:
++			atStart = false
++		}
++	}
++	if !found {
++		return pe
++	}
++	if config != nil && config.Operations != nil && !config.Operations[name] {
++		known := make([]string, 0, len(config.Operations))
++		for op, accepted := range config.Operations {
++			if accepted {
++				known = append(known, op)
++			}
++		}
++		return NewUnknownOperationError(name, namePos, known)
++	}
++	pe.Operation = name
++	pe.OperationPos = &Pos{Offset: namePos.Offset, Line: namePos.Line, Column: namePos.Column}
++	return pe
++}
++
+ // --- Token types ---
+ 
+ type tokenType int
+@@ -181,14 +229,9 @@ func (t *tokenizer) readString() error {
+ 		if ch == '\\' && t.pos+1 < len(t.input) {
+ 			// Backslash escaping
+ 			next := t.input[t.pos+1]
+-			switch next {
+-			case '"', '\\':
+-				result = append(result, next)
+-			case 'n':
+-				result = append(result, '\n')
+-			case 't':
+-				result = append(result, '\t')
+-			default:
++			if decoded, ok := stringEscapes[next]; ok {
++				result = append(result, decoded)
++			} else {
+ 				result = append(result, '\\', next)
+ 			}
+ 			t.pos += 2
+@@ -347,16 +390,35 @@ func (p *parser) parseStatement() (*Statement, error) {
+ 	// Validate operation name if config restricts them
+ 	if p.config != nil && p.config.Operations != nil {
+ 		if !p.config.Operations[opTok.val] {
+-			pos := p.tzer.posAt(opTok.pos)
+-			return nil, &ParseError{
+-				Message: fmt.Sprintf("unknown operation %q", opTok.val),
+-				Pos:     pos,
+-				Got:     opTok.val,
++			known := make([]string, 0, len(p.config.Operations))
++			for name, accepted := range p.config.Operations {
++				if accepted {
++					known = append(known, name)
++				}
+ 			}
++			return nil, NewUnknownOperationError(opTok.val, p.tzer.posAt(opTok.pos), known)
+ 		}
+ 	}
+ 
+ 	stmtPos := p.tzer.posAt(opTok.pos)
++	body, err := p.parseStatementBody(opTok.val, stmtPos)
++	if err != nil {
++		// Every error inside the statement body is attributed to its operation
++		// so a permissive host can decide whether the operation itself was the
++		// problem before it reports an argument position.
++		var parseErr *ParseError
++		if errors.As(err, &parseErr) && parseErr.Operation == "" {
++			parseErr.Operation = opTok.val
++			parseErr.OperationPos = &Pos{Offset: stmtPos.Offset, Line: stmtPos.Line, Column: stmtPos.Column}
++		}
++		return nil, err
++	}
++	return body, nil
++}
++
++// parseStatementBody parses everything after the operation name:
++// '(' args ')' ['{' fields '}'].
++func (p *parser) parseStatementBody(operation string, stmtPos Pos) (*Statement, error) {
+ 
+ 	// Expect '('
+ 	if _, err := p.expect(tokenLParen); err != nil {
+@@ -388,7 +450,7 @@ func (p *parser) parseStatement() (*Statement, error) {
+ 	}
+ 
+ 	return &Statement{
+-		Operation: opTok.val,
++		Operation: operation,
+ 		Args:      args,
+ 		Fields:    fields,
+ 		Pos:       stmtPos,
+diff --git a/agentquery/query.go b/agentquery/query.go
+index a02c913..b3c405a 100644
+--- a/agentquery/query.go
++++ b/agentquery/query.go
+@@ -3,7 +3,6 @@ package agentquery
+ import (
+ 	"bytes"
+ 	"encoding/json"
+-	"fmt"
+ )
+ 
+ // Query parses and executes the input query string against the schema.
+@@ -69,11 +68,7 @@ func (s *Schema[T]) ValidateAST(q *Query) error {
+ 	}
+ 	for _, statement := range q.Statements {
+ 		if _, ok := s.operations[statement.Operation]; !ok {
+-			return &ParseError{
+-				Message: "unknown operation " + fmt.Sprintf("%q", statement.Operation),
+-				Pos:     statement.Pos,
+-				Got:     statement.Operation,
+-			}
++			return NewUnknownOperationError(statement.Operation, statement.Pos, s.operationNames())
+ 		}
+ 		if _, err := s.newSelector(statement.Fields); err != nil {
+ 			return &ParseError{
+diff --git a/agentquery/render.go b/agentquery/render.go
+index 41c431e..d5c955e 100644
+--- a/agentquery/render.go
++++ b/agentquery/render.go
+@@ -42,17 +42,12 @@ func renderStatement(statement Statement) string {
+ func writeQuotedValue(b *strings.Builder, value string) {
+ 	b.WriteByte('"')
+ 	for i := 0; i < len(value); i++ {
+-		switch value[i] {
+-		case '\\', '"':
++		if encoded, ok := stringUnescapes[value[i]]; ok {
+ 			b.WriteByte('\\')
+-			b.WriteByte(value[i])
+-		case '\n':
+-			b.WriteString(`\n`)
+-		case '\t':
+-			b.WriteString(`\t`)
+-		default:
+-			b.WriteByte(value[i])
++			b.WriteByte(encoded)
++			continue
+ 		}
++		b.WriteByte(value[i])
+ 	}
+ 	b.WriteByte('"')
+ }
+diff --git a/agentquery/schema.go b/agentquery/schema.go
+index c91707b..b9a4c88 100644
+--- a/agentquery/schema.go
++++ b/agentquery/schema.go
+@@ -266,6 +266,7 @@ func (s *Schema[T]) introspect() map[string]any {
+ 		"fields":        fields,
+ 		"presets":       presets,
+ 		"defaultFields": defaults,
++		"grammar":       DSLGrammar(),
+ 	}
+ 
+ 	// Include operationMetadata only if at least one operation has metadata registered
+@@ -316,6 +317,16 @@ func (s *Schema[T]) introspect() map[string]any {
+ 	return result
+ }
+ 
++// operationNames returns every registered operation name, mutations included,
++// in no particular order.
++func (s *Schema[T]) operationNames() []string {
++	names := make([]string, 0, len(s.operations))
++	for name := range s.operations {
++		names = append(names, name)
++	}
++	return names
++}
++
+ // parserConfig builds a ParserConfig from the schema's registered operations and fields.
+ func (s *Schema[T]) parserConfig() *ParserConfig {
+ 	ops := make(map[string]bool, len(s.operations))
+diff --git a/agentquery/types.go b/agentquery/types.go
+index f7200c9..4fc918c 100644
+--- a/agentquery/types.go
++++ b/agentquery/types.go
+@@ -57,12 +57,12 @@ type Pos struct {
+ // valid parameters without external docs.
+ type ParameterDef struct {
+ 	Name        string   `json:"name"`
+-	Type        string   `json:"type"`                  // "string", "int", "bool"
++	Type        string   `json:"type"` // "string", "int", "bool"
+ 	Optional    bool     `json:"optional"`
+ 	Default     any      `json:"default,omitempty"`
+ 	Description string   `json:"description,omitempty"`
+-	Enum        []string `json:"enum,omitempty"`         // allowed values (validated by framework for mutations)
+-	Required    bool     `json:"required,omitempty"`     // explicit required flag (for mutation parameters)
++	Enum        []string `json:"enum,omitempty"`     // allowed values (validated by framework for mutations)
++	Required    bool     `json:"required,omitempty"` // explicit required flag (for mutation parameters)
+ }
+ 
+ // OperationMetadata provides human/agent-readable documentation for an operation.
+@@ -88,7 +88,7 @@ type SortSpec struct {
+ type SortDirection int
+ 
+ const (
+-	Asc  SortDirection = iota // default
++	Asc SortDirection = iota // default
+ 	Desc
+ )
+ 
+@@ -118,12 +118,12 @@ type MutationHandler[T any] func(ctx MutationContext[T]) (any, error)
+ // Unlike OperationContext, it does not include Selector (no field projection)
+ // but adds ArgMap for convenient key-value access and DryRun flag.
+ type MutationContext[T any] struct {
+-	Mutation   string            // mutation operation name
+-	Statement  Statement         // full parsed statement (for positional args)
+-	Args       []Arg             // parsed arguments
+-	ArgMap     map[string]string // key=value args as map (convenience)
+-	Items      func() ([]T, error) // lazy item loader (for lookups/validation)
+-	DryRun     bool              // true when dry_run=true was passed
++	Mutation  string              // mutation operation name
++	Statement Statement           // full parsed statement (for positional args)
++	Args      []Arg               // parsed arguments
++	ArgMap    map[string]string   // key=value args as map (convenience)
++	Items     func() ([]T, error) // lazy item loader (for lookups/validation)
++	DryRun    bool                // true when dry_run=true was passed
+ }
+ 
+ // PositionalArg returns the value of the first positional (keyless) argument,

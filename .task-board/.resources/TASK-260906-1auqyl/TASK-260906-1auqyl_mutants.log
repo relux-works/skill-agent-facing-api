@@ -1,0 +1,13 @@
+baseline: go test ./... -count=1 exit=0
+
+M1 unknown-op-wins loses batch statements: KILLED by TestPermissiveParseAttributesErrorsToOperation, TestUnknownOperationWinsOverArgumentPosition
+M2 parser-stage attribution skips errors that carry Expected: KILLED by TestPermissiveParseAttributesErrorsToOperation
+M3 ValidateAST reports unknown op without the known list / hint: KILLED by TestUnknownOperationWinsOverArgumentPosition
+M4 unknown-op error drops the schema() recovery pointer: KILLED by TestUnknownOperationWinsOverArgumentPosition
+M4b unknown-op known list is not sorted: KILLED by TestUnknownOperationWinsOverArgumentPosition
+M5 token name ';' preserved, tokenizer stops emitting it: KILLED by TestCountFiltered_InBatchWithGet, TestCount_CompactOutput_InBatch, TestCount_InBatchWithFailure, TestCount_InBatchWithOtherOperations, TestGrammarExamplesParse, TestInjectDryRun_Batch, TestIntegration_BatchMixedResults, TestIntegration_QueryJSON_Batch, TestMutation_BatchMultiple, TestMutation_MixedBatchQueryAndMutation, TestNeedsConfirm_BatchWithDestructive, TestParse, TestPermissiveParseAttributesErrorsToOperation, TestQueryJSONWithMode_LLMReadable_Batch, TestQueryJSONWithMode_LLMReadable_BatchWithError, TestQueryJSON_Batch, TestQuery_BatchMultipleStatements, TestQuery_BatchTwoStatements, TestQuery_BatchWithOneFailure, TestQuery_TableDriven, TestRenderRoundTripsQuotedSeparators, TestSchemaOperation_InBatch, TestTokenizer_LineTracking, TestUnknownOperationWinsOverArgumentPosition
+M6 schema() keeps the grammar key but empties it: KILLED by TestSchemaIntrospectionCarriesGrammar
+M7 escape table decodes \n to 'x' instead of newline: KILLED by TestParse
+M8 renderer stops escaping tab: KILLED by TestGrammarEscapesRoundTrip
+
+no survivors: every mutant killed by at least one named test

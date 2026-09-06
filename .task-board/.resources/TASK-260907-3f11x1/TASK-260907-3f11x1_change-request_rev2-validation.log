@@ -1,0 +1,10 @@
+$ cd agentquery && go vet ./...
+[exit 0]
+$ cd agentquery && test -z "$(gofmt -l .)"
+[exit 0]
+$ cd agentquery && go test ./... -count=1
+ok  	github.com/relux-works/skill-agent-facing-api/agentquery	0.494s
+ok  	github.com/relux-works/skill-agent-facing-api/agentquery/cobraext	0.825s
+[exit 0]
+$ cd example && go vet ./...
+[exit 0]

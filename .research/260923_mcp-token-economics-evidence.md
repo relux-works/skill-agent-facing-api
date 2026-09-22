@@ -1,0 +1,89 @@
+# MCP Token-Economics Evidence Map
+
+**Task:** `TASK-260923-b1kh3e`
+**Decision unblocked:** select the publication to revise and define the admissible MCP comparison claim set for `TASK-260923-hyh12u`.
+**Research contract:** `grammar_frozen: not applicable` — this is an editorial evidence map, not a runtime grammar. Worker-time budget: 45 minutes including verification and packaging. Artifact budget: this one Markdown note (no archive; repository paths, commands, and board-resource digest are the evidence). Serial-prerequisite budget: one. First production slice: `TASK-260923-hyh12u` revises the selected article with one integrated MCP comparison and a bounded conclusion.
+
+## Decision
+
+Revise **[`articles/field-alias-compression-study.md`](../articles/field-alias-compression-study.md)**, and no other document in this slice.
+
+It is the canonical publication source because the root README has a dedicated `Articles` index and links this exact file as the only article ([`README.md:160-166`](../README.md#L160)); it contains the study's abstract, methods, results, discussion, conclusion, and references ([`articles/field-alias-compression-study.md:9-13`](../articles/field-alias-compression-study.md#L9), [`174-305`](../articles/field-alias-compression-study.md#L174)). Git history shows it was introduced as the field-alias research article and has not been revised since (`git log --follow -- articles/field-alias-compression-study.md` → `ba5a6cc`, 2026-02-12).
+
+`references/comparison-example.md` is evidence input, not the publication surface: it calls itself a context-efficiency comparison ([`references/comparison-example.md:1-5`](../references/comparison-example.md#L1)) and README lists it separately as a reference ([`README.md:168-177`](../README.md#L168)). It should be cited, corrected, or bounded by the article; it must not be treated as a reproducible benchmark record.
+
+## Evidence classes
+
+| Label | Meaning in this note |
+| --- | --- |
+| **Measured/reproduced** | A command in the current checkout ran successfully and its result is recorded below. |
+| **Checked-in measurement** | Historical fixture/script/output exists, but this run did not independently reproduce the tokenizer count. |
+| **Estimate/model** | Arithmetic or simulator output whose constants/assumptions were not independently measured in this run. |
+| **Reasoning** | A conditional design conclusion, not a numeric measurement. |
+| **External fact** | A primary-source statement, cited directly. |
+| **Unknown** | Neither code nor a reproducible local command establishes it. Do not turn it into a publication claim. |
+
+## What the current repository establishes
+
+1. **Measured/reproduced — the DSL implements multi-statement batching.** The parser accepts `query (';' query)*` ([`agentquery/parser.go:318-369`](../agentquery/parser.go#L318)); `Schema.QueryAST` executes each statement and returns a result array for multi-statement input ([`agentquery/query.go:30-60`](../agentquery/query.go#L30)); and the executable tests cover three batched statements and compact batched rendering ([`agentquery/query_test.go:276-319`](../agentquery/query_test.go#L276), [`1161-1193`](../agentquery/query_test.go#L1161)). `go test ./...` from `agentquery/` exited **0** (3.910s main package, 3.343s Cobra extension).
+2. **Measured/reproduced — compact list output is schema-once.** `FormatCompact` writes a comma-separated field header once, then iterates rows/selected fields ([`agentquery/format.go:9-62`](../agentquery/format.go#L9)). Field projection returns only requested fields ([`agentquery/selector.go:14-24`](../agentquery/selector.go#L14)) and validates selected fields/presets ([`agentquery/selector.go:53-100`](../agentquery/selector.go#L53)). This supports a structural statement about *this formatter*, not a universal token percentage.
+3. **Checked-in measurement, not reproduced here — alias fixtures and a tokenizer script exist.** `.research/synthetic-payloads/measure.py` reads four fixed payload scales, calls `tiktoken` `cl100k_base`, and computes the compact-full/alias delta ([`.research/synthetic-payloads/measure.py:12-45`](./synthetic-payloads/measure.py#L12), [`98-112`](./synthetic-payloads/measure.py#L98)). The matching payload fixtures are present under `.research/synthetic-payloads/` and the article's result table is traceable to them ([`articles/field-alias-compression-study.md:62-106`](../articles/field-alias-compression-study.md#L62)).
+4. **Expected-red verification — raw-token results are not re-attested in this run.** `python3 -c 'import tiktoken; …'` exited **1** with `ModuleNotFoundError: No module named 'tiktoken'`. The task forbids creating a new benchmark program; no package was installed and no paid model was called. Therefore the 5-token/46%-range values remain *checked-in historical measurements*, not newly measured facts in the revised MCP comparison.
+5. **Estimate/model, internally consistent only — alias session simulator.** Importing `.research/session-simulator/simulate.py` and evaluating its compact cases exited **0**: 16 cases, 4 positive; `(20, K=20)` returns `-5`, `(50, K=50)` returns `+115`. The script hard-codes its 85-token schema roundtrip, 5-token compact alias saving, query mix, and eviction schedule ([`.research/session-simulator/simulate.py:18-66`](./session-simulator/simulate.py#L18), [`104-159`](./session-simulator/simulate.py#L104)). Its `4/16` result is a model result conditional on those inputs, not an MCP measurement.
+
+Verification details and exact exit codes are preserved in `.temp/TASK-260923-b1kh3e/research-verification-01.md` (ignored scratch evidence, not an outcome artifact).
+
+## MCP claim map
+
+The table covers the MCP propositions currently presented in the comparison reference, README, and skill. “Admissible” means safe to publish in the target article without obtaining new benchmark evidence.
+
+| Proposed claim | Current source | Evidence status | Editorial disposition |
+| --- | --- | --- | --- |
+| “The DSL parser/executor can batch `;`-separated statements.” | `agentquery/parser.go:318-369`; `agentquery/query.go:30-60`; green `go test ./...` | **Measured/reproduced** behavior | **Admissible**, explicitly scoped to this Go implementation. |
+| “Compact tabular list output places names in one header rather than repeating JSON keys.” | `agentquery/format.go:37-62` | **Measured/reproduced** implementation behavior | **Admissible** as a structural formatter claim; do not add an unmeasured percentage. |
+| “MCP and DSL return identical JSON because they share `internal/fields`.” | Comparison [`:20`](../references/comparison-example.md#L20), README [`:26`](../README.md#L26), SKILL [`:45-49`](../SKILL.md#L45) | **Unsupported/stale**: no `internal/fields` package or MCP adapter is in this checkout. A Go-source search returned only the forward-looking comment “any future MCP server” in `assets/field-selector.go:4`. | **Do not publish** as current fact. Future-tense architecture intent is allowed only if an adapter actually uses the same `Schema`. |
+| “12 MCP definitions cost ~2,200 tokens per session.” | Comparison [`:26`, `:79-92`](../references/comparison-example.md#L26) | **Unknown**: only a 2026-02 estimate; no saved definitions, host transcript, tokenizer command, MCP server, or fixture. | **Remove numeric claim** from the article. Replace with a host/server/protocol-specific measurement requirement. |
+| “Bash/DSL has zero session overhead because Bash is already supplied.” | Comparison [`:26-28`](../references/comparison-example.md#L26) | **Unknown** across agent hosts; no prompt snapshots or host contract in the repo. | **Do not publish as universal fact.** State it only as an assumed comparison condition when a given host already grants shell access. |
+| “MCP and Bash have the same ~80-token per-call framing.” | Comparison [`:21-22`](../references/comparison-example.md#L21) | **Estimate**, with no tokenizer/model/host trace. | **Do not reuse numerical value.** If retained, label it an old scenario assumption, not evidence. |
+| “MCP input is ~5–10 tokens smaller; break-even is ~293 queries.” | Comparison [`:108-126`](../references/comparison-example.md#L108) | **Derived estimate**, dependent on the unverified 2,200-token and 7.5-token inputs. | **Do not publish.** Formula is valid arithmetic only after per-host inputs are measured. |
+| “MCP has no batching and needs one call per operation; DSL saves 194 tokens per three-item batch.” | Comparison [`:117-128`](../references/comparison-example.md#L117), README [`:23-25`](../README.md#L23), SKILL [`:45-47`](../SKILL.md#L45) | **Partly supported / overbroad.** DSL batching is proven; MCP behavior is not tested here. MCP version/transport behavior varies: the official Ruby SDK notes that the 2025-06-18 protocol removed JSON-RPC batching, while the official TypeScript SDK's current server accepts up to 100 messages in a JSON-RPC batch array. | **Publish only the DSL half.** Say MCP batching/round-trip count is host, protocol, SDK, and server-tool-design dependent; do not assert “no batching” or a fixed 194-token delta. |
+| “MCP never breaks even / is only competitive past ~300 queries.” | Comparison [`:128`, `:186`](../references/comparison-example.md#L128) | **Unsupported conclusion**, derived from unsupported fixed costs and an overbroad batching premise. | **Remove.** Replace with an explicit `unknown without an aligned host/server measurement`. |
+| “MCP is useful for native, long-lived, or already-MCP integrations.” | Comparison [`:167-170`](../references/comparison-example.md#L167) | **Reasoning, not token evidence.** MCP's own primary docs define server tools as model-controlled executable functions, but the repo has no economic comparison for this niche. | **Admissible only as a qualitative conditional.** Do not attach a token win, threshold, or “marginal cost” assertion. |
+
+### Direct primary sources for the protocol correction
+
+- The official [MCP Ruby SDK protocol-version reference](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/) states that version `2025-06-18` removed JSON-RPC batching, while newer versions have different lifecycle behavior. This establishes that batching claims need a version bound.
+- The official [MCP TypeScript SDK request-body reference](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html) documents `MAX_BATCH_SIZE = 100`, an upper bound on messages accepted in one JSON-RPC batch array. This establishes a current SDK capability, **not** a guarantee that a particular agent host will send or expose batches.
+- The official [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index) defines tools as model-controlled executable functions. It supports the interoperability rationale for MCP, not a context-token price claim.
+
+## Important limitations and stale wording
+
+1. The comparison was recorded against an external, path-specific 346-element board ([`references/comparison-example.md:3-5`](../references/comparison-example.md#L3)); the board, commands, MCP definitions, and transcripts are not fixtures in this repository. Its raw table cannot be reproduced here.
+2. The comparison says both transports use `internal/fields`, but this repository instead contains `agentquery` and only a *future MCP server* comment. Treat this as a stale source reference, not a missing line item.
+3. The public README and SKILL repeat the fixed-MCP-overhead, no-batching, and break-even wording ([`README.md:7, 21-28`](../README.md#L7); [`SKILL.md:43-49`](../SKILL.md#L43)). They remain outside the requested article-only slice, but will contradict a bounded article afterward. Track a separate documentation correction; do not silently edit them under this research task.
+4. Existing historical alias measurements are materially better evidenced than the MCP comparison because scripts and fixtures exist, but the local environment lacks `tiktoken`. Do not blur “fixture-backed historical measurement” with “rerun on 2026-09-23.”
+5. The simulator's “typical” eviction behavior is an assumption. It is not evidence about any agent runtime, including Codex or Claude.
+
+## When MCP remains the better choice
+
+MCP remains a reasonable or better interface **when the requirement is interoperability rather than a proven local token minimum**: for example, a remote service must expose model-callable tools to multiple MCP-capable hosts, or an existing MCP deployment/host capability already meets the integration need. It may also provide a domain-level bulk tool, but the cost and capability must be measured for that server/host pair.
+
+This is a design conclusion, not a statement that MCP wins a token comparison. The repository contains no MCP adapter, definitions, prompt snapshot, host trace, or aligned workload that could establish an economic threshold. The article should say so plainly.
+
+## Revision brief for `TASK-260923-hyh12u`
+
+Keep the article's field-alias decision separate from the transport comparison. The writer can apply this without new research:
+
+1. In the optimization landscape ([`articles/field-alias-compression-study.md:21-26`](../articles/field-alias-compression-study.md#L21)), change the batching item from “~80 tokens saved per avoided call” to an implementation fact: `agentquery` supports semicolon-separated batched statements; external-call savings depend on the host/transport. Leave the proven compact/schema-once explanation intact.
+2. After the optimization hierarchy in §5 ([`:253-263`](../articles/field-alias-compression-study.md#L253)), add one small subsection, **“MCP comparison: scoped conclusion.”** It must contain: (a) the proven DSL batching and schema-once facts, (b) the missing MCP adapter/fixture evidence, (c) protocol/SDK-dependent batching and discovery cost, and (d) the interoperability-positive case above.
+3. In §4's batching example ([`:224-239`](../articles/field-alias-compression-study.md#L224)), remove or relabel every 80/165/246/306 total as a historical model calculation unless its exact host framing is supplied. Keep the conclusion limited to alias economics; it is not evidence that DSL globally beats MCP.
+4. In the conclusion ([`:292-312`](../articles/field-alias-compression-study.md#L292)), retain the field-alias NO-GO only to the extent supported by the existing fixture-backed study. Replace “the optimization hierarchy is clear” / universal zero-overhead language with: **“For this formatter, aliases are a one-header optimization; no repository-local MCP benchmark establishes a transport-wide token winner.”**
+5. Link this note and the two official primary protocol references. Do **not** recreate the 346-element benchmark, install packages, call paid models, or add a new MCP implementation in this editorial slice.
+
+## Handoff checks
+
+- Exact article to revise: recorded.
+- MCP claims: every currently repeated claim above has an evidence status and disposition.
+- Measurements, estimates, reasoning, external facts, and unknowns: separated.
+- MCP-positive case, limits, stale claims, and section-level brief: recorded.
+- No new benchmark program, paid model run, or archive: created.

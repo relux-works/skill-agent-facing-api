@@ -163,7 +163,7 @@ Research on agent-facing output optimization:
 
 | Article | Summary |
 |---------|---------|
-| [Field Name Aliases in Schema-Once Output: Do They Save Tokens?](articles/field-alias-compression-study.md) | Three-part empirical study showing that field name abbreviations are architecturally redundant when compact tabular (schema-once) format already eliminates key repetition. Aliases save a fixed 5 tokens regardless of payload size, while schema discovery costs 85 tokens per roundtrip: a net loss in 75% of scenarios. |
+| [Field Name Aliases in Schema-Once Output: Do They Save Tokens?](articles/field-alias-compression-study.md) | Fixture-backed historical measurements show a fixed 5-token alias-header saving at the tested scales. A separate session model is conditional on its hard-coded discovery cost, query mix, and eviction assumptions. The article rejects aliases for this formatter on that bounded evidence; no repository-local MCP benchmark establishes a transport-wide token winner. |
 
 ## References
 

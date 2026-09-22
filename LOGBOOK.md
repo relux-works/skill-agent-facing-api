@@ -3,6 +3,19 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-09-23
+
+### 1205 — Article now separates alias economics from MCP economics
+- FINDING: the revised [field-alias article](articles/field-alias-compression-study.md) labels fixture-backed token counts as historical measurements, session output as a model estimate, and the current formatter/batching behavior as implementation evidence.
+- DECISION: retain the field-alias NO-GO only for this schema-once formatter. State no MCP token winner because the repository has no adapter, tool-definition fixture, prompt snapshot, host trace, or aligned workload.
+- EVIDENCE: `.research/260923_mcp-token-economics-evidence.md`; current `go test ./...` runs passed in `agentquery/` and `example/`; the tokenizer command was expected-red because `tiktoken` is not installed. No package or benchmark fixture was added.
+- CAVEAT: the README article-index summary now carries the same evidence boundary. The broader README overview and SKILL.md retain stale fixed MCP-overhead, no-batching, and break-even claims outside this article-focused slice; correct them in a separate documentation task.
+
+### 1045 — MCP token comparison needs a bounded correction
+- FINDING: `references/comparison-example.md` asserts an `internal/fields`-backed MCP implementation, fixed 2,200-token definition cost, no batching, and a ~293-query break-even; this checkout has no MCP adapter or `internal/fields` package. A Go-source search finds only `assets/field-selector.go:4`, which explicitly describes a future MCP server.
+- DECISION: revise `articles/field-alias-compression-study.md` as the canonical publication source. Keep proven DSL batching/schema-once formatter facts, but mark MCP token economics unknown without an aligned server, host, protocol/version, definitions, and tokenizer transcript.
+- EVIDENCE: `.research/260923_mcp-token-economics-evidence.md`; `go test ./...` from `agentquery/` exited 0. Official MCP SDK documentation shows batching/version behavior is protocol- and SDK-dependent, so the current universal no-batching wording is stale.
+
 ## 2026-09-06
 
 ### 1520 — gofmt drift already on main at 656ad0a

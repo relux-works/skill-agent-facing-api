@@ -1,0 +1,1481 @@
+2026-09-23T12:56:33.021205Z ERROR codex_models_manager::manager: failed to refresh available models: request timed out
+2026-09-23T12:56:33.022872Z ERROR codex_models_manager::manager: failed to refresh available models: request timed out
+OpenAI Codex v0.156.1
+--------
+workdir: /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+model: gpt-5.6-luna
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a0ce56-d7ff-7e31-9265-c13d3033ba45
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'
+```
+
+## Operational Constraints (Headless Run)
+
+Read this before you run any gate or attach any outcome. A spawned run is
+usually headless: the session ends when your turn ends.
+
+- **Never background a long command and end your turn.** The session terminates
+  with the turn and the process dies with it, while the run is still recorded as
+  completed — a successful-looking run with no evidence attached.
+- **A single shell call is time-bounded (~10 minutes).** Waiting out a longer
+  check inside one call fails too. Split long verification into bounded
+  sequential calls (package subsets, `-run` masks) and state explicitly what you
+  reran yourself versus accepted from already-attached evidence.
+- **Attach evidence before you end the lifecycle, not after.** "I will attach it
+  when the run finishes" is unfulfillable by construction: once your turn ends
+  there is no session left to attach anything.
+
+## Your Role
+# doc-writer
+
+## Description
+
+Writes and updates documentation — README, SKILL.md, references, CHANGELOG. Reads specs, tasks, and code to understand context. Uses domain skills for understanding only.
+
+## Deliverable
+
+Updated documentation files.
+Outcome resources are named `<ELEMENT-ID>_<slug>.<ext>` — the completion guard matches on that
+ID prefix, and a differently named artifact does not satisfy the handoff. Write the file outside the
+managed worktree, then attach it with `task-board resource add`.
+
+Final human-facing wording must say "ready for review" or "handed off to review", not "done", "complete", "finished", "final", or "готово", when the board status is `to-review`.
+
+## Standing Orders
+
+### Evidence Honesty Contract
+
+1. Run each validation or gate command directly as a standalone process. Do not pipe it through `tee`; do not use a pipe chain unless `pipefail` is enabled and the gate command's real status is preserved.
+2. Report the real exit code of every validation or gate command.
+3. Report expected-red gates truthfully as failing: when a command is expected to fail (for example, `go test` in a package-less module), give its real non-zero exit code and a one-line expected-failure rationale; never present it as passing.
+4. Check a checklist item tied to a command only after that exact command has actually run green with exit code 0. If it did not run or did not exit 0, leave the item unchecked.
+5. For board reads, use compact task-specific projections. A concrete assignment does not need routine `summary()`, `plan()`, `schema()`, or `{ full }`; request scoped schema only after an unknown call.
+
+## Status Transitions
+
+- **start_status:** `development`
+- **end_status:** `to-review` (review handoff, not accepted done)
+
+## Constraints
+
+Does NOT modify code. Read-only access to code, specs, tasks. Writes only documentation files.
+
+## Skills
+
+These role skill references are a lazy catalog, not a mandate to bulk-read every
+body. Before technical work, identify the skills relevant to this task's concrete
+scope and read those full skill bodies. Always read any skill explicitly required
+by the task, user, or project instructions.
+
+- **project-management**: `/Users/alexis/.claude/skills/project-management/SKILL.md`
+
+## Definition of Done
+
+- [ ] Use the accepted research note as the only factual expansion source
+- [ ] Apply all eight developer-writer invariants without changing the technical conclusion beyond evidence
+- [ ] Add a substantive MCP comparison with conditional recommendations and failure modes
+- [ ] Validate links, commands, article index consistency, and repository documentation checks
+- [ ] Attach a task-scoped results note naming evidence, changed sections, validation, and publication caveats
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Docs updated and consistent with current code
+- [ ] No discrepancies between code and description
+- [ ] Result linked as a new task-scoped outcome resource
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+## Your Task
+
+- **ID**: TASK-260923-hyh12u
+- **Title**: TASK-260923-hyh12u: revise-token-economics-article-with-developer-writer
+- **Parent**: STORY-260923-371o14
+### Description
+
+Revise the research-selected canonical token-efficiency article in skill-agent-facing-api. Apply the attached developer-writer semantic core: lead with the concrete engineering tension, state the bounded question early, progress from familiar baseline to the agent-facing CLI improvement, keep each numerical claim next to evidence, include MCP tradeoffs and cases where MCP is preferable, and close with a concrete design decision. Update adjacent indexes or README links only when needed for consistency.
+### Scope
+
+Edit the selected source article and minimal adjacent documentation in this repository. Preserve technical facts, measurement provenance, and reproducibility instructions. Do not create blog translations here and do not introduce new product claims beyond the accepted research note.
+### Acceptance Criteria
+
+The article contains a substantive MCP comparison grounded in the accepted research note; measured values, estimates, assumptions, and limitations are visibly distinct; the recommendation is conditional rather than universal; developer-writer invariants are satisfied; links and commands are valid; repository documentation checks pass; and a task-scoped results resource records changed sections, evidence used, checks run, and any remaining publication caveats.
+
+## Instructions
+
+The following instructions have been attached to this task:
+
+### developer-writer-core.md
+> Accepted developer-writer runtime semantic core to apply to the article
+
+# Developer writer
+
+1. Open with the concrete problem, tension, decision, or surprising observation that shows why the subject matters — not with an announcement of what the article will cover.
+
+2. State the specific question the article answers and the boundary of what it covers early, before any broad background.
+
+3. When the idea needs examples, prefer one concrete example that grows as the solution becomes more capable; use separate samples only when they are truly independent. Before each code sample, name the situation it handles and the behavior to expect; after it, say what it shows or what changed.
+
+4. Move from a familiar or simple baseline to the useful improvement, then show the edge case, limitation, or alternative that affects the choice.
+
+5. Keep each substantive claim beside the evidence that supports it, and make the kind of evidence recognizable — a demonstration, a measurement, an external source, reasoning, or experience — so that none of them passes for another.
+
+6. When recommending a technique, state its tradeoffs and failure modes rather than presenting it as universally right. Say when it does not apply and what the demonstration does not prove.
+
+7. Use headings only for conceptual waypoints. Match their number and depth to the article's length and its distinct stages, and let a short focused note remain prose-led.
+
+8. Close on a concrete consequence — a decision, warning, next action, or practical takeaway that follows from the article — before any thanks, links, or call to action. Do not let a recap alone or generic encouragement stand in for it.
+
+
+
+### mcp-token-economics-evidence.md
+> Accepted evidence map and section-level brief from TASK-260923-b1kh3e
+
+# MCP Token-Economics Evidence Map
+
+**Task:** `TASK-260923-b1kh3e`  
+**Decision unblocked:** select the publication to revise and define the admissible MCP comparison claim set for `TASK-260923-hyh12u`.  
+**Research contract:** `grammar_frozen: not applicable` — this is an editorial evidence map, not a runtime grammar. Worker-time budget: 45 minutes including verification and packaging. Artifact budget: this one Markdown note (no archive; repository paths, commands, and board-resource digest are the evidence). Serial-prerequisite budget: one. First production slice: `TASK-260923-hyh12u` revises the selected article with one integrated MCP comparison and a bounded conclusion.
+
+## Decision
+
+Revise **[`articles/field-alias-compression-study.md`](../articles/field-alias-compression-study.md)**, and no other document in this slice.
+
+It is the canonical publication source because the root README has a dedicated `Articles` index and links this exact file as the only article ([`README.md:160-166`](../README.md#L160)); it contains the study's abstract, methods, results, discussion, conclusion, and references ([`articles/field-alias-compression-study.md:9-13`](../articles/field-alias-compression-study.md#L9), [`174-305`](../articles/field-alias-compression-study.md#L174)). Git history shows it was introduced as the field-alias research article and has not been revised since (`git log --follow -- articles/field-alias-compression-study.md` → `ba5a6cc`, 2026-02-12).
+
+`references/comparison-example.md` is evidence input, not the publication surface: it calls itself a context-efficiency comparison ([`references/comparison-example.md:1-5`](../references/comparison-example.md#L1)) and README lists it separately as a reference ([`README.md:168-177`](../README.md#L168)). It should be cited, corrected, or bounded by the article; it must not be treated as a reproducible benchmark record.
+
+## Evidence classes
+
+| Label | Meaning in this note |
+| --- | --- |
+| **Measured/reproduced** | A command in the current checkout ran successfully and its result is recorded below. |
+| **Checked-in measurement** | Historical fixture/script/output exists, but this run did not independently reproduce the tokenizer count. |
+| **Estimate/model** | Arithmetic or simulator output whose constants/assumptions were not independently measured in this run. |
+| **Reasoning** | A conditional design conclusion, not a numeric measurement. |
+| **External fact** | A primary-source statement, cited directly. |
+| **Unknown** | Neither code nor a reproducible local command establishes it. Do not turn it into a publication claim. |
+
+## What the current repository establishes
+
+1. **Measured/reproduced — the DSL implements multi-statement batching.** The parser accepts `query (';' query)*` ([`agentquery/parser.go:318-369`](../agentquery/parser.go#L318)); `Schema.QueryAST` executes each statement and returns a result array for multi-statement input ([`agentquery/query.go:30-60`](../agentquery/query.go#L30)); and the executable tests cover three batched statements and compact batched rendering ([`agentquery/query_test.go:276-319`](../agentquery/query_test.go#L276), [`1161-1193`](../agentquery/query_test.go#L1161)). `go test ./...` from `agentquery/` exited **0** (3.910s main package, 3.343s Cobra extension).
+2. **Measured/reproduced — compact list output is schema-once.** `FormatCompact` writes a comma-separated field header once, then iterates rows/selected fields ([`agentquery/format.go:9-62`](../agentquery/format.go#L9)). Field projection returns only requested fields ([`agentquery/selector.go:14-24`](../agentquery/selector.go#L14)) and validates selected fields/presets ([`agentquery/selector.go:53-100`](../agentquery/selector.go#L53)). This supports a structural statement about *this formatter*, not a universal token percentage.
+3. **Checked-in measurement, not reproduced here — alias fixtures and a tokenizer script exist.** `.research/synthetic-payloads/measure.py` reads four fixed payload scales, calls `tiktoken` `cl100k_base`, and computes the compact-full/alias delta ([`.research/synthetic-payloads/measure.py:12-45`](./synthetic-payloads/measure.py#L12), [`98-112`](./synthetic-payloads/measure.py#L98)). The matching payload fixtures are present under `.research/synthetic-payloads/` and the article's result table is traceable to them ([`articles/field-alias-compression-study.md:62-106`](../articles/field-alias-compression-study.md#L62)).
+4. **Expected-red verification — raw-token results are not re-attested in this run.** `python3 -c 'import tiktoken; …'` exited **1** with `ModuleNotFoundError: No module named 'tiktoken'`. The task forbids creating a new benchmark program; no package was installed and no paid model was called. Therefore the 5-token/46%-range values remain *checked-in historical measurements*, not newly measured facts in the revised MCP comparison.
+5. **Estimate/model, internally consistent only — alias session simulator.** Importing `.research/session-simulator/simulate.py` and evaluating its compact cases exited **0**: 16 cases, 4 positive; `(20, K=20)` returns `-5`, `(50, K=50)` returns `+115`. The script hard-codes its 85-token schema roundtrip, 5-token compact alias saving, query mix, and eviction schedule ([`.research/session-simulator/simulate.py:18-66`](./session-simulator/simulate.py#L18), [`104-159`](./session-simulator/simulate.py#L104)). Its `4/16` result is a model result conditional on those inputs, not an MCP measurement.
+
+Verification details and exact exit codes are preserved in `.temp/TASK-260923-b1kh3e/research-verification-01.md` (ignored scratch evidence, not an outcome artifact).
+
+## MCP claim map
+
+The table covers the MCP propositions currently presented in the comparison reference, README, and skill. “Admissible” means safe to publish in the target article without obtaining new benchmark evidence.
+
+| Proposed claim | Current source | Evidence status | Editorial disposition |
+| --- | --- | --- | --- |
+| “The DSL parser/executor can batch `;`-separated statements.” | `agentquery/parser.go:318-369`; `agentquery/query.go:30-60`; green `go test ./...` | **Measured/reproduced** behavior | **Admissible**, explicitly scoped to this Go implementation. |
+| “Compact tabular list output places names in one header rather than repeating JSON keys.” | `agentquery/format.go:37-62` | **Measured/reproduced** implementation behavior | **Admissible** as a structural formatter claim; do not add an unmeasured percentage. |
+| “MCP and DSL return identical JSON because they share `internal/fields`.” | Comparison [`:20`](../references/comparison-example.md#L20), README [`:26`](../README.md#L26), SKILL [`:45-49`](../SKILL.md#L45) | **Unsupported/stale**: no `internal/fields` package or MCP adapter is in this checkout. A Go-source search returned only the forward-looking comment “any future MCP server” in `assets/field-selector.go:4`. | **Do not publish** as current fact. Future-tense architecture intent is allowed only if an adapter actually uses the same `Schema`. |
+| “12 MCP definitions cost ~2,200 tokens per session.” | Comparison [`:26`, `:79-92`](../references/comparison-example.md#L26) | **Unknown**: only a 2026-02 estimate; no saved definitions, host transcript, tokenizer command, MCP server, or fixture. | **Remove numeric claim** from the article. Replace with a host/server/protocol-specific measurement requirement. |
+| “Bash/DSL has zero session overhead because Bash is already supplied.” | Comparison [`:26-28`](../references/comparison-example.md#L26) | **Unknown** across agent hosts; no prompt snapshots or host contract in the repo. | **Do not publish as universal fact.** State it only as an assumed comparison condition when a given host already grants shell access. |
+| “MCP and Bash have the same ~80-token per-call framing.” | Comparison [`:21-22`](../references/comparison-example.md#L21) | **Estimate**, with no tokenizer/model/host trace. | **Do not reuse numerical value.** If retained, label it an old scenario assumption, not evidence. |
+| “MCP input is ~5–10 tokens smaller; break-even is ~293 queries.” | Comparison [`:108-126`](../references/comparison-example.md#L108) | **Derived estimate**, dependent on the unverified 2,200-token and 7.5-token inputs. | **Do not publish.** Formula is valid arithmetic only after per-host inputs are measured. |
+| “MCP has no batching and needs one call per operation; DSL saves 194 tokens per three-item batch.” | Comparison [`:117-128`](../references/comparison-example.md#L117), README [`:23-25`](../README.md#L23), SKILL [`:45-47`](../SKILL.md#L45) | **Partly supported / overbroad.** DSL batching is proven; MCP behavior is not tested here. MCP version/transport behavior varies: the official Ruby SDK notes that the 2025-06-18 protocol removed JSON-RPC batching, while the official TypeScript SDK's current server accepts up to 100 messages in a JSON-RPC batch array. | **Publish only the DSL half.** Say MCP batching/round-trip count is host, protocol, SDK, and server-tool-design dependent; do not assert “no batching” or a fixed 194-token delta. |
+| “MCP never breaks even / is only competitive past ~300 queries.” | Comparison [`:128`, `:186`](../references/comparison-example.md#L128) | **Unsupported conclusion**, derived from unsupported fixed costs and an overbroad batching premise. | **Remove.** Replace with an explicit `unknown without an aligned host/server measurement`. |
+| “MCP is useful for native, long-lived, or already-MCP integrations.” | Comparison [`:167-170`](../references/comparison-example.md#L167) | **Reasoning, not token evidence.** MCP's own primary docs define server tools as model-controlled executable functions, but the repo has no economic comparison for this niche. | **Admissible only as a qualitative conditional.** Do not attach a token win, threshold, or “marginal cost” assertion. |
+
+### Direct primary sources for the protocol correction
+
+- The official [MCP Ruby SDK protocol-version reference](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/) states that version `2025-06-18` removed JSON-RPC batching, while newer versions have different lifecycle behavior. This establishes that batching claims need a version bound.
+- The official [MCP TypeScript SDK request-body reference](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html) documents `MAX_BATCH_SIZE = 100`, an upper bound on messages accepted in one JSON-RPC batch array. This establishes a current SDK capability, **not** a guarantee that a particular agent host will send or expose batches.
+- The official [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index) defines tools as model-controlled executable functions. It supports the interoperability rationale for MCP, not a context-token price claim.
+
+## Important limitations and stale wording
+
+1. The comparison was recorded against an external, path-specific 346-element board ([`references/comparison-example.md:3-5`](../references/comparison-example.md#L3)); the board, commands, MCP definitions, and transcripts are not fixtures in this repository. Its raw table cannot be reproduced here.
+2. The comparison says both transports use `internal/fields`, but this repository instead contains `agentquery` and only a *future MCP server* comment. Treat this as a stale source reference, not a missing line item.
+3. The public README and SKILL repeat the fixed-MCP-overhead, no-batching, and break-even wording ([`README.md:7, 21-28`](../README.md#L7); [`SKILL.md:43-49`](../SKILL.md#L43)). They remain outside the requested article-only slice, but will contradict a bounded article afterward. Track a separate documentation correction; do not silently edit them under this research task.
+4. Existing historical alias measurements are materially better evidenced than the MCP comparison because scripts and fixtures exist, but the local environment lacks `tiktoken`. Do not blur “fixture-backed historical measurement” with “rerun on 2026-09-23.”
+5. The simulator's “typical” eviction behavior is an assumption. It is not evidence about any agent runtime, including Codex or Claude.
+
+## When MCP remains the better choice
+
+MCP remains a reasonable or better interface **when the requirement is interoperability rather than a proven local token minimum**: for example, a remote service must expose model-callable tools to multiple MCP-capable hosts, or an existing MCP deployment/host capability already meets the integration need. It may also provide a domain-level bulk tool, but the cost and capability must be measured for that server/host pair.
+
+This is a design conclusion, not a statement that MCP wins a token comparison. The repository contains no MCP adapter, definitions, prompt snapshot, host trace, or aligned workload that could establish an economic threshold. The article should say so plainly.
+
+## Revision brief for `TASK-260923-hyh12u`
+
+Keep the article's field-alias decision separate from the transport comparison. The writer can apply this without new research:
+
+1. In the optimization landscape ([`articles/field-alias-compression-study.md:21-26`](../articles/field-alias-compression-study.md#L21)), change the batching item from “~80 tokens saved per avoided call” to an implementation fact: `agentquery` supports semicolon-separated batched statements; external-call savings depend on the host/transport. Leave the proven compact/schema-once explanation intact.
+2. After the optimization hierarchy in §5 ([`:253-263`](../articles/field-alias-compression-study.md#L253)), add one small subsection, **“MCP comparison: scoped conclusion.”** It must contain: (a) the proven DSL batching and schema-once facts, (b) the missing MCP adapter/fixture evidence, (c) protocol/SDK-dependent batching and discovery cost, and (d) the interoperability-positive case above.
+3. In §4's batching example ([`:224-239`](../articles/field-alias-compression-study.md#L224)), remove or relabel every 80/165/246/306 total as a historical model calculation unless its exact host framing is supplied. Keep the conclusion limited to alias economics; it is not evidence that DSL globally beats MCP.
+4. In the conclusion ([`:292-312`](../articles/field-alias-compression-study.md#L292)), retain the field-alias NO-GO only to the extent supported by the existing fixture-backed study. Replace “the optimization hierarchy is clear” / universal zero-overhead language with: **“For this formatter, aliases are a one-header optimization; no repository-local MCP benchmark establishes a transport-wide token winner.”**
+5. Link this note and the two official primary protocol references. Do **not** recreate the 346-element benchmark, install packages, call paid models, or add a new MCP implementation in this editorial slice.
+
+## Handoff checks
+
+- Exact article to revise: recorded.
+- MCP claims: every currently repeated claim above has an evidence status and disposition.
+- Measurements, estimates, reasoning, external facts, and unknowns: separated.
+- MCP-positive case, limits, stale claims, and section-level brief: recorded.
+- No new benchmark program, paid model run, or archive: created.
+
+
+
+### integration-retry-brief.md
+> Exact accepted-CR integration retry with owner-policy commit time
+
+# Integration retry brief
+
+This run owns only the accepted `CR-TASK-260923-hyh12u-2` revision 2 landing
+for `STORY-260923-371o14`.
+
+The prior integration owner `RUN-260923-929408` was rejected before ref
+movement because `version_control.confirm` is enabled, no automatic
+`commit_time_policy` is configured, and it supplied no explicit commit time.
+Its reviewer write-boundary marker has since been cleared after operator review.
+
+Do not edit source or documentation, do not republish the Change Request, and
+do not run `task-board handoff`. From this tracked producer-bound run, execute:
+
+```bash
+task-board worktree integrate STORY-260923-371o14 \
+  --cr TASK-260923-hyh12u \
+  --revision 2 \
+  --commit-time 2026-09-22T20:01:00+03:00
+```
+
+The timestamp is the previous day after 20:00 MSK, matching the configured
+owner policy. If integration succeeds, verify the transaction, Task/Story
+statuses, landed commits, signatures, and exact changed paths. Attach a new
+task-scoped outcome named `TASK-260923-hyh12u_integration-retry-results.md`.
+If it refuses, attach the exact refusal and current transaction state instead.
+Do not push, tag, or clean the workspace.
+
+
+
+
+
+## Board CLI Reference
+
+You have access to `task-board` CLI for managing your work. All writes use the `m` (mutation DSL) subcommand:
+
+```bash
+# FIRST/LAST lifecycle commands:
+# Use explicit status changes when the task flow requires it.
+task-board m 'set_status(TASK-260923-hyh12u, status=analysis)'       # analyst-style work
+task-board m 'set_status(TASK-260923-hyh12u, status=development)'    # implementation / testing work
+task-board m 'set_status(TASK-260923-hyh12u, status=reviewing)'      # reviewer handoff
+task-board m 'set_status(TASK-260923-hyh12u, status=blocked)'        # when blocked
+task-board m 'set_status(TASK-260923-hyh12u, status=to-review)'      # when your work is ready for review
+
+# Track progress with checklist
+task-board m 'check_item(TASK-260923-hyh12u, item=1)'                        # check item N
+task-board m 'add_checklist_item(TASK-260923-hyh12u, text="Write tests")'    # add checklist item
+
+# Add notes about your progress, decisions, blockers, or review findings
+task-board m 'set_notes(TASK-260923-hyh12u, text="your note here")'
+
+# Save short text directly as outcome resources
+task-board m 'add_resource(TASK-260923-hyh12u, name=TASK-260923-hyh12u_results.md, content="...", type=outcome, description="Description")'
+
+# Attach an existing local file (screenshots, PDFs, logs, archives, research docs)
+task-board resource add TASK-260923-hyh12u ./path/to/file --type outcome --name TASK-260923-hyh12u_artifact.bin -d "Description"
+```
+
+## Spawn Run Control
+
+Tracked runs expose `TASK_BOARD_RUN_ID`. Check directives at safe checkpoints,
+at most once per 1 minute, never in a loop. Directives have no delivery timer.
+
+```bash
+task-board spawn status "$TASK_BOARD_RUN_ID"
+task-board spawn directives "$TASK_BOARD_RUN_ID"
+```
+
+No inbound push: directives are cooperative checkpoint signals:
+- persist your current notes/artifacts before acting on `cancel`-style requests
+- only honor pause/reroute intent at a safe checkpoint
+- if no directive is present, continue normally
+
+## IMPORTANT: Saving Results
+
+When you produce work products (research documents, design docs, screenshots, logs, archives, implementation notes), you MUST save them as outcome resources with names that include the task ID:
+
+```bash
+task-board m 'add_resource(TASK-260923-hyh12u, name=TASK-260923-hyh12u_results.md, content="...", type=outcome, description="Description")'
+task-board resource add TASK-260923-hyh12u ./path/to/file --type outcome --name TASK-260923-hyh12u_artifact.bin -d "Description"
+```
+
+If you revise the same artifact later, use `task-board m 'update_resource(...)'` or `task-board resource update ...` instead of creating a silent overwrite.
+
+If you discover important findings, decisions, anomalies, regressions, or non-obvious constraints while working, record them in `logbook` as well as on the board.
+
+This ensures your results persist on the board and are accessible to other agents and the coordinator. Spawn completion is expected to produce at least one new task-scoped outcome artifact before the task can cleanly remain in `to-review`.
+
+## Evidence That Counts
+
+A passing suite means nothing unless something in it would have failed.
+
+- Any behavior that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS ships with negative tests that fail when the gate admits what it must reject. A positive test proves the gate is reachable, not that it works.
+- Prove a bound by NARROWING the gate, not only by deleting it. A delete-only mutant proves the gate exists and says nothing about the class it covers.
+- Prove behavior by driving the real entry point — launch, materialize, resolve, publish — and name the production call site. A helper that is unit-tested but called from nowhere promises nothing.
+- Standard negative shapes to test and to look for: forged or self-minted evidence; absent evidence treated as satisfied; the check present but uncalled from production; a bypass path around the check; a capability claim that does not reproduce.
+- A gate reports coverage as a measured ratio, not as prose: prose cannot distinguish 7 of 7 from 3 of 7, and "nothing is there" is not "nothing this checker sees". Name the blind spot as a stated bound.
+- An absence and a failure to read are different facts. A failed, partial, or malformed read is never a legitimate absence, and a fallback defined for absence must not fire on a read failure.
+- Prove, or report nothing. Where a property cannot be established, report unknown instead of inferring it from a proxy signal; callers act on a plausible guess.
+
+Shapes vocabulary and the incident record behind each rule: `references/negative-evidence.md` in the project-management skill.
+
+## Stop-The-Line: No Forced Fits
+
+Do not keep implementing when autonomous work starts requiring a forced fit. A forced fit is any path where the task conflicts with a platform/API constraint, product decision, UX state model, ownership boundary, or architecture, and the remaining "solution" is mostly compensating hacks.
+
+Warning signs:
+- each fix needs another flag, stub, priority rule, mock-only behavior, or special-case test
+- the tests can pass only because the test harness avoids the real platform behavior
+- the implementation depends on an assumption you can no longer defend
+- the user-facing behavior cannot be described cleanly without contradicting the product model
+
+When this happens, stop product-code changes before adding another workaround layer. Attach or note:
+- the constraint and evidence
+- the failed assumptions/attempts
+- the viable options and tradeoffs
+- the recommended option
+- the exact human/product/architecture decision needed
+
+Then set the board item to `blocked` and ask only for that exact decision or external input. This stop applies only to a concrete external blocker or an unresolved human-only platform/product/architecture/tradeoff/approval decision; recoverable failures and ordinary rework stay autonomous. Tests and stubs are not proof that a forced-fit design is correct; use them only after the state model and platform assumptions are valid.
+
+## Completion Discipline
+
+Keep working until the task reaches a terminal handoff for your role. If no objective blocker remains, do not stop while the board item is still parked in `analysis`, `development`, `testing`, or `reviewing`.
+
+Before your final status change:
+- satisfy the task acceptance criteria and relevant checklist items
+- attach outcome evidence for the work you produced
+- run the relevant verification commands when the task changes code, tests, docs, or config
+
+Use `blocked` only for either a concrete external blocker you cannot resolve autonomously or an unresolved human-only platform/product/architecture/tradeoff/approval decision. Record the constraint, evidence, failed assumptions/attempts, viable alternatives and tradeoffs, recommendation, and exact human decision or external input needed. Recoverable failures and ordinary rework are not `blocked`.
+
+Status language is literal:
+- `to-review` means your role has handed work to review; it does not mean the board task is accepted or done.
+- In your final response, say "ready for review" or "handed off to review" when the final board status is `to-review`.
+- Do not say "done", "complete", "finished", "final", or "готово" as the overall task state unless the board status is actually `done`.
+
+## LAST — Run For Role Handoff
+
+When you have completed all role work and the task is ready for its role handoff, run this as your **final board command**:
+
+```bash
+task-board handoff TASK-260923-hyh12u --role doc-writer
+```
+
+## Working Directory
+Board directory: `/Users/alexis/src/relux-works/skill-agent-facing-api/.task-board`
+
+Work in the project root. Do not modify board files directly — always use the `task-board` CLI.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260923-371o14.
+
+- Workspace path: `.temp/STORY-260923-371o14/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260923-371o14`, forked from `main`
+- Authoritative board: `/Users/alexis/src/relux-works/skill-agent-facing-api/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+## Integration Assignment
+
+This is the integration run for accepted Change Request `CR-TASK-260923-hyh12u-2` revision 2. The immutable producer binding is role `doc-writer` (archetype `implementer`). Keep the board at `integrating`; only the integration transaction may write `done`. This assignment supersedes generic producer FIRST/LAST status and handoff instructions: confirm the landing preconditions, attach fresh task-scoped outcome evidence, and end without calling the generic `handoff` command or setting status yourself. Do not execute or detach `worktree checkpoint` or `worktree integrate`; after your successful handoff the runner performs the bound landing synchronously and records its evidence.
+
+codex
+Starting the bound integration retry. I’ll verify the accepted revision’s landing preconditions, run the required integration transaction with the supplied commit time, then attach fresh evidence without altering source files.
+exec
+/bin/zsh -lc "task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 448ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"TASK-260923-hyh12u","field":"status","new_value":"integrating","old_value":"integrating"}}}
+
+codex
+The task is already in `integrating`, as required. I’m reading the project-management runbook now, then I’ll inspect the transaction state and exact accepted revision before invoking the retry.
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/alexis/.claude/skills/project-management/SKILL.md" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable; codex `gpt-6-astra`/`astra` REQUIRE one of `low`/`medium`/`high`/`xhigh`/`max`/`ultra`.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false; authority schema v1 authorizes no
+   per-board backend policy route, so never infer or add one. See
+   [canonical config reference](references/task-board-config.md) and
+   [README](README.md) for `service_tier`/remote-v4 provenance.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+   Under managed Story isolation, `.planning/` belongs to the authoring Story
+   worktree, never the control root. Before that worktree exists, persist the
+   canonical plan as a task-scoped board resource; after provisioning,
+   materialize it in the worktree while retaining the explicit board/config
+   bindings. Never bypass control-root cleanliness to make planning spawnable.
+3. In a manager-hosted session (`task-board claude`/`codex` primary) never
+   wait for a spawned run in a foreground tool call: the Session Manager
+   types the terminal run state in as a notice, and an unbounded `spawn
+   wait`/`observe --until terminal` refuses there (`--allow-blocking`
+   overrides). No foreground `until`/`sleep` loops on `spawn status`.
+   Observe/wait serve unmanaged sessions, replay and diagnosis; an
+   unavoidable wait is a harness background task (`run_in_background`/
+   Monitor) while the session keeps reading owner messages. Route the handoff.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint. That chain lives only in the live session: a restarted
+   or resumed primary session runs `task-board worktree obligations` BEFORE
+   spawning anything new and routes every listed ready-without-reviewer or
+   accepted-without-checkpoint revision first.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or a
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions, viable alternatives, tradeoffs,
+   recommendation, and the exact decision or external input needed. Linked
+   `blocked` lifts when its last blocker is done.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+   Local goal/query/status reads require an existing board and do not migrate
+   legacy goals. Goal writes initialize and validate the board before migration.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Primary session restarted or resumed? -> `task-board worktree obligations` first
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research budgets, exit, first slice | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, refusal rows | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| CR order, checkpoint, repeat-of, reuse | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+| Developing task-board itself (this repo) | [CLAUDE.md](CLAUDE.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Gemini CLI 0.54.4 is deprecated in favour of Antigravity (`agy`); both remain
+supported. `agy` effort is encoded in its model ID, not `--reasoning-effort`.
+See [README](README.md#antigravity-cli-agy) for the command, models, argv
+budget, and JSON contract.
+
+exec
+/bin/zsh -lc 'git status --short && git diff --check && git log -1 --oneline' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+ succeeded in 0ms:
+ M .research/260923_mcp-token-economics-evidence.md
+ M LOGBOOK.md
+ M README.md
+ M articles/field-alias-compression-study.md
+da97a32 TASK-260923-b1kh3e: TASK-260923-b1kh3e: recover-and-bound-mcp-token-economics-evidence
+
+exec
+/bin/zsh -lc "sed -n '1,220p' /Users/alexis/.claude/skills/project-management/references/change-request-lifecycle.md" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 0ms:
+# Change Request Lifecycle Runbook
+
+Orchestrator-owned. An accepted Change Request is accepted work, not delivered
+work. This page states the order, the recovery paths, and the republish
+semantics that used to live only in an operator's head.
+
+The full typed contract — how a candidate is snapshotted, what
+`repository_delta` means, what a `stale` revision is, and every refusal you can
+hit — stays in
+[tracked background spawn](tracked-background-spawn.md), section
+`Change Requests, review, rework, and checkpoint`. This page is the order of
+operations on top of it.
+
+---
+
+## The Change Request lifecycle, in order
+
+1. **Accept.** The reviewer runs
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N>, evidence=<ELEMENT-ID>_review-verdict.md)'`.
+   The element moves to `integrating`. It is accepted, not delivered. Only the
+   reviewer run that was handed the revision may accept it.
+2. **Checkpoint immediately.** For every non-final leaf, run
+   `task-board worktree checkpoint <ELEMENT-ID>` as the next action after
+   acceptance. The accepted tree lands on the Story branch only, and the leaf
+   stays `integrating` until Story integration lands it on trunk. Delay here is
+   what makes the next producer's Change Request go `stale`.
+3. **Checkpoint refreshes the real index automatically.** Candidate capture
+   records (but never mutates) the real-index tree. Under the bound run's Story
+   lease and the candidate-captured index CAS, checkpoint replaces only that
+   captured state and independently verifies branch/HEAD/index/worktree
+   identity. A typed
+   `change_request_checkpoint_index_unsynced` refusal is retried after its named
+   lock, I/O, or ownership condition is resolved; do not use a broad manual
+   reset that can erase unreviewed staged state.
+4. **Final leaf: integrate, do not checkpoint.** `checkpoint` refuses the
+   Story's last open leaf with `change_request_final_leaf_checkpoint`, because
+   closing it would promote a Story whose branch has never reached trunk. Land
+   the Story with
+   `task-board worktree integrate <STORY-ID> --cr <ELEMENT-ID> --revision <N>`.
+5. **When `integrate` refuses, report the refusal.** `validation_not_configured`
+   (`BUG-260807-1o5092`, the as-shipped behavior) and
+   `integration_indeterminate` for a board that lives outside the control root
+   are blockers, not detours. Report the refusal as the blocker it is, naming
+   the typed code and the transaction it left behind. Whether a manual
+   substitute exists is decided by the repository's own delivery authority —
+   the board's `version_control` configuration and the repository's
+   contribution instructions — never by this runbook. Where that authority
+   requires the hosting platform's pull-request lifecycle, the substitute is
+   an isolated clone, a signed cherry-pick of the exact reviewed head, a
+   branch, a pull request with a real platform review record, and the
+   platform's non-rewriting landing; a direct push to the default branch is
+   forbidden there even when it would fast-forward. Where the authority admits
+   a fail-closed plain push of the exact reviewed head, that is the last step
+   and it must fail closed if the default branch advanced. Do not infer
+   permission from skill text, and never route around a typed refusal by
+   moving board files or the branch by hand.
+6. **A lost run is recovered by republish, never by re-running the producer.** A
+   run that died after producing content but before the board recorded it still
+   has its content on disk. Republish it with provenance. Re-running the
+   producer discards work that already exists and costs the run again.
+7. **A republish of an unchanged accepted tree is an annotation, not a new
+   revision.** A candidate whose `repository_delta` is byte-identical to the
+   accepted one, and whose acceptance still stands, is not a new candidate.
+   Recording it as a revision turns the revision count — the only rework
+   measure the board has — into process noise.
+8. **Never commit manually on the Story branch.** The managed worktree's tree is
+   published by the producer's handoff and landed by `checkpoint` or
+   `integrate`. A hand commit on that branch makes the accepted snapshot and the
+   branch head disagree, and the disagreement surfaces later as an unexplained
+   `stale` or an integration that lands the wrong tree. A `task_delta` handoff
+   now fails closed on it: the tip is compared to the workspace record's
+   `checkpoint_oid` before the validation suite runs and before anything is
+   written, and a disagreement is refused with
+   `change_request_candidate_committed_past_checkpoint`. The producer repairs it
+   inside its own run with `git reset --soft <checkpoint_oid>` — the work stays
+   in the worktree — and completes the handoff again.
+9. **An accepted candidate that is already on trunk is closed by
+   `close-landed`, not by a second landing.** `set_status(done)` refuses an
+   element under a Change Request, and `integrate` lands only a
+   `story_final` (and refuses a revision an older binary accepted without a
+   producer binding) — both at once, and neither is recoverable by retrying
+   the other. `task-board worktree close-landed <ELEMENT-ID> --reason "..."`
+   is the exit. It invents no review (the revision must already be
+   `accepted`), spends no run, and relaxes nothing on the general path: the
+   protected ref is re-resolved fresh and one of three verification methods
+   is recorded BY NAME on the ledger with the landing commit (when one is
+   named) and the authority OID:
+   - `tree_carried` — the recorded `candidate_tree_oid` is the tree of
+     exactly one commit that is an ancestor of the protected ref AND is not
+     an ancestor of the record's `base_oid`. The second condition is what
+     keeps a pure revert out: a candidate cut at the trunk tip that restores
+     the previous state has the tree of `tip^`, an ancestor of the protected
+     ref, yet nothing of it landed — such carriers are reported as
+     `predates_base` and refused with `landed_commit_predates_base`, and the
+     exactly-one rule is applied to the carriers that survive both filters.
+     Stated bound: "not an ancestor of the base" is weaker than "descends
+     from the base"; the two coincide on a linear protected branch, which is
+     what ff plain-push landing produces, and the stronger rule would refuse
+     a record whose base left trunk in a history rewrite.
+   - `patch_contained` — the accepted revision's patch resource, whose
+     SHA-256 must equal the record's `diff_sha256` BEFORE any apply
+     (`landed_patch_digest_mismatch` otherwise), applies in reverse cleanly
+     (`git apply --check -R`) in a clean temporary worktree of the protected
+     tip — never in the control root. It names no landing commit; the
+     authority OID stands for it. This is the proof for a leaf whose delta
+     was squashed or rebased under a tree the record never saw.
+   - `pr_attested` — `--landed-by-pr N` names a pull request; its merge
+     commit is read from the hosting platform (`gh`), must be an ancestor of
+     the protected ref (`landed_pr_not_on_trunk`), and its title or body must
+     name the element id (`landed_pr_does_not_name_element`). Recorded as
+     `attested=true`, never inferred; there is deliberately no flag for the
+     landing commit itself. **Rewritten-twin admission:** when the platform's
+     merge commit is NOT an ancestor because the protected branch's history
+     was rewritten (a re-sign changes every OID), the route admits exactly
+     one ancestor that carries the merge commit's tree AND its subject line;
+     the author name, email and date only break a tie among several. The
+     tree is the proof that trunk reached the merged state; the subject keeps
+     a same-tree squash of something else out. A same-subject commit with a
+     different tree is no twin, and two indistinguishable twins refuse
+     (`twin_candidates` in the details) rather than pick. The ledger row then
+     records `landing_commit=<twin> twin_of=<platform merge OID>`.
+
+   A `story_final` keeps the tree proof and closes the Story exactly as
+   before, co-closing checkpointed siblings. A `task_delta` — a non-final leaf
+   landed by its own pull request — tries `tree_carried` then
+   `patch_contained`, or `pr_attested` when the flag is given, and closes
+   ONLY that leaf: no sibling is co-closed, a checkpointed sibling stays
+   `integrating`, and the Story's later final integration treats the closed
+   leaf like a checkpointed one (terminal, not carried). Dependents of the
+   closed leaf read `isBlocked=false`. A candidate with no repository delta
+   is disposed of separately (`zero_delta`) — its base must be on the
+   protected ref and no landing commit is named.
+
+   An element at `integrating` with NO Change Request record (the view's
+   `indeterminate: no Change Request record`) is the legacy shape and is
+   admitted by the same command as `legacy_patch_contained` when an
+   `<ID>_change-request_rev<N>.patch` outcome resource reverse-applies
+   (digest recomputed from the resource and recorded, newest revision first),
+   or as `research_outcome_only` when `review=none`, `task_class=research`
+   and at least one outcome resource exists; anything else is refused
+   `landed_close_missing_evidence` naming what is missing. The evidence goes
+   on the element's notes, there being no ledger.
+
+   `--dry-run` reports the method, the landing commit and the intended
+   writes and writes nothing; a spawned run may use it. Every indeterminate
+   answer refuses with its own code: `landed_tree_not_on_trunk`,
+   `landed_tree_ambiguous`, `landed_commit_predates_base`,
+   `landed_patch_digest_mismatch`, `landed_pr_not_on_trunk`,
+   `landed_pr_does_not_name_element`, `landed_close_missing_evidence`,
+   `landed_close_not_applicable`, `landed_close_indeterminate`,
+   `zero_delta_base_not_on_trunk`. A spawned run is refused as a guardrail
+   unless `--dry-run` is given.
+10. **`integrating` is not one state, and `worktree integrating` says which.**
+   An element at `integrating` with no owner run is one of four things:
+   accepted code awaiting a landing act (`awaiting_landing`), an empty-delta
+   record whose only landing act is a board-state commit
+   (`empty_delta_board_only`), code already on trunk under another commit
+   object (`landed_on_trunk`), or an initiative a human parked (`deferred`).
+   `task-board worktree integrating` is the read-only view that classifies
+   every such element with its evidence — `candidate_tree_on_trunk`
+   yes/no/indeterminate by the SAME tree proof `close-landed` applies,
+   `repository_delta`, the deferral marker and reason, the age since the
+   `accepted` ledger row — and counts `landing_backlog` as the first two
+   classes only. A record it cannot read or that contradicts itself is
+   `indeterminate`, never classified. The marker is set and cleared with
+   `defer_cr` / `undefer_cr` (below). Route: `landed_on_trunk` → `close-landed`;
+   `empty_delta_board_only` → `checkpoint`/`integrate` or `close-landed`;
+   `awaiting_landing` → land it; `deferred` → leave it alone.
+
+## Recovering a stranded accepted task_delta
+
+A final leaf whose accepted revision carries kind `task_delta` instead of
+`story_final` — published before the checkpoint-readiness repair, or while
+the board lived outside the launcher control root — cannot integrate:
+`worktree integrate` demands the Story's integration unit and refuses. The
+accepted revision is immutable history; recovery supersedes it, never edits
+it.
+
+1. **Release.** `task-board worktree invalidate-acceptance <STORY-ID> --cr
+   <ELEMENT-ID> --reason "accepted task_delta no longer matches derived
+   story_final"`. This is admitted only when the kind re-derived from the
+   board actually differs from the recorded one; the accepted revision file
+   stays byte-identical and the leaf returns to rework. A record whose kind
+   still matches is refused — there is nothing to recover, look elsewhere.
+2. **Republish.** The rework producer run publishes the next revision, which
+   now derives `story_final` from the bound checkpoint loader.
+3. **Accept.** The reviewer accepts the new revision independently:
+   `task-board m 'accept_cr(<ELEMENT-ID>, revision=<N+1>,
+   evidence=<ELEMENT-ID>_review-verdict.md)'`.
+4. **Integrate.** `task-board worktree integrate <STORY-ID> --cr
+   <ELEMENT-ID> --revision <N+1>`, which closes the final leaf and co-closes
+   the checkpointed sibling and the Story.
+
+## Recovering an acceptance whose integration revalidation failed
+
+When §6.2 re-parents an accepted Change Request and §6.2.1's suite fails on
+the merged tree, integrate refuses with `revalidation_failed` and records the
+failure on the accepted revision, bound to its subject: `revalidation_revision`,
+`tree_oid`, `suite_sha256`, `exit_status`, `completed_at`,
+`materialized_commit_oid`. The element stays `integrating` and the revision
+stays `accepted`. Either re-run `worktree integrate` (the suite runs again,
+under the attempt cap) or release to rework:
+
+1. **Release.** `task-board worktree invalidate-acceptance <STORY-ID> --cr
+   <ELEMENT-ID> --reason "fix the failed landing validation"`. Admitted only
+   when the bound failure matches the CURRENT revision, candidate tree and
+   configured suite and no integration transaction exists; the revision is
+   demoted to `stale` and the leaf returns to `to-dev`. Evidence about a
+   previous revision, another tree, another suite, exit 0, a missing
+   completion or materialized commit, no evidence, or a spawned run is
+   refused and nothing is written.
+2. **Rework, republish, accept, integrate** exactly as for a §6.2 stale
+   revision: the producer spawn is admitted on the stale leaf, the handoff
+   publishes revision N+1, the reviewer accepts it, integrate lands it.
+
+## A revision that will never be integrated
+
+Two shapes end a Change Request revision without a reviewer verdict, and they
+are different facts.
+
+
+exec
+/bin/zsh -lc 'task-board --help' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 0ms:
+Manage a file-based task board with epics, stories, tasks, and bugs.
+
+Usage:
+  task-board [command]
+
+Available Commands:
+  admin                  Server administration (users, tokens, access)
+  board                  Record and publish board state on trunk
+  boards                 List boards accessible to the current user (remote mode)
+  claude                 Launch Claude through the Task-board Session Manager
+  codex                  Attach Codex to the Task-board Session Manager
+  completion             Generate the autocompletion script for the specified shell
+  export                 Export current board into a tar.gz archive
+  goal                   Read and align the board-scoped parent primary goal
+  grep                   Full-text search across board files
+  handoff                Verify role handoff evidence and move to the role end status
+  help                   Help about any command
+  import                 Import a tar.gz archive into the current board
+  init                   Install task-board project integrations
+  limits                 Inspect and control provider rate-limit state
+  login                  Store a token for the current remote
+  logout                 Remove active user's token for current remote
+  m                      Execute a mutation (write operation)
+  migrate-keychain       Import legacy remote credentials into macOS Keychain
+  migrate-project-config Preview or apply guarded deprecated project-config alias migration
+  plan                   Show execution plan with phases and critical path
+  q                      Query the board with a mini DSL
+  repair-links           List or remove unsupported container dependency links
+  resource               Upload, update, download, and delete board resources
+  self-update            Update task-board to the latest version
+  session                Inspect and stop Task-board Session Manager sessions
+  spawn                  Queue an agent spawn run for a board task
+  switch-user            Switch active user for current remote
+  tree                   Show board as hierarchical tree
+  validate               Validate board structure
+  whoami                 Show current remote and active user
+  worktree               Inspect and repair managed Story workspaces
+
+Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+  -h, --help                     help for task-board
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+  -v, --version                  version for task-board
+
+Use "task-board [command] --help" for more information about a command.
+
+codex
+The retry brief and the run assignment conflict on who performs `worktree integrate`; the later integration-run directive explicitly forbids me from executing or detaching that transaction and says the runner will land it synchronously. I’ll honor that boundary, inspect the accepted revision and current integration classification, and attach a precise handoff note documenting the state for the runner.
+exec
+/bin/zsh -lc 'task-board worktree integrating' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc "task-board q 'task(TASK-260923-hyh12u){id,status,notes,resources}'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc 'task-board worktree --help' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 0ms:
+Inspect and repair the Story-scoped Git workspaces that repository-mutating
+spawns run in.
+
+Each Story gets one managed worktree under .temp/<STORY-ID>/worktree on a
+short-lived task-board/story/<STORY-ID> branch forked from trunk. Trunk is
+spawn.worktree_isolation.integration_base_branch when configured, and otherwise
+resolves from refs/remotes/origin/HEAD and then the current branch.
+
+These commands require a local authoritative board. On a remote board they
+refuse with worktree_isolation_requires_local_board and do nothing else.
+
+Usage:
+  task-board worktree [command]
+
+Available Commands:
+  abort                 Stop using a Story workspace, preserving its work by default
+  checkpoint            Commit an accepted leaf onto its Story branch while preserving integrating
+  close-landed          Close an element whose accepted candidate is already on the protected trunk
+  complete              Prove an accepted Story's code landed on its own repository, then record its board state in the board repository
+  converge              Refresh a pinned Story workspace onto fresh trunk, carrying its uncommitted delta
+  gc                    Release Story leases whose holding runs are provably terminal
+  integrate             Land an accepted Story candidate on trunk and commit its board state
+  integrating           Classify every element parked at integrating: awaiting a landing, board-only, already on trunk, or deferred
+  invalidate-acceptance Release an invalidated or failed-revalidation acceptance back to rework
+  obligations           List Change Request revisions that no live run owns
+  prepare-landed-review Export a signed current-default tree for a new producer handoff and exact-tree review
+  reconcile-trunk       Move the control root's trunk onto fresh protected authority when every local commit is already delivered there
+  refresh-candidate     Refresh an initial or rework candidate base without losing uncommitted files
+  repair                Re-materialize a recorded workspace whose worktree is missing
+  start-landed-rework   Reprove a landed-review export and durably authorize normal producer rework
+  status                Report managed Story workspaces and what blocks their cleanup
+  transaction           Inspect and dispose of a refused or abandoned integration transaction
+  trunk-rewrite         Report and migrate Story workspaces orphaned by a rewrite of protected trunk history
+
+Flags:
+  -h, --help   help for worktree
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+Use "task-board worktree [command] --help" for more information about a command.
+
+ exited 1 in 113ms:
+query error: parse error at 1:1: unknown operation "task" (got "task"); known operations: activity, agents, context, context_boundary, context_candidates, context_retention, contexts, count, get, list, models, plan, project_config, provider_limits, schema, summary, whoami; see schema() for the contract and schema(operation=NAME) for one signature
+
+exec
+/bin/zsh -lc "task-board q 'schema(operation=get)'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc 'task-board worktree integrating --json' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc 'task-board worktree integrating --help' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 0ms:
+List every element whose board status is integrating and say which of four
+things it is, with the evidence:
+
+  awaiting_landing        accepted code whose candidate tree is NOT on the fresh
+                          protected trunk: the landing act is still owed
+  empty_delta_board_only  repository_delta=empty: the only landing act is a
+                          board-state commit
+  landed_on_trunk         the candidate tree is the tree of an ancestor of the
+                          fresh protected ref that postdates the record's base —
+                          the same proof close-landed applies, and nothing weaker
+  deferred                the record carries the explicit deferral marker set by
+                          defer_cr: a human parked it, and it is not backlog
+
+Everything the view cannot establish — no Change Request record, a record that
+cannot be read or contradicts itself, a git read that failed — is reported as
+indeterminate and is never one of the four. A commit message that mentions an
+element id is not evidence and is not consulted.
+
+Each row carries candidate_tree_on_trunk (yes/no/indeterminate),
+repository_delta, the deferral marker with its reason, and the age since the
+revision was accepted. landing_backlog counts awaiting_landing plus
+empty_delta_board_only; deferred, landed and indeterminate rows are excluded.
+
+This view is read-only. It moves no ref, writes no record and spends no run.
+Set or clear the marker with:
+
+  task-board m 'defer_cr(ELEMENT-ID, revision=N, reason="...")'
+  task-board m 'undefer_cr(ELEMENT-ID, revision=N)'
+
+Usage:
+  task-board worktree integrating [flags]
+
+Flags:
+  -h, --help   help for integrating
+
+Global Flags:
+      --board-dir string         Path to the board directory (overrides TASK_BOARD_DIR and config local.board_dir) (default ".task-board")
+      --context-profile string   Agent context profile override: full or lite
+      --insecure                 Skip TLS certificate verification (for self-signed certs)
+      --json                     Output in JSON format
+      --no-update-check          Disable automatic update check
+      --remote string            Remote board server URL (overrides TASK_BOARD_REMOTE)
+      --remote-board string      Remote board ID (overrides TASK_BOARD_ID)
+
+ succeeded in 224ms:
+{"description":"Get a single element by ID","examples":["get(TASK-XX) { overview }"],"kind":"operation","name":"get","parameters":[{"name":"id","type":"string","optional":false,"description":"Element ID"}],"signature":"get(id:string)","syntax":"OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: \\\" \\\\ \\n \\t"}
+
+ succeeded in 21231ms:
+protected: refs/heads/main at c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830
+ELEMENT                REV  CLASSIFICATION         TREE     DELTA    AGE      EVIDENCE
+TASK-260923-b1kh3e     1    awaiting_landing       no       present  1h6m     candidate tree is not carried by any post-base ancestor of refs/heads/main (landed_tree_not_on_trunk)
+TASK-260923-hyh12u     2    awaiting_landing       no       present  13m      candidate tree is not carried by any post-base ancestor of refs/heads/main (landed_tree_not_on_trunk)
+landing_backlog: 2 (awaiting_landing=2)
+
+exec
+/bin/zsh -lc 'task-board worktree integrating --json' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 17161ms:
+{
+  "protected_ref": "refs/heads/main",
+  "protected_oid": "c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830",
+  "leaves": [
+    {
+      "element_id": "TASK-260923-b1kh3e",
+      "type": "task",
+      "status": "integrating",
+      "integration_scope_id": "STORY-260923-371o14",
+      "classification": "awaiting_landing",
+      "reason": "candidate tree is not carried by any post-base ancestor of refs/heads/main (landed_tree_not_on_trunk)",
+      "cr_id": "CR-TASK-260923-b1kh3e-1",
+      "revision": 1,
+      "cr_state": "checkpointed",
+      "kind": "task_delta",
+      "repository_delta": "present",
+      "candidate_tree_oid": "729c4b0c23ed6447820d9019b1245458b57084b0",
+      "candidate_tree_on_trunk": "no",
+      "deferred": false,
+      "accepted_at": "2026-09-23T11:50:43.589908Z",
+      "age": "1h7m",
+      "age_seconds": 4022
+    },
+    {
+      "element_id": "TASK-260923-hyh12u",
+      "type": "task",
+      "status": "integrating",
+      "integration_scope_id": "STORY-260923-371o14",
+      "classification": "awaiting_landing",
+      "reason": "candidate tree is not carried by any post-base ancestor of refs/heads/main (landed_tree_not_on_trunk)",
+      "cr_id": "CR-TASK-260923-hyh12u-2",
+      "revision": 2,
+      "cr_state": "accepted",
+      "kind": "story_final",
+      "repository_delta": "present",
+      "candidate_tree_oid": "cc924a0d7f6a5d76a48738c1c9f232484e544039",
+      "candidate_tree_on_trunk": "no",
+      "deferred": false,
+      "accepted_at": "2026-09-23T12:43:35.699365Z",
+      "age": "14m",
+      "age_seconds": 850
+    }
+  ],
+  "counts": {
+    "awaiting_landing": 2
+  },
+  "landing_backlog": 2
+}
+
+ succeeded in 15743ms:
+{
+  "protected_ref": "refs/heads/main",
+  "protected_oid": "c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830",
+  "leaves": [
+    {
+      "element_id": "TASK-260923-b1kh3e",
+      "type": "task",
+      "status": "integrating",
+      "integration_scope_id": "STORY-260923-371o14",
+      "classification": "awaiting_landing",
+      "reason": "candidate tree is not carried by any post-base ancestor of refs/heads/main (landed_tree_not_on_trunk)",
+      "cr_id": "CR-TASK-260923-b1kh3e-1",
+      "revision": 1,
+      "cr_state": "checkpointed",
+      "kind": "task_delta",
+      "repository_delta": "present",
+      "candidate_tree_oid": "729c4b0c23ed6447820d9019b1245458b57084b0",
+      "candidate_tree_on_trunk": "no",
+      "deferred": false,
+      "accepted_at": "2026-09-23T11:50:43.589908Z",
+      "age": "1h7m",
+      "age_seconds": 4035
+    },
+    {
+      "element_id": "TASK-260923-hyh12u",
+      "type": "task",
+      "status": "integrating",
+      "integration_scope_id": "STORY-260923-371o14",
+      "classification": "awaiting_landing",
+      "reason": "candidate tree is not carried by any post-base ancestor of refs/heads/main (landed_tree_not_on_trunk)",
+      "cr_id": "CR-TASK-260923-hyh12u-2",
+      "revision": 2,
+      "cr_state": "accepted",
+      "kind": "story_final",
+      "repository_delta": "present",
+      "candidate_tree_oid": "cc924a0d7f6a5d76a48738c1c9f232484e544039",
+      "candidate_tree_on_trunk": "no",
+      "deferred": false,
+      "accepted_at": "2026-09-23T12:43:35.699365Z",
+      "age": "14m",
+      "age_seconds": 863
+    }
+  ],
+  "counts": {
+    "awaiting_landing": 2
+  },
+  "landing_backlog": 2
+}
+
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260923-hyh12u) { overview }'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 324ms:
+{"assignee":"[implementer] doc-writer (codex)","id":"TASK-260923-hyh12u","name":"revise-token-economics-article-with-developer-writer","parent":"STORY-260923-371o14","status":"integrating"}
+
+codex
+Inspection confirms the accepted revision is still `awaiting_landing`: `story_final`, repository delta present, candidate tree not on `refs/heads/main`, and no integration transaction is recorded. I’m preserving that exact evidence in a task-scoped outcome; no source or documentation files were changed in this integration run.
+apply patch
+patch: completed
+/tmp/TASK-260923-hyh12u_integration-retry-results.md
+diff --git a//tmp/TASK-260923-hyh12u_integration-retry-results.md b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..c13ea7536faae743eeb400edcdc44d01eb2b25cd
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+@@ -0,0 +1,54 @@
++# TASK-260923-hyh12u integration retry results
++
++## Scope
++
++This integration run was bound to accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2, for `STORY-260923-371o14`.
++
++The run assignment explicitly prohibited executing or detaching
++`task-board worktree integrate`; the runner is responsible for the bound
++landing transaction synchronously. Accordingly, this run performed no landing
++mutation and did not alter the source worktree.
++
++## Preflight evidence
++
++`task-board worktree integrating --json` exited 0 and reported:
++
++- protected ref: `refs/heads/main`
++- protected OID: `c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830`
++- element: `TASK-260923-hyh12u`
++- CR/revision: `CR-TASK-260923-hyh12u-2`, revision `2`
++- CR state: `accepted`
++- integration kind: `story_final`
++- repository delta: `present`
++- candidate tree: `cc924a0d7f6a5d76a48738c1c9f232484e544039`
++- candidate tree on trunk: `no`
++- classification: `awaiting_landing`
++- reason: candidate tree is not carried by any post-base ancestor of
++  `refs/heads/main` (`landed_tree_not_on_trunk`)
++- integration backlog: 2 awaiting elements, including this task
++
++`task-board q 'get(TASK-260923-hyh12u) { overview }'` exited 0 and confirmed
++the task remains `integrating` under Story `STORY-260923-371o14`.
++
++## Landing command for the runner
++
++The accepted retry brief specifies this command and owner-policy commit time:
++
++```bash
++task-board worktree integrate STORY-260923-371o14 \
++  --cr TASK-260923-hyh12u \
++  --revision 2 \
++  --commit-time 2026-09-22T20:01:00+03:00
++```
++
++It was intentionally not executed by this run because of the explicit
++integration-run boundary above. No refusal or transaction state was produced
++by an integration attempt in this run.
++
++## Publication caveat
++
++The accepted article/documentation changes remain unpublished on `main` until
++the runner performs and verifies the landing transaction. After landing, the
++runner should verify the transaction, task/story statuses, landed commit,
++signatures, and exact changed paths.
+
+diff --git a//tmp/TASK-260923-hyh12u_integration-retry-results.md b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..c13ea7536faae743eeb400edcdc44d01eb2b25cd
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+@@ -0,0 +1,54 @@
++# TASK-260923-hyh12u integration retry results
++
++## Scope
++
++This integration run was bound to accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2, for `STORY-260923-371o14`.
++
++The run assignment explicitly prohibited executing or detaching
++`task-board worktree integrate`; the runner is responsible for the bound
++landing transaction synchronously. Accordingly, this run performed no landing
++mutation and did not alter the source worktree.
++
++## Preflight evidence
++
++`task-board worktree integrating --json` exited 0 and reported:
++
++- protected ref: `refs/heads/main`
++- protected OID: `c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830`
++- element: `TASK-260923-hyh12u`
++- CR/revision: `CR-TASK-260923-hyh12u-2`, revision `2`
++- CR state: `accepted`
++- integration kind: `story_final`
++- repository delta: `present`
++- candidate tree: `cc924a0d7f6a5d76a48738c1c9f232484e544039`
++- candidate tree on trunk: `no`
++- classification: `awaiting_landing`
++- reason: candidate tree is not carried by any post-base ancestor of
++  `refs/heads/main` (`landed_tree_not_on_trunk`)
++- integration backlog: 2 awaiting elements, including this task
++
++`task-board q 'get(TASK-260923-hyh12u) { overview }'` exited 0 and confirmed
++the task remains `integrating` under Story `STORY-260923-371o14`.
++
++## Landing command for the runner
++
++The accepted retry brief specifies this command and owner-policy commit time:
++
++```bash
++task-board worktree integrate STORY-260923-371o14 \
++  --cr TASK-260923-hyh12u \
++  --revision 2 \
++  --commit-time 2026-09-22T20:01:00+03:00
++```
++
++It was intentionally not executed by this run because of the explicit
++integration-run boundary above. No refusal or transaction state was produced
++by an integration attempt in this run.
++
++## Publication caveat
++
++The accepted article/documentation changes remain unpublished on `main` until
++the runner performs and verifies the landing transaction. After landing, the
++runner should verify the transaction, task/story statuses, landed commit,
++signatures, and exact changed paths.
+
+exec
+/bin/zsh -lc "task-board resource add TASK-260923-hyh12u /tmp/TASK-260923-hyh12u_integration-retry-results.md --type outcome --name TASK-260923-hyh12u_integration-retry-results.md -d 'Integration preflight and runner handoff evidence for accepted CR revision 2'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+diff --git a//tmp/TASK-260923-hyh12u_integration-retry-results.md b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..c13ea7536faae743eeb400edcdc44d01eb2b25cd
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+@@ -0,0 +1,54 @@
++# TASK-260923-hyh12u integration retry results
++
++## Scope
++
++This integration run was bound to accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2, for `STORY-260923-371o14`.
++
++The run assignment explicitly prohibited executing or detaching
++`task-board worktree integrate`; the runner is responsible for the bound
++landing transaction synchronously. Accordingly, this run performed no landing
++mutation and did not alter the source worktree.
++
++## Preflight evidence
++
++`task-board worktree integrating --json` exited 0 and reported:
++
++- protected ref: `refs/heads/main`
++- protected OID: `c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830`
++- element: `TASK-260923-hyh12u`
++- CR/revision: `CR-TASK-260923-hyh12u-2`, revision `2`
++- CR state: `accepted`
++- integration kind: `story_final`
++- repository delta: `present`
++- candidate tree: `cc924a0d7f6a5d76a48738c1c9f232484e544039`
++- candidate tree on trunk: `no`
++- classification: `awaiting_landing`
++- reason: candidate tree is not carried by any post-base ancestor of
++  `refs/heads/main` (`landed_tree_not_on_trunk`)
++- integration backlog: 2 awaiting elements, including this task
++
++`task-board q 'get(TASK-260923-hyh12u) { overview }'` exited 0 and confirmed
++the task remains `integrating` under Story `STORY-260923-371o14`.
++
++## Landing command for the runner
++
++The accepted retry brief specifies this command and owner-policy commit time:
++
++```bash
++task-board worktree integrate STORY-260923-371o14 \
++  --cr TASK-260923-hyh12u \
++  --revision 2 \
++  --commit-time 2026-09-22T20:01:00+03:00
++```
++
++It was intentionally not executed by this run because of the explicit
++integration-run boundary above. No refusal or transaction state was produced
++by an integration attempt in this run.
++
++## Publication caveat
++
++The accepted article/documentation changes remain unpublished on `main` until
++the runner performs and verifies the landing transaction. After landing, the
++runner should verify the transaction, task/story statuses, landed commit,
++signatures, and exact changed paths.
+
+ succeeded in 703ms:
+Attached TASK-260923-hyh12u_integration-retry-results.md on TASK-260923-hyh12u as outcome
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+ succeeded in 0ms:
+ M .research/260923_mcp-token-economics-evidence.md
+ M LOGBOOK.md
+ M README.md
+ M articles/field-alias-compression-study.md
+
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260923-hyh12u) { overview, resources }'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+diff --git a//tmp/TASK-260923-hyh12u_integration-retry-results.md b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..c13ea7536faae743eeb400edcdc44d01eb2b25cd
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+@@ -0,0 +1,54 @@
++# TASK-260923-hyh12u integration retry results
++
++## Scope
++
++This integration run was bound to accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2, for `STORY-260923-371o14`.
++
++The run assignment explicitly prohibited executing or detaching
++`task-board worktree integrate`; the runner is responsible for the bound
++landing transaction synchronously. Accordingly, this run performed no landing
++mutation and did not alter the source worktree.
++
++## Preflight evidence
++
++`task-board worktree integrating --json` exited 0 and reported:
++
++- protected ref: `refs/heads/main`
++- protected OID: `c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830`
++- element: `TASK-260923-hyh12u`
++- CR/revision: `CR-TASK-260923-hyh12u-2`, revision `2`
++- CR state: `accepted`
++- integration kind: `story_final`
++- repository delta: `present`
++- candidate tree: `cc924a0d7f6a5d76a48738c1c9f232484e544039`
++- candidate tree on trunk: `no`
++- classification: `awaiting_landing`
++- reason: candidate tree is not carried by any post-base ancestor of
++  `refs/heads/main` (`landed_tree_not_on_trunk`)
++- integration backlog: 2 awaiting elements, including this task
++
++`task-board q 'get(TASK-260923-hyh12u) { overview }'` exited 0 and confirmed
++the task remains `integrating` under Story `STORY-260923-371o14`.
++
++## Landing command for the runner
++
++The accepted retry brief specifies this command and owner-policy commit time:
++
++```bash
++task-board worktree integrate STORY-260923-371o14 \
++  --cr TASK-260923-hyh12u \
++  --revision 2 \
++  --commit-time 2026-09-22T20:01:00+03:00
++```
++
++It was intentionally not executed by this run because of the explicit
++integration-run boundary above. No refusal or transaction state was produced
++by an integration attempt in this run.
++
++## Publication caveat
++
++The accepted article/documentation changes remain unpublished on `main` until
++the runner performs and verifies the landing transaction. After landing, the
++runner should verify the transaction, task/story statuses, landed commit,
++signatures, and exact changed paths.
+
+ exited 1 in 124ms:
+query error: parse error at 1:35: expected field name (got ",", expected identifier); relevant operation signature: get(id:string)
+
+codex
+Preflight evidence attached as:
+
+`TASK-260923-hyh12u_integration-retry-results.md`
+
+Findings:
+
+- Accepted CR revision 2 is `awaiting_landing`.
+- Candidate tree is not on `main`.
+- No integration transaction was attempted, per the explicit run boundary.
+- Source worktree remains unchanged.
+- Runner should execute the supplied `worktree integrate` command and verify landing evidence.
+diff --git a//tmp/TASK-260923-hyh12u_integration-retry-results.md b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..c13ea7536faae743eeb400edcdc44d01eb2b25cd
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-retry-results.md
+@@ -0,0 +1,54 @@
++# TASK-260923-hyh12u integration retry results
++
++## Scope
++
++This integration run was bound to accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2, for `STORY-260923-371o14`.
++
++The run assignment explicitly prohibited executing or detaching
++`task-board worktree integrate`; the runner is responsible for the bound
++landing transaction synchronously. Accordingly, this run performed no landing
++mutation and did not alter the source worktree.
++
++## Preflight evidence
++
++`task-board worktree integrating --json` exited 0 and reported:
++
++- protected ref: `refs/heads/main`
++- protected OID: `c5a6fb45d6e028377d6f7c6e006cd8ce5c0d0830`
++- element: `TASK-260923-hyh12u`
++- CR/revision: `CR-TASK-260923-hyh12u-2`, revision `2`
++- CR state: `accepted`
++- integration kind: `story_final`
++- repository delta: `present`
++- candidate tree: `cc924a0d7f6a5d76a48738c1c9f232484e544039`
++- candidate tree on trunk: `no`
++- classification: `awaiting_landing`
++- reason: candidate tree is not carried by any post-base ancestor of
++  `refs/heads/main` (`landed_tree_not_on_trunk`)
++- integration backlog: 2 awaiting elements, including this task
++
++`task-board q 'get(TASK-260923-hyh12u) { overview }'` exited 0 and confirmed
++the task remains `integrating` under Story `STORY-260923-371o14`.
++
++## Landing command for the runner
++
++The accepted retry brief specifies this command and owner-policy commit time:
++
++```bash
++task-board worktree integrate STORY-260923-371o14 \
++  --cr TASK-260923-hyh12u \
++  --revision 2 \
++  --commit-time 2026-09-22T20:01:00+03:00
++```
++
++It was intentionally not executed by this run because of the explicit
++integration-run boundary above. No refusal or transaction state was produced
++by an integration attempt in this run.
++
++## Publication caveat
++
++The accepted article/documentation changes remain unpublished on `main` until
++the runner performs and verifies the landing transaction. After landing, the
++runner should verify the transaction, task/story statuses, landed commit,
++signatures, and exact changed paths.
+
+tokens used
+46,126
+Preflight evidence attached as:
+
+`TASK-260923-hyh12u_integration-retry-results.md`
+
+Findings:
+
+- Accepted CR revision 2 is `awaiting_landing`.
+- Candidate tree is not on `main`.
+- No integration transaction was attempted, per the explicit run boundary.
+- Source worktree remains unchanged.
+- Runner should execute the supplied `worktree integrate` command and verify landing evidence.

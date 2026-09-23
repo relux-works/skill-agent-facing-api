@@ -1,353 +1,296 @@
 # Field Name Aliases in Schema-Once Output: Do They Save Tokens?
 
-**A three-part empirical study on the marginal value of field name abbreviation when compact tabular format already eliminates key repetition.**
+**A compact formatter has already paid to say a field name once. Is an alias dictionary worth another schema lookup to save a few tokens?**
 
-*February 2026*
-
----
-
-## Abstract
-
-We investigated whether registering short aliases for field names (e.g., `status` -> `s`, `assignee` -> `a`) would meaningfully reduce token consumption in agent-facing CLI output that already uses a schema-once compact format. Three independent studies measured: (1) raw token savings from abbreviation across payload scales, (2) LLM comprehension impact at 5, 15, and 30 alias complexity levels, and (3) session-level token economics including schema discovery roundtrip overhead.
-
-**Finding: aliases are not worth implementing.** In compact tabular (schema-once) format, field names appear exactly once in the header row. Abbreviating the header saves a fixed 5 tokens regardless of whether the payload contains 5 or 500 items — a 0.02% to 1.86% marginal reduction. Meanwhile, the alias dictionary requires a `schema()` introspection roundtrip costing 85 tokens per call, producing a net token loss in 75% of simulated session scenarios. The compact format already solves the problem aliases target (repeated key names), making aliases architecturally redundant.
+*February 2026; evidence boundaries revised September 2026.*
 
 ---
 
-## 1. Introduction
+## The question and its boundary
 
-### The Optimization Landscape
+A task-list formatter can return a header once and values beneath it:
 
-When AI agents consume structured data from CLI tools, token efficiency directly impacts cost and context window utilization. A well-optimized agent-facing query layer implements several techniques to minimize output tokens:
+~~~text
+id,name,status
+T-209,Schema migration,development
+T-210,Release notes,to-review
+~~~
 
-1. **Field projection** — return only requested fields (~variable savings)
-2. **Format switch** — compact tabular output instead of JSON (~46% savings)
-3. **Batching** — multiple queries per tool call (~80 tokens saved per avoided call)
-4. **Presets** — named field bundles reduce query input tokens
+This is the familiar baseline: field names identify the columns once, while the
+rows carry only values. Replacing the header with aliases such as
+<code>i,n,s</code> can make that one line shorter, but it also requires an
+agent to learn and retain the dictionary.
 
-After implementing these four optimizations, a natural question arises: can we squeeze out more tokens by abbreviating field names themselves?
+This article asks a deliberately bounded question: **for this repository's
+schema-once compact formatter, do field aliases justify their discovery and
+comprehension cost?** It covers the checked-in alias fixtures, the associated
+session model, and the current Go implementation of compact output and DSL
+batching. It does not establish a token winner between the DSL and MCP, and it
+does not generalize the results to arbitrary tokenizers, hosts, or transports.
 
-### The Hypothesis
+The evidence types are kept distinct throughout:
 
-Field name aliases (`id` -> `i`, `name` -> `n`, `status` -> `s`) should reduce output tokens because shorter strings produce fewer tokens. The alias mapping would be stored in the schema and exposed via a `schema()` introspection call. The agent learns the dictionary once, then reads abbreviated output for the remainder of the session.
+| Label | What it means here |
+| --- | --- |
+| **Verified implementation fact** | Current source and executable tests establish a behavior of this Go implementation. |
+| **Checked-in historical measurement** | A fixture, script, and recorded result exist, but this revision did not rerun the tokenizer. |
+| **Model estimate** | A simulator result depends on stated constants and eviction assumptions; it is not a runtime observation. |
+| **Reasoning** | A conditional design recommendation rather than a numeric result. |
+| **Unknown** | The repository has no aligned artifact that could support the claim. |
 
-### The Concern
+The detailed classification and MCP claim dispositions are in the accepted
+[MCP token-economics evidence map](../.research/260923_mcp-token-economics-evidence.md).
 
-Three potential costs could negate the savings:
+## Study 1: What one abbreviated header saves
 
-1. **Token savings might be trivial** if field names are already short or appear infrequently in the output format
-2. **LLM comprehension might degrade** when reading cryptic abbreviated headers
-3. **Schema roundtrip overhead** (the cost of calling `schema()` to learn the alias dictionary) might exceed the per-query savings, especially if context compression forces repeated re-learning
+**Evidence: checked-in historical measurement.** The fixtures use task-tracker
+payloads at 5, 20, 100, and 500 items, each with eight fields:
+<code>id</code>, <code>name</code>, <code>status</code>,
+<code>assignee</code>, <code>description</code>,
+<code>priority</code>, <code>created</code>, and <code>updated</code>.
+The checked-in [measurement script](../.research/synthetic-payloads/measure.py)
+tokenizes fixed JSON, compact-full, and compact-alias fixtures with
+<code>tiktoken</code> and <code>cl100k_base</code>. These are historical fixture
+results, not tokenizer counts re-attested by this revision.
 
-We designed three independent studies to test each concern.
-
----
-
-## 2. Study 1: Token Savings Measurement
-
-### Methodology
-
-Generated synthetic task tracker payloads at four scales (5, 20, 100, 500 items) with 8 fields per item: `id`, `name`, `status`, `assignee`, `description`, `priority`, `created`, `updated`.
-
-Three format variants per scale:
-
-- **JSON** — standard pretty-printed JSON array with indentation
-- **Compact-full** — CSV-style with full field names as header, comma-separated data rows below
-- **Compact-alias** — same CSV-style with 1-character abbreviated header (`i,n,s,a,d,p,c,u`)
-
-Token counts measured with `tiktoken` using `cl100k_base` encoding (compatible with GPT-4 and Claude tokenizers). Random seed fixed at 42 for reproducibility. Payloads used realistic data: task names, assignee names, ISO date strings, multi-word descriptions.
-
-### Results
-
-#### Raw Token Counts
-
-| Items | JSON | Compact-Full | Compact-Alias |
-|------:|-----:|-------------:|--------------:|
+| Items | JSON | Compact-full | Compact-alias |
+| ---: | ---: | ---: | ---: |
 | 5 | 485 | 269 | 264 |
 | 20 | 1,957 | 1,055 | 1,050 |
 | 100 | 9,836 | 5,283 | 5,278 |
 | 500 | 48,933 | 26,144 | 26,139 |
 
-#### Savings Breakdown
+The same recorded data makes the contrast explicit:
 
 | Transition | 5 items | 20 items | 100 items | 500 items |
-|-----------|--------:|--------:|---------:|---------:|
-| JSON -> Compact-Full | -44.5% | -46.1% | -46.3% | -46.6% |
-| Compact-Full -> Compact-Alias | -1.86% | -0.47% | -0.09% | -0.02% |
-| **Absolute alias savings** | **5 tok** | **5 tok** | **5 tok** | **5 tok** |
+| --- | ---: | ---: | ---: | ---: |
+| JSON to compact-full | -44.5% | -46.1% | -46.3% | -46.6% |
+| Compact-full to compact-alias | -1.86% | -0.47% | -0.09% | -0.02% |
+| **Absolute alias saving** | **5 tok** | **5 tok** | **5 tok** | **5 tok** |
 
-#### The Structural Explanation
+The concrete example explains the fixed result. The full header
 
-The alias savings are constant at 5 tokens because in CSV-style output, field names appear **exactly once** — in the header row. The full header:
-
-```
+~~~text
 id,name,status,assignee,description,priority,created,updated
-```
+~~~
 
-is 14 tokens. The abbreviated header:
+is emitted once; the abbreviated version
 
-```
+~~~text
 i,n,s,a,d,p,c,u
-```
+~~~
 
-is 9 tokens. The difference (5 tokens) is fixed regardless of how many data rows follow. All data rows are identical in both variants — they contain values, not keys.
+changes only that declaration. The value rows do not repeat either set of field
+names. The historical fixture counts therefore show a 5-token header delta at
+every tested payload size; they do not prove the same percentage or token count
+for another tokenizer or formatter.
 
-This is the fundamental structural property of schema-once formats: field names are declared once, then never repeated. Abbreviating a one-time declaration yields a one-time saving. As payload size grows, the marginal benefit of that saving approaches zero.
+The per-item values below are another view of those same historical fixtures,
+not a new measurement:
 
-#### Per-Item Amortization
-
-| Items | JSON tok/item | Compact tok/item | Alias tok/item |
-|------:|--------------:|-----------------:|---------------:|
+| Items | JSON tok/item | Compact-full tok/item | Compact-alias tok/item |
+| ---: | ---: | ---: | ---: |
 | 5 | 97.0 | 53.8 | 52.8 |
 | 20 | 97.8 | 52.8 | 52.5 |
 | 100 | 98.4 | 52.8 | 52.8 |
 | 500 | 97.9 | 52.3 | 52.3 |
 
-JSON costs ~98 tokens per item (keys repeat per object). Compact costs ~53 tokens per item (keys declared once). Aliases save an additional 1 token per item at 5 items, converging to 0 per item at scale.
+## Study 2: What a remembered dictionary costs
 
----
-
-## 3. Study 2: LLM Comprehension Impact
-
-### Methodology
-
-Designed a three-level comprehension benchmark:
-
-| Level | Fields | Alias Style | Collision Risk |
-|-------|-------:|-------------|----------------|
-| 1 | 5 | Single-char (`i,n,s,a,d`) | Low |
-| 2 | 15 | 1-2 char (`i,n,s,a,d,p,t,cr,up,dl,e,tg,bl,cm,pr`) | Medium |
-| 3 | 30 | 1-2 char with deliberate near-collisions (`s,sc,sp,st,sr` / `c,cl,cr,cm`) | High |
-
-Each level includes 12 data items and 10 questions spanning five types: direct lookup, filtering, cross-reference, aggregation, and multi-field reasoning. Each level was tested in two conditions:
-
-- **Abbreviated (A):** explicit alias dictionary provided, data uses abbreviated headers
-- **Full (F):** identical data with full field names, no dictionary needed
-
-Evaluated by Claude Opus 4.6 with pre-computed ground truth verified independently by positional field counting. Self-evaluation caveat: both tests and answers were produced in the same pipeline; the meaningful signal is the *delta* between conditions, not absolute accuracy.
-
-### Results
+**Evidence: checked-in historical benchmark record.** The comprehension
+materials under [.research/comprehension-tests](../.research/comprehension-tests/)
+compare full names with aliases at three levels: 5, 15, and 30 fields. Each
+level has 12 data items and 10 questions spanning lookup, filtering,
+cross-reference, aggregation, and multi-field reasoning. The earlier benchmark
+reported the following result when an explicit dictionary was supplied:
 
 | Level | Fields | Abbreviated | Full | Delta |
-|-------|-------:|:-----------:|:----:|:-----:|
+| --- | ---: | :---: | :---: | :---: |
 | 1 | 5 | 10/10 (100%) | 10/10 (100%) | 0% |
 | 2 | 15 | 10/10 (100%) | 10/10 (100%) | 0% |
 | 3 | 30 | 10/10 (100%) | 10/10 (100%) | 0% |
 
-**Zero accuracy degradation across all levels** when an explicit dictionary is provided.
+This result is bounded. The tests and answers were produced in the same
+pipeline, so the useful signal is the reported delta, not a general claim about
+model accuracy. The benchmark was not rerun for this revision.
 
-### Qualitative Friction
+The growing task-list example also exposes the operational risk. Once a header
+contains aliases such as <code>s</code>, <code>sc</code>,
+<code>sp</code>, and <code>st</code>, an agent answering a question about
+T-209 must first recover the dictionary, then find the row and its columns.
+The source materials identify five failure modes:
 
-Despite perfect accuracy, aliases introduced measurable cognitive overhead at Level 3. Collision clusters required repeated dictionary lookups:
+1. No dictionary leaves an alias such as <code>c</code> ambiguous.
+2. Domain priors can conflict with a tool's chosen alias.
+3. Different tools can reuse the same alias for different fields.
+4. Partial context eviction can leave an incomplete dictionary.
+5. Large aggregations add attention pressure even when the dictionary is present.
 
-- **The "s-family":** `s`=status, `sc`=scope, `sp`=sprint, `st`=story-points, `sr`=source
-- **The "c-family":** `c`=category, `cl`=closed, `cm`=comments, `cr`=created
-- **The "r-family":** `r`=reporter, `rv`=reviewer, `rn`=rank
+An explicit dictionary prevents the first failure in the historical benchmark,
+but it creates the discovery and retention requirement evaluated next.
 
-**Processing path comparison** (Level 3, Q2: "What sprint and scope does T-209 belong to?"):
+## Study 3: The alias session model
 
-| Step | Full Names | Abbreviated |
-|------|-----------|-------------|
-| 1 | Find T-209 row | Lookup: sp=sprint, sc=scope (not s, not st) |
-| 2 | Read "sprint" column -> S-15 | Find T-209 row |
-| 3 | Read "scope" column -> backend | Locate `sp` column (16th) -> S-15 |
-| 4 | — | Locate `sc` column (15th) -> backend |
+**Evidence: model estimate, not a runtime measurement.** The
+[session simulator](../.research/session-simulator/simulate.py) models an
+agent that refreshes its alias dictionary after every <em>K</em> turns. It
+hard-codes the historical 85-token schema roundtrip and 5-token compact-header
+saving, plus a query mix and eviction schedule. Those inputs are assumptions of
+the model; they are not observations of Codex, Claude, MCP, or another agent
+host.
 
-The abbreviated path adds one dictionary lookup per aliased field. Trivial for a single question. Over thousands of agent queries, this compounds.
+| Model input | Value used by the simulator | Evidence boundary |
+| --- | ---: | --- |
+| Schema roundtrip | 85 tok | Historical measurement reused as a model input |
+| Compact alias saving per query | 5 tok | Historical fixture result reused as a model input |
+| Context eviction and query mix | Scenario-specific | Assumption |
 
-### Failure Modes
+With those inputs, the simulator produces these estimates:
 
-Five failure modes were identified for production deployment:
+| Session queries | Eviction K | Schema calls | Schema cost | Alias savings | Net |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 | 10 | 1 | 85 | 40 | -45 |
+| 10 | never | 1 | 85 | 40 | -45 |
+| 20 | 10 | 2 | 170 | 80 | -90 |
+| 20 | 20 | 1 | 85 | 80 | -5 |
+| 50 | 10 | 5 | 425 | 200 | -225 |
+| 50 | 50 | 1 | 85 | 200 | +115 |
+| 100 | 10 | 10 | 850 | 400 | -450 |
+| 100 | 20 | 5 | 425 | 400 | -25 |
+| 100 | 50 | 2 | 170 | 400 | +230 |
+| 100 | never | 1 | 85 | 400 | +315 |
 
-1. **No dictionary provided** — catastrophic. `c` could mean category, comments, created, or closed. The Columbo study (EMNLP 2025) measured 10.54% NL2SQL accuracy drop and 40.5% relation detection drop with undocumented abbreviations.
+For its compact-format cases, the simulator evaluates 16 cases and reports four
+positive outcomes. For example, its compact scenario for 20 queries with K=20
+returns -5, while 50 queries with K=50 returns +115. That result supports only
+this conditional statement: aliases can be positive when the model's discovery
+cost is amortized over sufficiently many remembered queries. It does not measure
+a typical agent session or a transport comparison.
 
-2. **Domain-specific ambiguity** — `s` defaults to "status" in developer tools but could mean "story", "sprint", "severity" in other contexts. Domain priors may override dictionary lookup.
+The simple all-data-query amortization check for the model's 85-token and
+5-token inputs is:
 
-3. **Multi-schema contexts** — agent works with multiple tools using different alias dictionaries. `p`=priority in Tool A, `p`=parent in Tool B. Cross-contamination is likely.
+~~~text
+break_even_queries >= schema_cost / savings_per_query
+net_positive_queries > schema_cost / savings_per_query
+~~~
 
-4. **Partial context eviction** — the worst failure mode. After context compression, the agent remembers some aliases but not others, silently applying incorrect mappings.
+At those inputs, 17 such data queries exactly amortize one schema roundtrip;
+net-positive savings begin at 18. These are derived model values, not
+host-independent thresholds.
 
-5. **Aggregation at scale** — counting or filtering over 100+ rows while holding alias mappings strains attention, though this is a general LLM limitation orthogonal to aliasing.
+### Batching is a separate implementation capability
 
----
+The alias model should not be turned into a claim that one transport universally
+beats another. Still, batching changes the local execution shape in a way the
+current implementation can verify.
 
-## 4. Study 3: Session-Level Token Economics
+**Situation:** an agent needs the status of T-209, T-210, and T-211.
+**Expected behavior:** this DSL accepts semicolon-separated statements and
+returns the results in source order.
 
-### Measured Constants
+~~~text
+get(T-209) { status }; get(T-210) { status }; get(T-211) { status }
+~~~
 
-All token counts measured with `tiktoken` cl100k_base encoding on real CLI output from an agentquery-based task tracker:
+The parser and executor implement this multi-statement behavior, and the test
+suite covers three batched statements and compact rendering. This shows a
+capability of this Go DSL. It does not supply a per-call token total, prove a
+particular host framing cost, or establish anything about an MCP server's
+batching behavior.
 
-| Metric | Tokens | Method |
-|--------|-------:|--------|
-| Schema() roundtrip cost | 85 | 10 (call) + 71 (response) + 4 (overhead) |
-| Alias savings per query (compact) | 5 | Fixed: header abbreviation only |
-| Alias savings per query (JSON get) | 3 | Abbreviated object keys |
-| Alias savings per query (JSON list, 10 items) | 30 | 3 tokens/item x 10 |
-| Typical get() response (compact) | 23 | Real CLI measurement |
-| Typical list() response, 8 items (compact) | 177 | Real CLI measurement |
+## Discussion: choose the structural optimization first
 
-### Session Simulation
+The historical fixtures support a narrow structural insight: a schema-once
+header removes repeated field names from the rows. Aliases can only shorten
+that one declaration. The simulator then models whether learning the aliases
+pays for that fixed saving under its stated assumptions.
 
-Modeled agent sessions of varying length with context eviction — the dictionary is forgotten every K turns, requiring a `schema()` re-query:
+| Priority | Optimization | Evidence in this repository | Boundary |
+| ---: | --- | --- | --- |
+| 1 | Field projection | Implementation selects requested fields | No percentage is claimed here |
+| 2 | Compact schema-once output | Historical fixtures report 44.5% to 46.6% versus JSON | Fixture and tokenizer specific |
+| 3 | Semicolon batching | Verified implementation behavior | External call savings depend on host and transport |
+| 4 | Presets | Implementation feature for common selections | No token saving is asserted here |
+| 5 | Field aliases | Historical fixtures show a fixed 5-token compact-header delta | Dictionary discovery is modeled, not newly measured |
 
-| Session | Eviction K | Schema Calls | Schema Cost | Alias Savings | **Net** |
-|--------:|-----------:|-------------:|------------:|--------------:|--------:|
-| 10 | 10 | 1 | 85 | 40 | **-45** |
-| 10 | never | 1 | 85 | 40 | **-45** |
-| 20 | 10 | 2 | 170 | 80 | **-90** |
-| 20 | 20 | 1 | 85 | 80 | **-5** |
-| 50 | 10 | 5 | 425 | 200 | **-225** |
-| 50 | 50 | 1 | 85 | 200 | **+115** |
-| 100 | 10 | 10 | 850 | 400 | **-450** |
-| 100 | 20 | 5 | 425 | 400 | **-25** |
-| 100 | 50 | 2 | 170 | 400 | **+230** |
-| 100 | never | 1 | 85 | 400 | **+315** |
+### MCP comparison: scoped conclusion
 
-**Net positive in only 4 of 16 scenarios (25%).** All require either long sessions (50+ queries) with infrequent eviction (50+ turns), or the unrealistic assumption that the dictionary is never evicted from context.
+The accepted evidence map separates implementation facts from transport
+economics:
 
-### Break-Even Analysis
+| Question | What the evidence supports | What remains unknown |
+| --- | --- | --- |
+| Can this DSL batch requests? | Yes. The [parser](../agentquery/parser.go#L318-L369) accepts semicolon-separated statements and [QueryAST](../agentquery/query.go#L30-L60) executes a batch. | The token saving for a particular host or transport. |
+| Is compact output schema-once? | Yes. [FormatCompact](../agentquery/format.go#L9-L62) writes a field header before its rows. | A universal percentage across tokenizers and payloads. |
+| Is MCP more or less token-efficient here? | No repository-local result answers this. | There is no MCP adapter, tool-definition fixture, prompt snapshot, host trace, or aligned workload. |
 
-```
-queries_between_evictions > schema_cost / savings_per_query
-```
+MCP batching and discovery costs must be bounded by protocol version, SDK,
+server design, and host behavior. The official
+[Ruby SDK protocol-version reference](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/)
+records that protocol version 2025-06-18 removed JSON-RPC batching, while the
+official [TypeScript SDK request-body reference](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html)
+documents a current maximum of 100 messages in a JSON-RPC batch array. Neither
+source guarantees that an agent host exposes or sends a batch, and neither
+measures prompt-token cost for this repository.
 
-| Format | Savings/Query | Schema Cost | Break-Even |
-|--------|-------------:|------------:|-----------:|
-| Compact | 5 | 85 | **17 queries** |
-| JSON (get) | 3 | 85 | **29 queries** |
-| JSON (list, 10 items) | 30 | 85 | **3 queries** |
+**Reasoning: MCP can still be the better interface when interoperability is the
+requirement rather than a proven local token minimum.** A remote service that
+must expose model-controlled tools to several MCP-capable hosts, or an existing
+MCP deployment that already meets the integration requirement, can justify MCP.
+The [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index)
+supports that tool-interoperability rationale. It is not evidence of a token
+win. The failure mode is treating any of those integration benefits as a
+measured break-even point; a real comparison needs a server/host pair, protocol
+and SDK version, discovery transcript, tokenizer, and aligned workload.
 
-For compact format, the agent needs 17 consecutive data queries between schema refreshes — unreliable given typical context eviction patterns (every 10-20 turns in production agent systems after ~180K context tokens).
+## Reproducing and extending the evidence
 
-### Workflow Analysis
+The checked-in artifacts make the historical alias result inspectable:
 
-Four representative agent workflows modeled end-to-end:
+| Artifact | Purpose |
+| --- | --- |
+| [Synthetic payload generator](../.research/synthetic-payloads/generate.py) | Generates the four fixed payload scales and three formats |
+| [Tokenizer measurement script](../.research/synthetic-payloads/measure.py) | Counts the fixtures with <code>tiktoken</code> and <code>cl100k_base</code> |
+| [Comprehension materials](../.research/comprehension-tests/) | Holds the three alias/full test levels |
+| [Session simulator](../.research/session-simulator/simulate.py) | Evaluates the documented 16 model scenarios |
 
-| Workflow | Without Aliases | With Aliases | Delta |
-|----------|---------------:|-------------:|------:|
-| Check status of 5 tasks | 246 tok | 306 tok | **+24% worse** |
-| Find blocked tasks + update | 486 tok | 541 tok | **+11% worse** |
-| Daily standup review | 130 tok | 196 tok | **+51% worse** |
-| Heavy analytics (100q, evict/20) | ~6,000 tok | ~6,025 tok | **-0.4% marginal loss** |
+Run the tokenizer measurement only in an isolated environment where
+<code>tiktoken</code> is installed:
 
-Every workflow shows aliases performing equal to or worse than the no-alias baseline.
+~~~bash
+python3 .research/synthetic-payloads/generate.py
+python3 .research/synthetic-payloads/measure.py
+~~~
 
-**Batching comparison:** For the "check status of 5 tasks" workflow, batching 5 queries into a single call costs 165 tokens — 33% less than individual queries (246 tok) and 46% less than aliases (306 tok). Batching is the superior optimization with zero overhead.
+Run the model separately so its output is not presented as a measurement:
 
-### The JSON Alias Irony
+~~~bash
+python3 .research/session-simulator/simulate.py
+~~~
 
-Aliases in JSON format *are* economical — saving ~3 tokens per item per query, easily exceeding the 85-token schema cost in moderate sessions. But this finding is irrelevant: the recommendation is to use compact format, which already saves ~46% vs JSON. Compact format eliminates the key repetition that makes JSON aliases valuable. **The two optimizations are substitutes, not complements.** Implementing aliases to optimize JSON output is like tuning a carburetor after installing fuel injection.
+To make an MCP token claim, add a distinct, reproducible benchmark with the
+exact server, host, protocol/SDK version, tool definitions, prompt snapshot,
+tokenizer, and workload. Do not reuse the historical 346-element comparison as
+if those artifacts were present here.
 
----
+## Conclusion: the decision for this formatter
 
-## 5. Discussion
+**Do not add field aliases to this compact formatter on the current evidence.**
+The checked-in fixtures show that aliases are a one-header optimization, and
+the session model turns that small fixed gain into a benefit only under its
+explicit retention assumptions. For this formatter, aliases are a one-header
+optimization; no repository-local MCP benchmark establishes a transport-wide
+token winner.
 
-### The Core Insight: Schema-Once Kills Aliases
-
-The three studies converge on a single structural insight:
-
-> **In any schema-once output format (CSV, TSV, TOON), field names appear exactly once. Abbreviating a one-time occurrence produces a one-time saving. As payload size grows, the marginal value of that saving approaches zero.**
-
-This is not a limitation of a specific implementation — it's an inherent property of the format. Any compact tabular format with a header row followed by value rows exhibits this behavior. Aliases are a solution to key repetition, and schema-once formats have no key repetition left to solve.
-
-### The Optimization Hierarchy
-
-| Rank | Optimization | Savings | Discovery Overhead |
-|------|-------------|---------|-------------------|
-| 1 | Field projection | 50-80% (selective queries) | Zero |
-| 2 | Compact format (JSON -> tabular) | ~46% | Zero |
-| 3 | Batching | ~80 tok per avoided call | Zero |
-| 4 | Presets | ~5-10 tok per query input | Zero |
-| **5** | **Field aliases** | **5 tokens (fixed)** | **85 tok per schema() call** |
-
-Optimizations 1-4 work from the first query with zero discovery overhead. Aliases are the only optimization requiring upfront investment (schema roundtrip), and the investment exceeds the return in most scenarios.
-
-### BPE Tokenizers Already Compress Field Names
-
-A second-order insight: modern BPE tokenizers already perform the compression that aliases attempt. Common field names — "status", "name", "id", "type" — are single tokens in cl100k_base. Abbreviating `status` (1 token) to `s` (1 token) saves zero tokens. Only multi-token field names benefit: `blocked_by` (3 tokens) -> `bb` (1 token) saves 2 tokens. But these savings only manifest in JSON (where keys repeat per item), not in compact format (where the header appears once).
-
-### Format as Transport Concern
-
-This study reinforces a broader design principle: **output format is a transport concern, not a domain concern.** The data source should never decide serialization format. The caller declares format through explicit transport-level mechanisms:
-
-| Layer | Format Declaration |
-|-------|-------------------|
-| CLI | `--format compact` flag (required, no default) |
-| SDK | `QueryJSONWithMode(query, LLMReadable)` per-call parameter |
-| REST | `Accept: application/json` header |
-| gRPC | `output_format` request field |
-
-If aliases were implemented, they would follow the same principle — a `--aliases` flag or per-call parameter, never a schema-level configuration. But even at the transport level, the economics don't justify the feature.
-
-### Comparison with External Research
-
-**Columbo (EMNLP 2025)** found devastating accuracy drops (10.54% NL2SQL, 40.5% relation detection) from abbreviated column names *without* dictionaries. Our benchmark showed 0% degradation *with* dictionaries. The dictionary is essential infrastructure, but requiring a dictionary means requiring a schema roundtrip — which is the overhead that kills the economics.
-
-**TOON format** uses full field names in its schema headers despite being designed explicitly for LLM token efficiency. TOON achieves 73.9% accuracy (vs 69.7% for JSON) with 39.6% fewer tokens through structural clarity, not name abbreviation. This validates the approach: **structure matters more than name length.**
-
-**Better Think with Tables (2024)** showed 40.29% performance gain from tabular format vs text for data analytics — driven by structural clarity (delimiters, alignment), not header verbosity.
-
----
-
-## 6. Conclusion
-
-Field name aliases in schema-once output are a solution to a problem that no longer exists. The compact tabular format — by declaring field names once in a header row — already eliminates the per-item key repetition that aliases target. The marginal savings (5 tokens, fixed) are dwarfed by the schema discovery overhead (85 tokens per roundtrip), producing a net token loss in 75% of simulated scenarios.
-
-The token optimization hierarchy for agent-facing output is clear: field projection and compact format deliver the largest gains (46%+) with zero overhead. Batching and presets provide additional savings. Aliases sit at the bottom — the only optimization where discovery cost exceeds the benefit in typical usage.
-
-### Decision Record
-
-| Criterion | Threshold | Measured | Result |
-|-----------|-----------|----------|--------|
-| Net token savings | > 10% | 0.02-1.86% (5 tokens fixed) | FAIL |
-| Comprehension degradation | < 5% | 0% (with dictionary) | PASS |
-| Schema roundtrip ratio | < 1:5 | Break-even at 1:17 | FAIL |
-| **Overall** | All pass | **2 of 3 failed** | **NO-GO** |
-
-### What to Optimize Instead
-
-1. **Compact format adoption** — the 46% savings is the single biggest win available
-2. **Batch query utilization** — agents underutilize multi-query syntax, leaving ~80 tokens per call on the table
-3. **Preset tuning** — matching named field bundles to common agent workflows
-4. **Value-level compression** — shortening date formats, status codes (warranting separate measurement)
-
----
+The concrete next action is therefore conditional: prioritize field projection,
+compact schema-once output, and the existing DSL batching capability for this
+formatter; choose MCP when interoperability requires it; and measure an aligned
+host/server workload before making any transport-token claim.
 
 ## References
 
-1. Columbo: Expanding Abbreviated Column Names for Tabular Data. EMNLP 2025 Findings. [arxiv.org/html/2508.09403](https://arxiv.org/html/2508.09403)
-
-2. TOON: Token-Oriented Object Notation. [github.com/toon-format/toon](https://github.com/toon-format/toon)
-
-3. Better Think with Tables: Tabular Structures Enhance LLM Comprehension. 2024. [arxiv.org/html/2412.17189v3](https://arxiv.org/html/2412.17189v3)
-
-4. LLMLingua: Compressing Prompts for Accelerated Inference. 2023. [arxiv.org/html/2310.05736v2](https://arxiv.org/html/2310.05736v2)
-
-5. TOON vs JSON — The New Format Designed for AI. dev.to, 2025. [dev.to/akki907/toon-vs-json-the-new-format-designed-for-ai-nk5](https://dev.to/akki907/toon-vs-json-the-new-format-designed-for-ai-nk5)
-
----
-
-## Appendix: Reproducibility
-
-All experimental artifacts are available in the repository:
-
-| Artifact | Description |
-|----------|-------------|
-| `generate.py` | Synthetic payload generator (4 scales x 3 variants, seeded) |
-| `measure.py` | Token measurement script using tiktoken cl100k_base |
-| Comprehension tests | 3 levels x 12 items x 10 questions with ground truth |
-| `simulate.py` | Session simulator with configurable eviction rates |
-
-To reproduce the token measurements:
-
-```bash
-pip3 install tiktoken
-python3 generate.py    # generates 12 payload files
-python3 measure.py     # tokenizes, computes savings, writes report
-```
-
-To run the session simulator:
-
-```bash
-python3 simulate.py    # models 16 session scenarios, outputs results
-```
+1. [MCP Token-Economics Evidence Map](../.research/260923_mcp-token-economics-evidence.md), repository research note, September 2026.
+2. [MCP Ruby SDK protocol versions](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/), official protocol-version reference.
+3. [MCP TypeScript SDK request body](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html), official request-body reference.
+4. [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index), official specification.

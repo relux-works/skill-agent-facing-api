@@ -1,0 +1,1656 @@
+2026-09-23T12:49:34.925884Z ERROR codex_models_manager::manager: failed to refresh available models: request timed out
+2026-09-23T12:49:34.929999Z ERROR codex_models_manager::manager: failed to refresh available models: request timed out
+OpenAI Codex v0.156.1
+--------
+workdir: /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+model: gpt-5.6-luna
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a0ce50-76d2-7032-a758-aa3740b48535
+--------
+user
+# Agent Task Assignment
+
+## FIRST — Run Immediately
+
+```bash
+task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'
+```
+
+## Operational Constraints (Headless Run)
+
+Read this before you run any gate or attach any outcome. A spawned run is
+usually headless: the session ends when your turn ends.
+
+- **Never background a long command and end your turn.** The session terminates
+  with the turn and the process dies with it, while the run is still recorded as
+  completed — a successful-looking run with no evidence attached.
+- **A single shell call is time-bounded (~10 minutes).** Waiting out a longer
+  check inside one call fails too. Split long verification into bounded
+  sequential calls (package subsets, `-run` masks) and state explicitly what you
+  reran yourself versus accepted from already-attached evidence.
+- **Attach evidence before you end the lifecycle, not after.** "I will attach it
+  when the run finishes" is unfulfillable by construction: once your turn ends
+  there is no session left to attach anything.
+
+## Your Role
+# doc-writer
+
+## Description
+
+Writes and updates documentation — README, SKILL.md, references, CHANGELOG. Reads specs, tasks, and code to understand context. Uses domain skills for understanding only.
+
+## Deliverable
+
+Updated documentation files.
+Outcome resources are named `<ELEMENT-ID>_<slug>.<ext>` — the completion guard matches on that
+ID prefix, and a differently named artifact does not satisfy the handoff. Write the file outside the
+managed worktree, then attach it with `task-board resource add`.
+
+Final human-facing wording must say "ready for review" or "handed off to review", not "done", "complete", "finished", "final", or "готово", when the board status is `to-review`.
+
+## Standing Orders
+
+### Evidence Honesty Contract
+
+1. Run each validation or gate command directly as a standalone process. Do not pipe it through `tee`; do not use a pipe chain unless `pipefail` is enabled and the gate command's real status is preserved.
+2. Report the real exit code of every validation or gate command.
+3. Report expected-red gates truthfully as failing: when a command is expected to fail (for example, `go test` in a package-less module), give its real non-zero exit code and a one-line expected-failure rationale; never present it as passing.
+4. Check a checklist item tied to a command only after that exact command has actually run green with exit code 0. If it did not run or did not exit 0, leave the item unchecked.
+5. For board reads, use compact task-specific projections. A concrete assignment does not need routine `summary()`, `plan()`, `schema()`, or `{ full }`; request scoped schema only after an unknown call.
+
+## Status Transitions
+
+- **start_status:** `development`
+- **end_status:** `to-review` (review handoff, not accepted done)
+
+## Constraints
+
+Does NOT modify code. Read-only access to code, specs, tasks. Writes only documentation files.
+
+## Skills
+
+These role skill references are a lazy catalog, not a mandate to bulk-read every
+body. Before technical work, identify the skills relevant to this task's concrete
+scope and read those full skill bodies. Always read any skill explicitly required
+by the task, user, or project instructions.
+
+- **project-management**: `/Users/alexis/.claude/skills/project-management/SKILL.md`
+
+## Definition of Done
+
+- [ ] Use the accepted research note as the only factual expansion source
+- [ ] Apply all eight developer-writer invariants without changing the technical conclusion beyond evidence
+- [ ] Add a substantive MCP comparison with conditional recommendations and failure modes
+- [ ] Validate links, commands, article index consistency, and repository documentation checks
+- [ ] Attach a task-scoped results note naming evidence, changed sections, validation, and publication caveats
+- [ ] Implementation matches AC
+- [ ] Solution fits project architecture
+- [ ] Tests green
+- [ ] Gate, refusal, validation, authorization, and attestation behavior attacked, not read — positive-path-only evidence is not accepted
+- [ ] If review does not accept the work — verdict evidence added and status routed by the explicit verdict branches
+- [ ] Docs updated and consistent with current code
+- [ ] No discrepancies between code and description
+- [ ] Result linked as a new task-scoped outcome resource
+- [ ] Important findings, decisions, anomalies, or regressions recorded in logbook when relevant
+## Your Task
+
+- **ID**: TASK-260923-hyh12u
+- **Title**: TASK-260923-hyh12u: revise-token-economics-article-with-developer-writer
+- **Parent**: STORY-260923-371o14
+### Description
+
+Revise the research-selected canonical token-efficiency article in skill-agent-facing-api. Apply the attached developer-writer semantic core: lead with the concrete engineering tension, state the bounded question early, progress from familiar baseline to the agent-facing CLI improvement, keep each numerical claim next to evidence, include MCP tradeoffs and cases where MCP is preferable, and close with a concrete design decision. Update adjacent indexes or README links only when needed for consistency.
+
+Additional spawn brief:
+# Post-review integration only
+
+Revision 2 is already independently accepted. This run is not a producer
+rework and must not update the accepted outcome, publish another Change
+Request, or hand off again.
+
+From the control root `/Users/alexis/src/relux-works/skill-agent-facing-api`,
+run exactly:
+
+```bash
+task-board worktree integrate STORY-260923-371o14 --cr TASK-260923-hyh12u --revision 2 --commit-time 2026-09-22T20:30:00+03:00
+```
+
+Then verify:
+
+- the transaction completed;
+- `TASK-260923-hyh12u` and `STORY-260923-371o14` are `done`;
+- the source and board-state commits are signed;
+- the landed article blob equals accepted candidate blob
+  `e08d229d9c35449576b0fbad32a38c94310e7de5`.
+
+Exit after reporting the integration receipt. Do not create a new CR.
+### Scope
+
+Edit the selected source article and minimal adjacent documentation in this repository. Preserve technical facts, measurement provenance, and reproducibility instructions. Do not create blog translations here and do not introduce new product claims beyond the accepted research note.
+### Acceptance Criteria
+
+The article contains a substantive MCP comparison grounded in the accepted research note; measured values, estimates, assumptions, and limitations are visibly distinct; the recommendation is conditional rather than universal; developer-writer invariants are satisfied; links and commands are valid; repository documentation checks pass; and a task-scoped results resource records changed sections, evidence used, checks run, and any remaining publication caveats.
+
+## Instructions
+
+The following instructions have been attached to this task:
+
+### developer-writer-core.md
+> Accepted developer-writer runtime semantic core to apply to the article
+
+# Developer writer
+
+1. Open with the concrete problem, tension, decision, or surprising observation that shows why the subject matters — not with an announcement of what the article will cover.
+
+2. State the specific question the article answers and the boundary of what it covers early, before any broad background.
+
+3. When the idea needs examples, prefer one concrete example that grows as the solution becomes more capable; use separate samples only when they are truly independent. Before each code sample, name the situation it handles and the behavior to expect; after it, say what it shows or what changed.
+
+4. Move from a familiar or simple baseline to the useful improvement, then show the edge case, limitation, or alternative that affects the choice.
+
+5. Keep each substantive claim beside the evidence that supports it, and make the kind of evidence recognizable — a demonstration, a measurement, an external source, reasoning, or experience — so that none of them passes for another.
+
+6. When recommending a technique, state its tradeoffs and failure modes rather than presenting it as universally right. Say when it does not apply and what the demonstration does not prove.
+
+7. Use headings only for conceptual waypoints. Match their number and depth to the article's length and its distinct stages, and let a short focused note remain prose-led.
+
+8. Close on a concrete consequence — a decision, warning, next action, or practical takeaway that follows from the article — before any thanks, links, or call to action. Do not let a recap alone or generic encouragement stand in for it.
+
+
+
+### mcp-token-economics-evidence.md
+> Accepted evidence map and section-level brief from TASK-260923-b1kh3e
+
+# MCP Token-Economics Evidence Map
+
+**Task:** `TASK-260923-b1kh3e`  
+**Decision unblocked:** select the publication to revise and define the admissible MCP comparison claim set for `TASK-260923-hyh12u`.  
+**Research contract:** `grammar_frozen: not applicable` — this is an editorial evidence map, not a runtime grammar. Worker-time budget: 45 minutes including verification and packaging. Artifact budget: this one Markdown note (no archive; repository paths, commands, and board-resource digest are the evidence). Serial-prerequisite budget: one. First production slice: `TASK-260923-hyh12u` revises the selected article with one integrated MCP comparison and a bounded conclusion.
+
+## Decision
+
+Revise **[`articles/field-alias-compression-study.md`](../articles/field-alias-compression-study.md)**, and no other document in this slice.
+
+It is the canonical publication source because the root README has a dedicated `Articles` index and links this exact file as the only article ([`README.md:160-166`](../README.md#L160)); it contains the study's abstract, methods, results, discussion, conclusion, and references ([`articles/field-alias-compression-study.md:9-13`](../articles/field-alias-compression-study.md#L9), [`174-305`](../articles/field-alias-compression-study.md#L174)). Git history shows it was introduced as the field-alias research article and has not been revised since (`git log --follow -- articles/field-alias-compression-study.md` → `ba5a6cc`, 2026-02-12).
+
+`references/comparison-example.md` is evidence input, not the publication surface: it calls itself a context-efficiency comparison ([`references/comparison-example.md:1-5`](../references/comparison-example.md#L1)) and README lists it separately as a reference ([`README.md:168-177`](../README.md#L168)). It should be cited, corrected, or bounded by the article; it must not be treated as a reproducible benchmark record.
+
+## Evidence classes
+
+| Label | Meaning in this note |
+| --- | --- |
+| **Measured/reproduced** | A command in the current checkout ran successfully and its result is recorded below. |
+| **Checked-in measurement** | Historical fixture/script/output exists, but this run did not independently reproduce the tokenizer count. |
+| **Estimate/model** | Arithmetic or simulator output whose constants/assumptions were not independently measured in this run. |
+| **Reasoning** | A conditional design conclusion, not a numeric measurement. |
+| **External fact** | A primary-source statement, cited directly. |
+| **Unknown** | Neither code nor a reproducible local command establishes it. Do not turn it into a publication claim. |
+
+## What the current repository establishes
+
+1. **Measured/reproduced — the DSL implements multi-statement batching.** The parser accepts `query (';' query)*` ([`agentquery/parser.go:318-369`](../agentquery/parser.go#L318)); `Schema.QueryAST` executes each statement and returns a result array for multi-statement input ([`agentquery/query.go:30-60`](../agentquery/query.go#L30)); and the executable tests cover three batched statements and compact batched rendering ([`agentquery/query_test.go:276-319`](../agentquery/query_test.go#L276), [`1161-1193`](../agentquery/query_test.go#L1161)). `go test ./...` from `agentquery/` exited **0** (3.910s main package, 3.343s Cobra extension).
+2. **Measured/reproduced — compact list output is schema-once.** `FormatCompact` writes a comma-separated field header once, then iterates rows/selected fields ([`agentquery/format.go:9-62`](../agentquery/format.go#L9)). Field projection returns only requested fields ([`agentquery/selector.go:14-24`](../agentquery/selector.go#L14)) and validates selected fields/presets ([`agentquery/selector.go:53-100`](../agentquery/selector.go#L53)). This supports a structural statement about *this formatter*, not a universal token percentage.
+3. **Checked-in measurement, not reproduced here — alias fixtures and a tokenizer script exist.** `.research/synthetic-payloads/measure.py` reads four fixed payload scales, calls `tiktoken` `cl100k_base`, and computes the compact-full/alias delta ([`.research/synthetic-payloads/measure.py:12-45`](./synthetic-payloads/measure.py#L12), [`98-112`](./synthetic-payloads/measure.py#L98)). The matching payload fixtures are present under `.research/synthetic-payloads/` and the article's result table is traceable to them ([`articles/field-alias-compression-study.md:62-106`](../articles/field-alias-compression-study.md#L62)).
+4. **Expected-red verification — raw-token results are not re-attested in this run.** `python3 -c 'import tiktoken; …'` exited **1** with `ModuleNotFoundError: No module named 'tiktoken'`. The task forbids creating a new benchmark program; no package was installed and no paid model was called. Therefore the 5-token/46%-range values remain *checked-in historical measurements*, not newly measured facts in the revised MCP comparison.
+5. **Estimate/model, internally consistent only — alias session simulator.** Importing `.research/session-simulator/simulate.py` and evaluating its compact cases exited **0**: 16 cases, 4 positive; `(20, K=20)` returns `-5`, `(50, K=50)` returns `+115`. The script hard-codes its 85-token schema roundtrip, 5-token compact alias saving, query mix, and eviction schedule ([`.research/session-simulator/simulate.py:18-66`](./session-simulator/simulate.py#L18), [`104-159`](./session-simulator/simulate.py#L104)). Its `4/16` result is a model result conditional on those inputs, not an MCP measurement.
+
+Verification details and exact exit codes are preserved in `.temp/TASK-260923-b1kh3e/research-verification-01.md` (ignored scratch evidence, not an outcome artifact).
+
+## MCP claim map
+
+The table covers the MCP propositions currently presented in the comparison reference, README, and skill. “Admissible” means safe to publish in the target article without obtaining new benchmark evidence.
+
+| Proposed claim | Current source | Evidence status | Editorial disposition |
+| --- | --- | --- | --- |
+| “The DSL parser/executor can batch `;`-separated statements.” | `agentquery/parser.go:318-369`; `agentquery/query.go:30-60`; green `go test ./...` | **Measured/reproduced** behavior | **Admissible**, explicitly scoped to this Go implementation. |
+| “Compact tabular list output places names in one header rather than repeating JSON keys.” | `agentquery/format.go:37-62` | **Measured/reproduced** implementation behavior | **Admissible** as a structural formatter claim; do not add an unmeasured percentage. |
+| “MCP and DSL return identical JSON because they share `internal/fields`.” | Comparison [`:20`](../references/comparison-example.md#L20), README [`:26`](../README.md#L26), SKILL [`:45-49`](../SKILL.md#L45) | **Unsupported/stale**: no `internal/fields` package or MCP adapter is in this checkout. A Go-source search returned only the forward-looking comment “any future MCP server” in `assets/field-selector.go:4`. | **Do not publish** as current fact. Future-tense architecture intent is allowed only if an adapter actually uses the same `Schema`. |
+| “12 MCP definitions cost ~2,200 tokens per session.” | Comparison [`:26`, `:79-92`](../references/comparison-example.md#L26) | **Unknown**: only a 2026-02 estimate; no saved definitions, host transcript, tokenizer command, MCP server, or fixture. | **Remove numeric claim** from the article. Replace with a host/server/protocol-specific measurement requirement. |
+| “Bash/DSL has zero session overhead because Bash is already supplied.” | Comparison [`:26-28`](../references/comparison-example.md#L26) | **Unknown** across agent hosts; no prompt snapshots or host contract in the repo. | **Do not publish as universal fact.** State it only as an assumed comparison condition when a given host already grants shell access. |
+| “MCP and Bash have the same ~80-token per-call framing.” | Comparison [`:21-22`](../references/comparison-example.md#L21) | **Estimate**, with no tokenizer/model/host trace. | **Do not reuse numerical value.** If retained, label it an old scenario assumption, not evidence. |
+| “MCP input is ~5–10 tokens smaller; break-even is ~293 queries.” | Comparison [`:108-126`](../references/comparison-example.md#L108) | **Derived estimate**, dependent on the unverified 2,200-token and 7.5-token inputs. | **Do not publish.** Formula is valid arithmetic only after per-host inputs are measured. |
+| “MCP has no batching and needs one call per operation; DSL saves 194 tokens per three-item batch.” | Comparison [`:117-128`](../references/comparison-example.md#L117), README [`:23-25`](../README.md#L23), SKILL [`:45-47`](../SKILL.md#L45) | **Partly supported / overbroad.** DSL batching is proven; MCP behavior is not tested here. MCP version/transport behavior varies: the official Ruby SDK notes that the 2025-06-18 protocol removed JSON-RPC batching, while the official TypeScript SDK's current server accepts up to 100 messages in a JSON-RPC batch array. | **Publish only the DSL half.** Say MCP batching/round-trip count is host, protocol, SDK, and server-tool-design dependent; do not assert “no batching” or a fixed 194-token delta. |
+| “MCP never breaks even / is only competitive past ~300 queries.” | Comparison [`:128`, `:186`](../references/comparison-example.md#L128) | **Unsupported conclusion**, derived from unsupported fixed costs and an overbroad batching premise. | **Remove.** Replace with an explicit `unknown without an aligned host/server measurement`. |
+| “MCP is useful for native, long-lived, or already-MCP integrations.” | Comparison [`:167-170`](../references/comparison-example.md#L167) | **Reasoning, not token evidence.** MCP's own primary docs define server tools as model-controlled executable functions, but the repo has no economic comparison for this niche. | **Admissible only as a qualitative conditional.** Do not attach a token win, threshold, or “marginal cost” assertion. |
+
+### Direct primary sources for the protocol correction
+
+- The official [MCP Ruby SDK protocol-version reference](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/) states that version `2025-06-18` removed JSON-RPC batching, while newer versions have different lifecycle behavior. This establishes that batching claims need a version bound.
+- The official [MCP TypeScript SDK request-body reference](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html) documents `MAX_BATCH_SIZE = 100`, an upper bound on messages accepted in one JSON-RPC batch array. This establishes a current SDK capability, **not** a guarantee that a particular agent host will send or expose batches.
+- The official [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index) defines tools as model-controlled executable functions. It supports the interoperability rationale for MCP, not a context-token price claim.
+
+## Important limitations and stale wording
+
+1. The comparison was recorded against an external, path-specific 346-element board ([`references/comparison-example.md:3-5`](../references/comparison-example.md#L3)); the board, commands, MCP definitions, and transcripts are not fixtures in this repository. Its raw table cannot be reproduced here.
+2. The comparison says both transports use `internal/fields`, but this repository instead contains `agentquery` and only a *future MCP server* comment. Treat this as a stale source reference, not a missing line item.
+3. The public README and SKILL repeat the fixed-MCP-overhead, no-batching, and break-even wording ([`README.md:7, 21-28`](../README.md#L7); [`SKILL.md:43-49`](../SKILL.md#L43)). They remain outside the requested article-only slice, but will contradict a bounded article afterward. Track a separate documentation correction; do not silently edit them under this research task.
+4. Existing historical alias measurements are materially better evidenced than the MCP comparison because scripts and fixtures exist, but the local environment lacks `tiktoken`. Do not blur “fixture-backed historical measurement” with “rerun on 2026-09-23.”
+5. The simulator's “typical” eviction behavior is an assumption. It is not evidence about any agent runtime, including Codex or Claude.
+
+## When MCP remains the better choice
+
+MCP remains a reasonable or better interface **when the requirement is interoperability rather than a proven local token minimum**: for example, a remote service must expose model-callable tools to multiple MCP-capable hosts, or an existing MCP deployment/host capability already meets the integration need. It may also provide a domain-level bulk tool, but the cost and capability must be measured for that server/host pair.
+
+This is a design conclusion, not a statement that MCP wins a token comparison. The repository contains no MCP adapter, definitions, prompt snapshot, host trace, or aligned workload that could establish an economic threshold. The article should say so plainly.
+
+## Revision brief for `TASK-260923-hyh12u`
+
+Keep the article's field-alias decision separate from the transport comparison. The writer can apply this without new research:
+
+1. In the optimization landscape ([`articles/field-alias-compression-study.md:21-26`](../articles/field-alias-compression-study.md#L21)), change the batching item from “~80 tokens saved per avoided call” to an implementation fact: `agentquery` supports semicolon-separated batched statements; external-call savings depend on the host/transport. Leave the proven compact/schema-once explanation intact.
+2. After the optimization hierarchy in §5 ([`:253-263`](../articles/field-alias-compression-study.md#L253)), add one small subsection, **“MCP comparison: scoped conclusion.”** It must contain: (a) the proven DSL batching and schema-once facts, (b) the missing MCP adapter/fixture evidence, (c) protocol/SDK-dependent batching and discovery cost, and (d) the interoperability-positive case above.
+3. In §4's batching example ([`:224-239`](../articles/field-alias-compression-study.md#L224)), remove or relabel every 80/165/246/306 total as a historical model calculation unless its exact host framing is supplied. Keep the conclusion limited to alias economics; it is not evidence that DSL globally beats MCP.
+4. In the conclusion ([`:292-312`](../articles/field-alias-compression-study.md#L292)), retain the field-alias NO-GO only to the extent supported by the existing fixture-backed study. Replace “the optimization hierarchy is clear” / universal zero-overhead language with: **“For this formatter, aliases are a one-header optimization; no repository-local MCP benchmark establishes a transport-wide token winner.”**
+5. Link this note and the two official primary protocol references. Do **not** recreate the 346-element benchmark, install packages, call paid models, or add a new MCP implementation in this editorial slice.
+
+## Handoff checks
+
+- Exact article to revise: recorded.
+- MCP claims: every currently repeated claim above has an evidence status and disposition.
+- Measurements, estimates, reasoning, external facts, and unknowns: separated.
+- MCP-positive case, limits, stale claims, and section-level brief: recorded.
+- No new benchmark program, paid model run, or archive: created.
+
+
+
+
+
+## Board CLI Reference
+
+You have access to `task-board` CLI for managing your work. All writes use the `m` (mutation DSL) subcommand:
+
+```bash
+# FIRST/LAST lifecycle commands:
+# Use explicit status changes when the task flow requires it.
+task-board m 'set_status(TASK-260923-hyh12u, status=analysis)'       # analyst-style work
+task-board m 'set_status(TASK-260923-hyh12u, status=development)'    # implementation / testing work
+task-board m 'set_status(TASK-260923-hyh12u, status=reviewing)'      # reviewer handoff
+task-board m 'set_status(TASK-260923-hyh12u, status=blocked)'        # when blocked
+task-board m 'set_status(TASK-260923-hyh12u, status=to-review)'      # when your work is ready for review
+
+# Track progress with checklist
+task-board m 'check_item(TASK-260923-hyh12u, item=1)'                        # check item N
+task-board m 'add_checklist_item(TASK-260923-hyh12u, text="Write tests")'    # add checklist item
+
+# Add notes about your progress, decisions, blockers, or review findings
+task-board m 'set_notes(TASK-260923-hyh12u, text="your note here")'
+
+# Save short text directly as outcome resources
+task-board m 'add_resource(TASK-260923-hyh12u, name=TASK-260923-hyh12u_results.md, content="...", type=outcome, description="Description")'
+
+# Attach an existing local file (screenshots, PDFs, logs, archives, research docs)
+task-board resource add TASK-260923-hyh12u ./path/to/file --type outcome --name TASK-260923-hyh12u_artifact.bin -d "Description"
+```
+
+## Spawn Run Control
+
+Tracked runs expose `TASK_BOARD_RUN_ID`. Check directives at safe checkpoints,
+at most once per 1 minute, never in a loop. Directives have no delivery timer.
+
+```bash
+task-board spawn status "$TASK_BOARD_RUN_ID"
+task-board spawn directives "$TASK_BOARD_RUN_ID"
+```
+
+No inbound push: directives are cooperative checkpoint signals:
+- persist your current notes/artifacts before acting on `cancel`-style requests
+- only honor pause/reroute intent at a safe checkpoint
+- if no directive is present, continue normally
+
+## IMPORTANT: Saving Results
+
+When you produce work products (research documents, design docs, screenshots, logs, archives, implementation notes), you MUST save them as outcome resources with names that include the task ID:
+
+```bash
+task-board m 'add_resource(TASK-260923-hyh12u, name=TASK-260923-hyh12u_results.md, content="...", type=outcome, description="Description")'
+task-board resource add TASK-260923-hyh12u ./path/to/file --type outcome --name TASK-260923-hyh12u_artifact.bin -d "Description"
+```
+
+If you revise the same artifact later, use `task-board m 'update_resource(...)'` or `task-board resource update ...` instead of creating a silent overwrite.
+
+If you discover important findings, decisions, anomalies, regressions, or non-obvious constraints while working, record them in `logbook` as well as on the board.
+
+This ensures your results persist on the board and are accessible to other agents and the coordinator. Spawn completion is expected to produce at least one new task-scoped outcome artifact before the task can cleanly remain in `to-review`.
+
+## Evidence That Counts
+
+A passing suite means nothing unless something in it would have failed.
+
+- Any behavior that GATES, REFUSES, VALIDATES, AUTHORIZES, or ATTESTS ships with negative tests that fail when the gate admits what it must reject. A positive test proves the gate is reachable, not that it works.
+- Prove a bound by NARROWING the gate, not only by deleting it. A delete-only mutant proves the gate exists and says nothing about the class it covers.
+- Prove behavior by driving the real entry point — launch, materialize, resolve, publish — and name the production call site. A helper that is unit-tested but called from nowhere promises nothing.
+- Standard negative shapes to test and to look for: forged or self-minted evidence; absent evidence treated as satisfied; the check present but uncalled from production; a bypass path around the check; a capability claim that does not reproduce.
+- A gate reports coverage as a measured ratio, not as prose: prose cannot distinguish 7 of 7 from 3 of 7, and "nothing is there" is not "nothing this checker sees". Name the blind spot as a stated bound.
+- An absence and a failure to read are different facts. A failed, partial, or malformed read is never a legitimate absence, and a fallback defined for absence must not fire on a read failure.
+- Prove, or report nothing. Where a property cannot be established, report unknown instead of inferring it from a proxy signal; callers act on a plausible guess.
+
+Shapes vocabulary and the incident record behind each rule: `references/negative-evidence.md` in the project-management skill.
+
+## Stop-The-Line: No Forced Fits
+
+Do not keep implementing when autonomous work starts requiring a forced fit. A forced fit is any path where the task conflicts with a platform/API constraint, product decision, UX state model, ownership boundary, or architecture, and the remaining "solution" is mostly compensating hacks.
+
+Warning signs:
+- each fix needs another flag, stub, priority rule, mock-only behavior, or special-case test
+- the tests can pass only because the test harness avoids the real platform behavior
+- the implementation depends on an assumption you can no longer defend
+- the user-facing behavior cannot be described cleanly without contradicting the product model
+
+When this happens, stop product-code changes before adding another workaround layer. Attach or note:
+- the constraint and evidence
+- the failed assumptions/attempts
+- the viable options and tradeoffs
+- the recommended option
+- the exact human/product/architecture decision needed
+
+Then set the board item to `blocked` and ask only for that exact decision or external input. This stop applies only to a concrete external blocker or an unresolved human-only platform/product/architecture/tradeoff/approval decision; recoverable failures and ordinary rework stay autonomous. Tests and stubs are not proof that a forced-fit design is correct; use them only after the state model and platform assumptions are valid.
+
+## Completion Discipline
+
+Keep working until the task reaches a terminal handoff for your role. If no objective blocker remains, do not stop while the board item is still parked in `analysis`, `development`, `testing`, or `reviewing`.
+
+Before your final status change:
+- satisfy the task acceptance criteria and relevant checklist items
+- attach outcome evidence for the work you produced
+- run the relevant verification commands when the task changes code, tests, docs, or config
+
+Use `blocked` only for either a concrete external blocker you cannot resolve autonomously or an unresolved human-only platform/product/architecture/tradeoff/approval decision. Record the constraint, evidence, failed assumptions/attempts, viable alternatives and tradeoffs, recommendation, and exact human decision or external input needed. Recoverable failures and ordinary rework are not `blocked`.
+
+Status language is literal:
+- `to-review` means your role has handed work to review; it does not mean the board task is accepted or done.
+- In your final response, say "ready for review" or "handed off to review" when the final board status is `to-review`.
+- Do not say "done", "complete", "finished", "final", or "готово" as the overall task state unless the board status is actually `done`.
+
+## LAST — Run For Role Handoff
+
+When you have completed all role work and the task is ready for its role handoff, run this as your **final board command**:
+
+```bash
+task-board handoff TASK-260923-hyh12u --role doc-writer
+```
+
+## Working Directory
+Board directory: `/Users/alexis/src/relux-works/skill-agent-facing-api/.task-board`
+
+Work in the project root. Do not modify board files directly — always use the `task-board` CLI.
+
+## Story Workspace
+
+You are running in an isolated Git worktree for STORY-260923-371o14.
+
+- Workspace path: `.temp/STORY-260923-371o14/worktree` (this is your working directory)
+- Branch: `task-board/story/STORY-260923-371o14`, forked from `main`
+- Authoritative board: `/Users/alexis/src/relux-works/skill-agent-facing-api/.task-board` (already exported as `TASK_BOARD_DIR`)
+
+Make every repository change here. Do not commit, switch, rebase, merge, or delete this branch, and do not run `task-board` against the `.task-board` copy inside this worktree — it is a checkout artifact, not the board. Integration into trunk is the orchestrator's step, not yours.
+
+Leave your work UNCOMMITTED in the worktree — the handoff snapshots the working tree against the recorded checkpoint. A commit of your own on this branch is refused at handoff with `change_request_candidate_committed_past_checkpoint`, and the repair is `git reset --soft <checkpoint_oid>` before completing again.
+
+## Integration Assignment
+
+This is the integration run for accepted Change Request `CR-TASK-260923-hyh12u-2` revision 2. The immutable producer binding is role `doc-writer` (archetype `implementer`). Keep the board at `integrating`; only the integration transaction may write `done`. This assignment supersedes generic producer FIRST/LAST status and handoff instructions: confirm the landing preconditions, attach fresh task-scoped outcome evidence, and end without calling the generic `handoff` command or setting status yourself. Do not execute or detach `worktree checkpoint` or `worktree integrate`; after your successful handoff the runner performs the bound landing synchronously and records its evidence.
+
+codex
+Запускаю обязательный переход в `integrating`, затем проверю принятый revision 2 и подготовлю свежую task-scoped квитанцию без повторной публикации CR. Использую `project-management`, потому что задача управляется через task-board и требует интеграционного handoff.
+exec
+/bin/zsh -lc "task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 680ms:
+{"ok":true,"result":{"primary":{"action":"status_changed","element_id":"TASK-260923-hyh12u","field":"status","new_value":"integrating","old_value":"integrating"}}}
+
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/alexis/.claude/skills/project-management/SKILL.md" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 0ms:
+---
+name: project-management
+description: >
+  File-backed task boards and spawn-first multi-agent orchestration through
+  task-board. Use for board/spec decomposition, task tracking, planning,
+  status/progress, tracked producer/reviewer runs, and delivery goals. A normal
+  primary session is the Orchestrator; a prompt-assigned role or
+  TASK_BOARD_RUN_ID is a specialist worker. Russian triggers: борд, доска,
+  задачи, эпик, стори, таски, спавн, оркестратор, субагент, статус, прогресс.
+triggers:
+  - task board, epic, story, task, bug, status, progress
+  - spec decomposition, planning, critical path
+  - spawn, orchestrator, coordinator, sub-agent, delivery goal
+  - борд, доска, задачи, эпик, стори, таски, спавн, оркестратор
+---
+
+# Project Management Router
+
+Load only the focused references needed. Use `task-board` for reads/writes;
+never edit `.task-board/` directly.
+
+## Active Role
+
+- **Specialist:** when assigned a role, `TASK_BOARD_RUN_ID` exists, or the
+  human explicitly requests inline execution. Follow lifecycle/evidence gates.
+- **Orchestrator:** otherwise. Detail settled specs inline; route
+  every artifact-producing or validating task through a tracked
+  background child run. `solution-architect` only for genuine
+  architecture decisions.
+
+## Critical Invariants
+
+1. Preflight with `project_config(view=spawn-preflight, role=ROLE, agent=RUNTIME?)`;
+   bare `project_config()` stays the role-optional config surface.
+   Cross-provider ranking requires the agent-less query: omit `agent`, compare
+   recommendations, then narrow with `agent=RUNTIME` for the fresh spawn snapshot.
+   `providers.targeted` names the query's runtime scope; policy-allowed entries
+   outside it use `runtime_not_targeted_by_query`, while policy-excluded entries
+   use `provider_not_allowed_by_preferred_agentic_system`.
+   When workload recommendations are configured: query with `task_class` or an
+   explicit `workload_class`, reason about scope/risk/autonomy/validation and
+   context cost, then spawn an explicit pair with the exact class transport,
+   fresh snapshot digest, and one-line recommendation rationale. A ranking is
+   advice, never authority, a default, or permission to widen the pair.
+   For a proprietary (paid) model, choose the pair that maximises delivered
+   work per token and escalate only for a stated reason.
+   Every child has explicit role, background mode, and a complete
+   model/reasoning-effort pair across its applicable dimensions — model
+   either typed or seeded by a configured per-role default, and, for Codex,
+   Qwen, or a Claude model whose registry row declares a reasoning-effort
+   vocabulary, an in-policy effort either typed or default-seeded the same
+   way. Built-in runtimes: `agy`, `claude`, `codex`, `gemini`, `muse`, `qwen`
+   (plus any runtime declared under `spawn.runtimes`); Gemini, Agy,
+   `muse-spark-1.2-contributor`, and an effortless Claude model take no
+   `--reasoning-effort` at all, while `muse-spark-1.3-contributor` and its
+   `muse-spark` alias REQUIRE one from `high`/`xhigh`/`max`. The
+   versioned-short `muse-spark-1.3` names no registered row and is not
+   spawnable; codex `gpt-6-astra`/`astra` REQUIRE one of `low`/`medium`/`high`/`xhigh`/`max`/`ultra`.
+   Treat the v3 `admitted_pairs` set the
+   preflight reports as the exact admission authority, not `allowed_models`,
+   which is one input form and is `null` when the runtime uses combinable
+   `entries`; when preflight reports a v2 migration warning, use the
+   full read-only migration snapshot for an explicit reviewed repository edit.
+   Never infer admission from `PolicyRank` or silently migrate config.
+   Codex-only `fast_mode` defaults false; authority schema v1 authorizes no
+   per-board backend policy route, so never infer or add one. See
+   [canonical config reference](references/task-board-config.md) and
+   [README](README.md) for `service_tier`/remote-v4 provenance.
+2. Workers use compact, task-specific projections. Skip routine
+   `summary()`, `plan()`, `schema()`, and `{ full }`; scoped schema only
+   repairs an unknown call.
+   Under managed Story isolation, `.planning/` belongs to the authoring Story
+   worktree, never the control root. Before that worktree exists, persist the
+   canonical plan as a task-scoped board resource; after provisioning,
+   materialize it in the worktree while retaining the explicit board/config
+   bindings. Never bypass control-root cleanliness to make planning spawnable.
+3. In a manager-hosted session (`task-board claude`/`codex` primary) never
+   wait for a spawned run in a foreground tool call: the Session Manager
+   types the terminal run state in as a notice, and an unbounded `spawn
+   wait`/`observe --until terminal` refuses there (`--allow-blocking`
+   overrides). No foreground `until`/`sleep` loops on `spawn status`.
+   Observe/wait serve unmanaged sessions, replay and diagnosis; an
+   unavoidable wait is a harness background task (`run_in_background`/
+   Monitor) while the session keeps reading owner messages. Route the handoff.
+4. The Orchestrator owns producer -> reviewer -> rework -> reviewer until the
+   configured review policy is satisfied and the board reaches `done`.
+   `to-review` is a routing trigger, not human acceptance. Commit
+   decomposition is that same Orchestrator's own call, never a per-commit
+   human checkpoint. That chain lives only in the live session: a restarted
+   or resumed primary session runs `task-board worktree obligations` BEFORE
+   spawning anything new and routes every listed ready-without-reviewer or
+   accepted-without-checkpoint revision first.
+5. Handoff needs a task-scoped outcome and `task-board handoff TASK-ID --role
+   ROLE`. Early exits and intermediate parked states are
+   retried, or rerouted through a focused child; routine work is never handed to the human.
+   Producer `set_status(to-review)`
+   is refused, and reviewer `accept_cr` requires its live merged checklist.
+   Attach artifacts through resource CRUD under
+   `.task-board/.resources/<ELEMENT-ID>/`, optionally in safe nested paths;
+   never write that tree directly or attach directories.
+6. `blocked` needs an evidence-backed external blocker or a
+   human-only product/platform/architecture/approval decision. Persist
+   constraint, evidence, failed assumptions, viable alternatives, tradeoffs,
+   recommendation, and the exact decision or external input needed. Linked
+   `blocked` lifts when its last blocker is done.
+7. At `to-review` say **ready for review** / **handed off to review**;
+   done/complete/final only for `done`.
+8. `board-goal-v2` is authoritative: `goal` owns `parent/primary`; `spawn goal`
+   owns `run/RUN-*`. V1 shapes are compatibility-only.
+   Local goal/query/status reads require an existing board and do not migrate
+   legacy goals. Goal writes initialize and validate the board before migration.
+9. `openai-board` / `anthropic-board` launch the primary `task-board
+   codex|claude` sessions.
+   agents-infra composes; `tb-sessiond` owns goal bind, location-scoped
+   `openai-board|anthropic-board resume [SES-*]`, native identity restart, and
+   session operations. Provider-native adoption remains explicit as
+   `codex resume THREAD_ID` (compatibility form) or `codex --resume THREAD_ID`,
+   and `claude --resume UUID`.
+   Bad records move to private `<state>/quarantine/`; listen continues and
+   status/list report them.
+10. Freeze stable project/config/runtime/control roots and one binding+digest.
+    Explicit config must exist; direct/managed children override ambient roots.
+    `TASK_BOARD_DIR` stores, not authority. Resolve authority from a
+    binding via fresh `git ls-remote --symref <authorized-url> HEAD`,
+    exact-ref fetch, and equal advertised/fetched OIDs. Never use cached/local
+    refs, tracking, caller/config fields, or prior tuples. Cross-check
+    `integration_base_branch` against the independent branch/remote
+    pair. Zero/multiple/unavailable/indeterminate evidence refuses.
+    Producer publishes a Change Request, reviewer runs `accept_cr`,
+    then Orchestrator checkpoints leaves and integrates the Story. Managed
+    commits use `-S` with repository human identity/key; index failures never
+    justify broad reset. See
+    [tracked background spawn](references/tracked-background-spawn.md#story-worktree-isolation).
+11. Cross-Story `set_parent` and integration are durable and fail closed; move
+    evidence never widens source-tombstone admission. See
+    [tracked background spawn](references/tracked-background-spawn.md#what-the-board-state-commit-covers-and-what-it-leaves-alone).
+12. Board validation stays strict by default. The project setting
+    `validation.allow_legacy_empty_done_containers=true` suppresses only the
+    historical empty-`done` Story/Epic aggregate mismatch; active or
+    child-backed containers remain strict.
+13. Transaction-owned `.activity/<ID>/events.ndjson` forbids caller logging.
+    Reads are bounded; corrections privileged/append-only. Transfer/worktrees
+    reject foreign history, preserve legacy/deletion boundaries, and never backfill.
+    See [file format](references/file-formats.md#activity-streams),
+    [query](references/querying.md), and
+    [coverage](docs/activity-mutation-coverage.md).
+14. Never run `make install*`, `scripts/setup.sh`, or `task-board self-update`
+    from inside a manager-hosted session. A Claude host's PTY master lives in
+    the `tb-sessiond` process, so replacing that daemon hangs up every hosted
+    session including the caller's own. A binary swap is a human action taken
+    between sessions; the manager restarts from an outside shell with
+    `task-board session restart`. See
+    [goals recovery](references/goals-recovery.md#1-a-skill-reinstall-beside-a-running-tb-sessiond).
+
+## Decision Tree
+
+```text
+Prompt-assigned role or TASK_BOARD_RUN_ID? -> work as that specialist
+Artifact, test, docs, research, or review? -> tracked role-based spawn
+Primary session restarted or resumed? -> `task-board worktree obligations` first
+Producer reached to-review? -> spawn reviewer, route verdict
+Concrete stop boundary? -> persist packet, then blocked
+Known structured board operation? -> q/m DSL with narrow projection
+Unknown name/field? -> schema(); known call syntax? -> schema(operation|mutation=NAME); see querying recovery examples
+```
+
+## Lazy Reference Routes
+
+| Need | Read |
+| --- | --- |
+| Queries, observability, goals, estimates, deps | [querying](references/querying.md), [file formats](references/file-formats.md) |
+| Status, review, recovery, Stop-The-Line | [statuses](references/statuses.md) |
+| Resources, bugs | [resources and bugs](references/resources-and-bugs.md) |
+| Detailing, plans, execution | [planning workflow](references/planning-workflow.md) |
+| Research budgets, exit, first slice | [research workflow](references/research-workflow.md) |
+| Roles, task classes, DoD | [roles](references/roles.md) |
+| Negative tests, gate proofs, refusal rows | [negative evidence](references/negative-evidence.md) |
+| Spawned goals, selection, runs, recovery, Story worktrees | [tracked background spawn](references/tracked-background-spawn.md) |
+| CR order, checkpoint, repeat-of, reuse | [CR lifecycle](references/change-request-lifecycle.md) |
+| Session Manager wrappers, goal runtimes | [codex goal runtime](docs/codex-goal-runtime.md), [claude goal runtime](docs/claude-goal-runtime.md) |
+| Templates, reviewer routing | [sub-agent templates](references/sub-agent-templates.md) |
+| Context budgets | [context efficiency](references/context-efficiency.md) |
+| Config feature gates | [config features](references/config-features.md) |
+| Goal daemon skew, native recovery | [goals recovery](references/goals-recovery.md) |
+| Project config refusals/schema/examples, authority envelopes, guarded alias migration, spawn supervision in minutes | [canonical config reference](references/task-board-config.md); persist a matching scoped selection before removing legacy `remote.user`, preview with `task-board migrate-project-config`, then apply only with its reviewed `--expected-digest` |
+| Install/bootstrap | [setup](references/setup.md) |
+| Remote auth/admin/ops | [remote board runbook](docs/remote-board-operations.md) |
+| CLI/deploy overview | [README](README.md) |
+| Developing task-board itself (this repo) | [CLAUDE.md](CLAUDE.md) |
+
+Runtime changes follow canonical `.specs/` contracts.
+
+Gemini CLI 0.54.4 is deprecated in favour of Antigravity (`agy`); both remain
+supported. `agy` effort is encoded in its model ID, not `--reasoning-effort`.
+See [README](README.md#antigravity-cli-agy) for the command, models, argv
+budget, and JSON contract.
+
+exec
+/bin/zsh -lc 'git status --short && git log -5 --oneline --decorate && git ls-tree HEAD articles/field-alias-compression-study.md' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+ succeeded in 0ms:
+ M .research/260923_mcp-token-economics-evidence.md
+ M LOGBOOK.md
+ M README.md
+ M articles/field-alias-compression-study.md
+da97a32 (HEAD -> task-board/story/STORY-260923-371o14) TASK-260923-b1kh3e: TASK-260923-b1kh3e: recover-and-bound-mcp-token-economics-evidence
+c5a6fb4 (origin/main, origin/HEAD, task-board/story/STORY-260908-3ieod5, main) Record STORY-260907-29qfnh board state
+6dbcfbe (tag: agentquery/v1.6.1) STORY-260907-29qfnh: STORY-260907-29qfnh: scoped-grammar-truthful-for-positional-arguments-v1-6-1
+dcc1355 (task-board/story/STORY-260907-29qfnh) chore: validation suite vets the example module instead of building it
+21b62bc Record STORY-260906-1mz2ft board state
+100644 blob d86faaf2d16eff7a08524c0f1271c83f9d7ecbd6	articles/field-alias-compression-study.md
+
+exec
+/bin/zsh -lc "task-board q 'task(id=TASK-260923-hyh12u, fields=[id,status,change_requests,resources])'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc "task-board q 'story(id=STORY-260923-371o14, fields=[id,status,resources])'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ exited 1 in 121ms:
+query error: parse error at 1:1: unknown operation "task" (got "task"); known operations: activity, agents, context, context_boundary, context_candidates, context_retention, contexts, count, get, list, models, plan, project_config, provider_limits, schema, summary, whoami; see schema() for the contract and schema(operation=NAME) for one signature
+
+ exited 1 in 117ms:
+query error: parse error at 1:1: unknown operation "story" (got "story"); known operations: activity, agents, context, context_boundary, context_candidates, context_retention, contexts, count, get, list, models, plan, project_config, provider_limits, schema, summary, whoami; see schema() for the contract and schema(operation=NAME) for one signature
+
+codex
+Обнаружил ожидаемую интеграционную картину: worktree содержит незакоммиченные изменения статьи и соседней документации, а `HEAD` ещё до принятой редакции. Два широких board-запроса отвергнуты CLI как неизвестные операции; уточняю компактный `get`-запрос и сверяю blob принятого кандидата напрямую.
+exec
+/bin/zsh -lc 'git hash-object articles/field-alias-compression-study.md && git diff --stat && git diff -- articles/field-alias-compression-study.md README.md LOGBOOK.md .research/260923_mcp-token-economics-evidence.md' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+ succeeded in 0ms:
+e08d229d9c35449576b0fbad32a38c94310e7de5
+ .research/260923_mcp-token-economics-evidence.md |   4 +-
+ LOGBOOK.md                                       |   6 +
+ README.md                                        |   4 +-
+ articles/field-alias-compression-study.md        | 575 ++++++++++-------------
+ 4 files changed, 269 insertions(+), 320 deletions(-)
+diff --git a/.research/260923_mcp-token-economics-evidence.md b/.research/260923_mcp-token-economics-evidence.md
+index da0e2ca..bcc30ff 100644
+--- a/.research/260923_mcp-token-economics-evidence.md
++++ b/.research/260923_mcp-token-economics-evidence.md
+@@ -1,7 +1,7 @@
+ # MCP Token-Economics Evidence Map
+ 
+-**Task:** `TASK-260923-b1kh3e`  
+-**Decision unblocked:** select the publication to revise and define the admissible MCP comparison claim set for `TASK-260923-hyh12u`.  
++**Task:** `TASK-260923-b1kh3e`
++**Decision unblocked:** select the publication to revise and define the admissible MCP comparison claim set for `TASK-260923-hyh12u`.
+ **Research contract:** `grammar_frozen: not applicable` — this is an editorial evidence map, not a runtime grammar. Worker-time budget: 45 minutes including verification and packaging. Artifact budget: this one Markdown note (no archive; repository paths, commands, and board-resource digest are the evidence). Serial-prerequisite budget: one. First production slice: `TASK-260923-hyh12u` revises the selected article with one integrated MCP comparison and a bounded conclusion.
+ 
+ ## Decision
+diff --git a/LOGBOOK.md b/LOGBOOK.md
+index 126e765..1032614 100644
+--- a/LOGBOOK.md
++++ b/LOGBOOK.md
+@@ -5,6 +5,12 @@
+ 
+ ## 2026-09-23
+ 
++### 1205 — Article now separates alias economics from MCP economics
++- FINDING: the revised [field-alias article](articles/field-alias-compression-study.md) labels fixture-backed token counts as historical measurements, session output as a model estimate, and the current formatter/batching behavior as implementation evidence.
++- DECISION: retain the field-alias NO-GO only for this schema-once formatter. State no MCP token winner because the repository has no adapter, tool-definition fixture, prompt snapshot, host trace, or aligned workload.
++- EVIDENCE: `.research/260923_mcp-token-economics-evidence.md`; current `go test ./...` runs passed in `agentquery/` and `example/`; the tokenizer command was expected-red because `tiktoken` is not installed. No package or benchmark fixture was added.
++- CAVEAT: the README article-index summary now carries the same evidence boundary. The broader README overview and SKILL.md retain stale fixed MCP-overhead, no-batching, and break-even claims outside this article-focused slice; correct them in a separate documentation task.
++
+ ### 1045 — MCP token comparison needs a bounded correction
+ - FINDING: `references/comparison-example.md` asserts an `internal/fields`-backed MCP implementation, fixed 2,200-token definition cost, no batching, and a ~293-query break-even; this checkout has no MCP adapter or `internal/fields` package. A Go-source search finds only `assets/field-selector.go:4`, which explicitly describes a future MCP server.
+ - DECISION: revise `articles/field-alias-compression-study.md` as the canonical publication source. Keep proven DSL batching/schema-once formatter facts, but mark MCP token economics unknown without an aligned server, host, protocol/version, definitions, and tokenizer transcript.
+diff --git a/README.md b/README.md
+index bbb5fcb..ef8a7a9 100644
+--- a/README.md
++++ b/README.md
+@@ -163,7 +163,7 @@ Research on agent-facing output optimization:
+ 
+ | Article | Summary |
+ |---------|---------|
+-| [Field Name Aliases in Schema-Once Output: Do They Save Tokens?](articles/field-alias-compression-study.md) | Three-part empirical study showing that field name abbreviations are architecturally redundant when compact tabular (schema-once) format already eliminates key repetition. Aliases save a fixed 5 tokens regardless of payload size, while schema discovery costs 85 tokens per roundtrip: a net loss in 75% of scenarios. |
++| [Field Name Aliases in Schema-Once Output: Do They Save Tokens?](articles/field-alias-compression-study.md) | Fixture-backed historical measurements show a fixed 5-token alias-header saving at the tested scales. A separate session model is conditional on its hard-coded discovery cost, query mix, and eviction assumptions. The article rejects aliases for this formatter on that bounded evidence; no repository-local MCP benchmark establishes a transport-wide token winner. |
+ 
+ ## References
+ 
+@@ -195,4 +195,4 @@ work is open source.
+ 
+ ## License
+ 
+-MIT
+\ No newline at end of file
++MIT
+diff --git a/articles/field-alias-compression-study.md b/articles/field-alias-compression-study.md
+index d86faaf..e08d229 100644
+--- a/articles/field-alias-compression-study.md
++++ b/articles/field-alias-compression-study.md
+@@ -1,353 +1,296 @@
+ # Field Name Aliases in Schema-Once Output: Do They Save Tokens?
+ 
+-**A three-part empirical study on the marginal value of field name abbreviation when compact tabular format already eliminates key repetition.**
++**A compact formatter has already paid to say a field name once. Is an alias dictionary worth another schema lookup to save a few tokens?**
+ 
+-*February 2026*
++*February 2026; evidence boundaries revised September 2026.*
+ 
+ ---
+ 
+-## Abstract
+-
+-We investigated whether registering short aliases for field names (e.g., `status` -> `s`, `assignee` -> `a`) would meaningfully reduce token consumption in agent-facing CLI output that already uses a schema-once compact format. Three independent studies measured: (1) raw token savings from abbreviation across payload scales, (2) LLM comprehension impact at 5, 15, and 30 alias complexity levels, and (3) session-level token economics including schema discovery roundtrip overhead.
+-
+-**Finding: aliases are not worth implementing.** In compact tabular (schema-once) format, field names appear exactly once in the header row. Abbreviating the header saves a fixed 5 tokens regardless of whether the payload contains 5 or 500 items — a 0.02% to 1.86% marginal reduction. Meanwhile, the alias dictionary requires a `schema()` introspection roundtrip costing 85 tokens per call, producing a net token loss in 75% of simulated session scenarios. The compact format already solves the problem aliases target (repeated key names), making aliases architecturally redundant.
+-
+----
+-
+-## 1. Introduction
+-
+-### The Optimization Landscape
+-
+-When AI agents consume structured data from CLI tools, token efficiency directly impacts cost and context window utilization. A well-optimized agent-facing query layer implements several techniques to minimize output tokens:
+-
+-1. **Field projection** — return only requested fields (~variable savings)
+-2. **Format switch** — compact tabular output instead of JSON (~46% savings)
+-3. **Batching** — multiple queries per tool call (~80 tokens saved per avoided call)
+-4. **Presets** — named field bundles reduce query input tokens
+-
+-After implementing these four optimizations, a natural question arises: can we squeeze out more tokens by abbreviating field names themselves?
+-
+-### The Hypothesis
+-
+-Field name aliases (`id` -> `i`, `name` -> `n`, `status` -> `s`) should reduce output tokens because shorter strings produce fewer tokens. The alias mapping would be stored in the schema and exposed via a `schema()` introspection call. The agent learns the dictionary once, then reads abbreviated output for the remainder of the session.
+-
+-### The Concern
+-
+-Three potential costs could negate the savings:
+-
+-1. **Token savings might be trivial** if field names are already short or appear infrequently in the output format
+-2. **LLM comprehension might degrade** when reading cryptic abbreviated headers
+-3. **Schema roundtrip overhead** (the cost of calling `schema()` to learn the alias dictionary) might exceed the per-query savings, especially if context compression forces repeated re-learning
+-
+-We designed three independent studies to test each concern.
+-
+----
+-
+-## 2. Study 1: Token Savings Measurement
+-
+-### Methodology
+-
+-Generated synthetic task tracker payloads at four scales (5, 20, 100, 500 items) with 8 fields per item: `id`, `name`, `status`, `assignee`, `description`, `priority`, `created`, `updated`.
+-
+-Three format variants per scale:
+-
+-- **JSON** — standard pretty-printed JSON array with indentation
+-- **Compact-full** — CSV-style with full field names as header, comma-separated data rows below
+-- **Compact-alias** — same CSV-style with 1-character abbreviated header (`i,n,s,a,d,p,c,u`)
+-
+-Token counts measured with `tiktoken` using `cl100k_base` encoding (compatible with GPT-4 and Claude tokenizers). Random seed fixed at 42 for reproducibility. Payloads used realistic data: task names, assignee names, ISO date strings, multi-word descriptions.
+-
+-### Results
+-
+-#### Raw Token Counts
+-
+-| Items | JSON | Compact-Full | Compact-Alias |
+-|------:|-----:|-------------:|--------------:|
++## The question and its boundary
++
++A task-list formatter can return a header once and values beneath it:
++
++~~~text
++id,name,status
++T-209,Schema migration,development
++T-210,Release notes,to-review
++~~~
++
++This is the familiar baseline: field names identify the columns once, while the
++rows carry only values. Replacing the header with aliases such as
++<code>i,n,s</code> can make that one line shorter, but it also requires an
++agent to learn and retain the dictionary.
++
++This article asks a deliberately bounded question: **for this repository's
++schema-once compact formatter, do field aliases justify their discovery and
++comprehension cost?** It covers the checked-in alias fixtures, the associated
++session model, and the current Go implementation of compact output and DSL
++batching. It does not establish a token winner between the DSL and MCP, and it
++does not generalize the results to arbitrary tokenizers, hosts, or transports.
++
++The evidence types are kept distinct throughout:
++
++| Label | What it means here |
++| --- | --- |
++| **Verified implementation fact** | Current source and executable tests establish a behavior of this Go implementation. |
++| **Checked-in historical measurement** | A fixture, script, and recorded result exist, but this revision did not rerun the tokenizer. |
++| **Model estimate** | A simulator result depends on stated constants and eviction assumptions; it is not a runtime observation. |
++| **Reasoning** | A conditional design recommendation rather than a numeric result. |
++| **Unknown** | The repository has no aligned artifact that could support the claim. |
++
++The detailed classification and MCP claim dispositions are in the accepted
++[MCP token-economics evidence map](../.research/260923_mcp-token-economics-evidence.md).
++
++## Study 1: What one abbreviated header saves
++
++**Evidence: checked-in historical measurement.** The fixtures use task-tracker
++payloads at 5, 20, 100, and 500 items, each with eight fields:
++<code>id</code>, <code>name</code>, <code>status</code>,
++<code>assignee</code>, <code>description</code>,
++<code>priority</code>, <code>created</code>, and <code>updated</code>.
++The checked-in [measurement script](../.research/synthetic-payloads/measure.py)
++tokenizes fixed JSON, compact-full, and compact-alias fixtures with
++<code>tiktoken</code> and <code>cl100k_base</code>. These are historical fixture
++results, not tokenizer counts re-attested by this revision.
++
++| Items | JSON | Compact-full | Compact-alias |
++| ---: | ---: | ---: | ---: |
+ | 5 | 485 | 269 | 264 |
+ | 20 | 1,957 | 1,055 | 1,050 |
+ | 100 | 9,836 | 5,283 | 5,278 |
+ | 500 | 48,933 | 26,144 | 26,139 |
+ 
+-#### Savings Breakdown
++The same recorded data makes the contrast explicit:
+ 
+ | Transition | 5 items | 20 items | 100 items | 500 items |
+-|-----------|--------:|--------:|---------:|---------:|
+-| JSON -> Compact-Full | -44.5% | -46.1% | -46.3% | -46.6% |
+-| Compact-Full -> Compact-Alias | -1.86% | -0.47% | -0.09% | -0.02% |
+-| **Absolute alias savings** | **5 tok** | **5 tok** | **5 tok** | **5 tok** |
++| --- | ---: | ---: | ---: | ---: |
++| JSON to compact-full | -44.5% | -46.1% | -46.3% | -46.6% |
++| Compact-full to compact-alias | -1.86% | -0.47% | -0.09% | -0.02% |
++| **Absolute alias saving** | **5 tok** | **5 tok** | **5 tok** | **5 tok** |
+ 
+-#### The Structural Explanation
++The concrete example explains the fixed result. The full header
+ 
+-The alias savings are constant at 5 tokens because in CSV-style output, field names appear **exactly once** — in the header row. The full header:
+-
+-```
++~~~text
+ id,name,status,assignee,description,priority,created,updated
+-```
++~~~
+ 
+-is 14 tokens. The abbreviated header:
++is emitted once; the abbreviated version
+ 
+-```
++~~~text
+ i,n,s,a,d,p,c,u
+-```
+-
+-is 9 tokens. The difference (5 tokens) is fixed regardless of how many data rows follow. All data rows are identical in both variants — they contain values, not keys.
++~~~
+ 
+-This is the fundamental structural property of schema-once formats: field names are declared once, then never repeated. Abbreviating a one-time declaration yields a one-time saving. As payload size grows, the marginal benefit of that saving approaches zero.
++changes only that declaration. The value rows do not repeat either set of field
++names. The historical fixture counts therefore show a 5-token header delta at
++every tested payload size; they do not prove the same percentage or token count
++for another tokenizer or formatter.
+ 
+-#### Per-Item Amortization
++The per-item values below are another view of those same historical fixtures,
++not a new measurement:
+ 
+-| Items | JSON tok/item | Compact tok/item | Alias tok/item |
+-|------:|--------------:|-----------------:|---------------:|
++| Items | JSON tok/item | Compact-full tok/item | Compact-alias tok/item |
++| ---: | ---: | ---: | ---: |
+ | 5 | 97.0 | 53.8 | 52.8 |
+ | 20 | 97.8 | 52.8 | 52.5 |
+ | 100 | 98.4 | 52.8 | 52.8 |
+ | 500 | 97.9 | 52.3 | 52.3 |
+ 
+-JSON costs ~98 tokens per item (keys repeat per object). Compact costs ~53 tokens per item (keys declared once). Aliases save an additional 1 token per item at 5 items, converging to 0 per item at scale.
+-
+----
+-
+-## 3. Study 2: LLM Comprehension Impact
+-
+-### Methodology
+-
+-Designed a three-level comprehension benchmark:
+-
+-| Level | Fields | Alias Style | Collision Risk |
+-|-------|-------:|-------------|----------------|
+-| 1 | 5 | Single-char (`i,n,s,a,d`) | Low |
+-| 2 | 15 | 1-2 char (`i,n,s,a,d,p,t,cr,up,dl,e,tg,bl,cm,pr`) | Medium |
+-| 3 | 30 | 1-2 char with deliberate near-collisions (`s,sc,sp,st,sr` / `c,cl,cr,cm`) | High |
+-
+-Each level includes 12 data items and 10 questions spanning five types: direct lookup, filtering, cross-reference, aggregation, and multi-field reasoning. Each level was tested in two conditions:
+-
+-- **Abbreviated (A):** explicit alias dictionary provided, data uses abbreviated headers
+-- **Full (F):** identical data with full field names, no dictionary needed
+-
+-Evaluated by Claude Opus 4.6 with pre-computed ground truth verified independently by positional field counting. Self-evaluation caveat: both tests and answers were produced in the same pipeline; the meaningful signal is the *delta* between conditions, not absolute accuracy.
++## Study 2: What a remembered dictionary costs
+ 
+-### Results
++**Evidence: checked-in historical benchmark record.** The comprehension
++materials under [.research/comprehension-tests](../.research/comprehension-tests/)
++compare full names with aliases at three levels: 5, 15, and 30 fields. Each
++level has 12 data items and 10 questions spanning lookup, filtering,
++cross-reference, aggregation, and multi-field reasoning. The earlier benchmark
++reported the following result when an explicit dictionary was supplied:
+ 
+ | Level | Fields | Abbreviated | Full | Delta |
+-|-------|-------:|:-----------:|:----:|:-----:|
++| --- | ---: | :---: | :---: | :---: |
+ | 1 | 5 | 10/10 (100%) | 10/10 (100%) | 0% |
+ | 2 | 15 | 10/10 (100%) | 10/10 (100%) | 0% |
+ | 3 | 30 | 10/10 (100%) | 10/10 (100%) | 0% |
+ 
+-**Zero accuracy degradation across all levels** when an explicit dictionary is provided.
+-
+-### Qualitative Friction
+-
+-Despite perfect accuracy, aliases introduced measurable cognitive overhead at Level 3. Collision clusters required repeated dictionary lookups:
+-
+-- **The "s-family":** `s`=status, `sc`=scope, `sp`=sprint, `st`=story-points, `sr`=source
+-- **The "c-family":** `c`=category, `cl`=closed, `cm`=comments, `cr`=created
+-- **The "r-family":** `r`=reporter, `rv`=reviewer, `rn`=rank
+-
+-**Processing path comparison** (Level 3, Q2: "What sprint and scope does T-209 belong to?"):
+-
+-| Step | Full Names | Abbreviated |
+-|------|-----------|-------------|
+-| 1 | Find T-209 row | Lookup: sp=sprint, sc=scope (not s, not st) |
+-| 2 | Read "sprint" column -> S-15 | Find T-209 row |
+-| 3 | Read "scope" column -> backend | Locate `sp` column (16th) -> S-15 |
+-| 4 | — | Locate `sc` column (15th) -> backend |
+-
+-The abbreviated path adds one dictionary lookup per aliased field. Trivial for a single question. Over thousands of agent queries, this compounds.
+-
+-### Failure Modes
+-
+-Five failure modes were identified for production deployment:
+-
+-1. **No dictionary provided** — catastrophic. `c` could mean category, comments, created, or closed. The Columbo study (EMNLP 2025) measured 10.54% NL2SQL accuracy drop and 40.5% relation detection drop with undocumented abbreviations.
+-
+-2. **Domain-specific ambiguity** — `s` defaults to "status" in developer tools but could mean "story", "sprint", "severity" in other contexts. Domain priors may override dictionary lookup.
+-
+-3. **Multi-schema contexts** — agent works with multiple tools using different alias dictionaries. `p`=priority in Tool A, `p`=parent in Tool B. Cross-contamination is likely.
+-
+-4. **Partial context eviction** — the worst failure mode. After context compression, the agent remembers some aliases but not others, silently applying incorrect mappings.
+-
+-5. **Aggregation at scale** — counting or filtering over 100+ rows while holding alias mappings strains attention, though this is a general LLM limitation orthogonal to aliasing.
+-
+----
+-
+-## 4. Study 3: Session-Level Token Economics
+-
+-### Measured Constants
+-
+-All token counts measured with `tiktoken` cl100k_base encoding on real CLI output from an agentquery-based task tracker:
+-
+-| Metric | Tokens | Method |
+-|--------|-------:|--------|
+-| Schema() roundtrip cost | 85 | 10 (call) + 71 (response) + 4 (overhead) |
+-| Alias savings per query (compact) | 5 | Fixed: header abbreviation only |
+-| Alias savings per query (JSON get) | 3 | Abbreviated object keys |
+-| Alias savings per query (JSON list, 10 items) | 30 | 3 tokens/item x 10 |
+-| Typical get() response (compact) | 23 | Real CLI measurement |
+-| Typical list() response, 8 items (compact) | 177 | Real CLI measurement |
+-
+-### Session Simulation
+-
+-Modeled agent sessions of varying length with context eviction — the dictionary is forgotten every K turns, requiring a `schema()` re-query:
+-
+-| Session | Eviction K | Schema Calls | Schema Cost | Alias Savings | **Net** |
+-|--------:|-----------:|-------------:|------------:|--------------:|--------:|
+-| 10 | 10 | 1 | 85 | 40 | **-45** |
+-| 10 | never | 1 | 85 | 40 | **-45** |
+-| 20 | 10 | 2 | 170 | 80 | **-90** |
+-| 20 | 20 | 1 | 85 | 80 | **-5** |
+-| 50 | 10 | 5 | 425 | 200 | **-225** |
+-| 50 | 50 | 1 | 85 | 200 | **+115** |
+-| 100 | 10 | 10 | 850 | 400 | **-450** |
+-| 100 | 20 | 5 | 425 | 400 | **-25** |
+-| 100 | 50 | 2 | 170 | 400 | **+230** |
+-| 100 | never | 1 | 85 | 400 | **+315** |
+-
+-**Net positive in only 4 of 16 scenarios (25%).** All require either long sessions (50+ queries) with infrequent eviction (50+ turns), or the unrealistic assumption that the dictionary is never evicted from context.
+-
+-### Break-Even Analysis
+-
+-```
+-queries_between_evictions > schema_cost / savings_per_query
+-```
+-
+-| Format | Savings/Query | Schema Cost | Break-Even |
+-|--------|-------------:|------------:|-----------:|
+-| Compact | 5 | 85 | **17 queries** |
+-| JSON (get) | 3 | 85 | **29 queries** |
+-| JSON (list, 10 items) | 30 | 85 | **3 queries** |
+-
+-For compact format, the agent needs 17 consecutive data queries between schema refreshes — unreliable given typical context eviction patterns (every 10-20 turns in production agent systems after ~180K context tokens).
+-
+-### Workflow Analysis
+-
+-Four representative agent workflows modeled end-to-end:
+-
+-| Workflow | Without Aliases | With Aliases | Delta |
+-|----------|---------------:|-------------:|------:|
+-| Check status of 5 tasks | 246 tok | 306 tok | **+24% worse** |
+-| Find blocked tasks + update | 486 tok | 541 tok | **+11% worse** |
+-| Daily standup review | 130 tok | 196 tok | **+51% worse** |
+-| Heavy analytics (100q, evict/20) | ~6,000 tok | ~6,025 tok | **-0.4% marginal loss** |
+-
+-Every workflow shows aliases performing equal to or worse than the no-alias baseline.
+-
+-**Batching comparison:** For the "check status of 5 tasks" workflow, batching 5 queries into a single call costs 165 tokens — 33% less than individual queries (246 tok) and 46% less than aliases (306 tok). Batching is the superior optimization with zero overhead.
+-
+-### The JSON Alias Irony
+-
+-Aliases in JSON format *are* economical — saving ~3 tokens per item per query, easily exceeding the 85-token schema cost in moderate sessions. But this finding is irrelevant: the recommendation is to use compact format, which already saves ~46% vs JSON. Compact format eliminates the key repetition that makes JSON aliases valuable. **The two optimizations are substitutes, not complements.** Implementing aliases to optimize JSON output is like tuning a carburetor after installing fuel injection.
+-
+----
+-
+-## 5. Discussion
+-
+-### The Core Insight: Schema-Once Kills Aliases
+-
+-The three studies converge on a single structural insight:
+-
+-> **In any schema-once output format (CSV, TSV, TOON), field names appear exactly once. Abbreviating a one-time occurrence produces a one-time saving. As payload size grows, the marginal value of that saving approaches zero.**
+-
+-This is not a limitation of a specific implementation — it's an inherent property of the format. Any compact tabular format with a header row followed by value rows exhibits this behavior. Aliases are a solution to key repetition, and schema-once formats have no key repetition left to solve.
+-
+-### The Optimization Hierarchy
+-
+-| Rank | Optimization | Savings | Discovery Overhead |
+-|------|-------------|---------|-------------------|
+-| 1 | Field projection | 50-80% (selective queries) | Zero |
+-| 2 | Compact format (JSON -> tabular) | ~46% | Zero |
+-| 3 | Batching | ~80 tok per avoided call | Zero |
+-| 4 | Presets | ~5-10 tok per query input | Zero |
+-| **5** | **Field aliases** | **5 tokens (fixed)** | **85 tok per schema() call** |
+-
+-Optimizations 1-4 work from the first query with zero discovery overhead. Aliases are the only optimization requiring upfront investment (schema roundtrip), and the investment exceeds the return in most scenarios.
+-
+-### BPE Tokenizers Already Compress Field Names
+-
+-A second-order insight: modern BPE tokenizers already perform the compression that aliases attempt. Common field names — "status", "name", "id", "type" — are single tokens in cl100k_base. Abbreviating `status` (1 token) to `s` (1 token) saves zero tokens. Only multi-token field names benefit: `blocked_by` (3 tokens) -> `bb` (1 token) saves 2 tokens. But these savings only manifest in JSON (where keys repeat per item), not in compact format (where the header appears once).
+-
+-### Format as Transport Concern
+-
+-This study reinforces a broader design principle: **output format is a transport concern, not a domain concern.** The data source should never decide serialization format. The caller declares format through explicit transport-level mechanisms:
+-
+-| Layer | Format Declaration |
+-|-------|-------------------|
+-| CLI | `--format compact` flag (required, no default) |
+-| SDK | `QueryJSONWithMode(query, LLMReadable)` per-call parameter |
+-| REST | `Accept: application/json` header |
+-| gRPC | `output_format` request field |
+-
+-If aliases were implemented, they would follow the same principle — a `--aliases` flag or per-call parameter, never a schema-level configuration. But even at the transport level, the economics don't justify the feature.
+-
+-### Comparison with External Research
+-
+-**Columbo (EMNLP 2025)** found devastating accuracy drops (10.54% NL2SQL, 40.5% relation detection) from abbreviated column names *without* dictionaries. Our benchmark showed 0% degradation *with* dictionaries. The dictionary is essential infrastructure, but requiring a dictionary means requiring a schema roundtrip — which is the overhead that kills the economics.
+-
+-**TOON format** uses full field names in its schema headers despite being designed explicitly for LLM token efficiency. TOON achieves 73.9% accuracy (vs 69.7% for JSON) with 39.6% fewer tokens through structural clarity, not name abbreviation. This validates the approach: **structure matters more than name length.**
+-
+-**Better Think with Tables (2024)** showed 40.29% performance gain from tabular format vs text for data analytics — driven by structural clarity (delimiters, alignment), not header verbosity.
+-
+----
+-
+-## 6. Conclusion
+-
+-Field name aliases in schema-once output are a solution to a problem that no longer exists. The compact tabular format — by declaring field names once in a header row — already eliminates the per-item key repetition that aliases target. The marginal savings (5 tokens, fixed) are dwarfed by the schema discovery overhead (85 tokens per roundtrip), producing a net token loss in 75% of simulated scenarios.
+-
+-The token optimization hierarchy for agent-facing output is clear: field projection and compact format deliver the largest gains (46%+) with zero overhead. Batching and presets provide additional savings. Aliases sit at the bottom — the only optimization where discovery cost exceeds the benefit in typical usage.
+-
+-### Decision Record
+-
+-| Criterion | Threshold | Measured | Result |
+-|-----------|-----------|----------|--------|
+-| Net token savings | > 10% | 0.02-1.86% (5 tokens fixed) | FAIL |
+-| Comprehension degradation | < 5% | 0% (with dictionary) | PASS |
+-| Schema roundtrip ratio | < 1:5 | Break-even at 1:17 | FAIL |
+-| **Overall** | All pass | **2 of 3 failed** | **NO-GO** |
+-
+-### What to Optimize Instead
+-
+-1. **Compact format adoption** — the 46% savings is the single biggest win available
+-2. **Batch query utilization** — agents underutilize multi-query syntax, leaving ~80 tokens per call on the table
+-3. **Preset tuning** — matching named field bundles to common agent workflows
+-4. **Value-level compression** — shortening date formats, status codes (warranting separate measurement)
+-
+----
++This result is bounded. The tests and answers were produced in the same
++pipeline, so the useful signal is the reported delta, not a general claim about
++model accuracy. The benchmark was not rerun for this revision.
++
++The growing task-list example also exposes the operational risk. Once a header
++contains aliases such as <code>s</code>, <code>sc</code>,
++<code>sp</code>, and <code>st</code>, an agent answering a question about
++T-209 must first recover the dictionary, then find the row and its columns.
++The source materials identify five failure modes:
++
++1. No dictionary leaves an alias such as <code>c</code> ambiguous.
++2. Domain priors can conflict with a tool's chosen alias.
++3. Different tools can reuse the same alias for different fields.
++4. Partial context eviction can leave an incomplete dictionary.
++5. Large aggregations add attention pressure even when the dictionary is present.
++
++An explicit dictionary prevents the first failure in the historical benchmark,
++but it creates the discovery and retention requirement evaluated next.
++
++## Study 3: The alias session model
++
++**Evidence: model estimate, not a runtime measurement.** The
++[session simulator](../.research/session-simulator/simulate.py) models an
++agent that refreshes its alias dictionary after every <em>K</em> turns. It
++hard-codes the historical 85-token schema roundtrip and 5-token compact-header
++saving, plus a query mix and eviction schedule. Those inputs are assumptions of
++the model; they are not observations of Codex, Claude, MCP, or another agent
++host.
++
++| Model input | Value used by the simulator | Evidence boundary |
++| --- | ---: | --- |
++| Schema roundtrip | 85 tok | Historical measurement reused as a model input |
++| Compact alias saving per query | 5 tok | Historical fixture result reused as a model input |
++| Context eviction and query mix | Scenario-specific | Assumption |
++
++With those inputs, the simulator produces these estimates:
++
++| Session queries | Eviction K | Schema calls | Schema cost | Alias savings | Net |
++| ---: | ---: | ---: | ---: | ---: | ---: |
++| 10 | 10 | 1 | 85 | 40 | -45 |
++| 10 | never | 1 | 85 | 40 | -45 |
++| 20 | 10 | 2 | 170 | 80 | -90 |
++| 20 | 20 | 1 | 85 | 80 | -5 |
++| 50 | 10 | 5 | 425 | 200 | -225 |
++| 50 | 50 | 1 | 85 | 200 | +115 |
++| 100 | 10 | 10 | 850 | 400 | -450 |
++| 100 | 20 | 5 | 425 | 400 | -25 |
++| 100 | 50 | 2 | 170 | 400 | +230 |
++| 100 | never | 1 | 85 | 400 | +315 |
++
++For its compact-format cases, the simulator evaluates 16 cases and reports four
++positive outcomes. For example, its compact scenario for 20 queries with K=20
++returns -5, while 50 queries with K=50 returns +115. That result supports only
++this conditional statement: aliases can be positive when the model's discovery
++cost is amortized over sufficiently many remembered queries. It does not measure
++a typical agent session or a transport comparison.
++
++The simple all-data-query amortization check for the model's 85-token and
++5-token inputs is:
++
++~~~text
++break_even_queries >= schema_cost / savings_per_query
++net_positive_queries > schema_cost / savings_per_query
++~~~
++
++At those inputs, 17 such data queries exactly amortize one schema roundtrip;
++net-positive savings begin at 18. These are derived model values, not
++host-independent thresholds.
++
++### Batching is a separate implementation capability
++
++The alias model should not be turned into a claim that one transport universally
++beats another. Still, batching changes the local execution shape in a way the
++current implementation can verify.
++
++**Situation:** an agent needs the status of T-209, T-210, and T-211.
++**Expected behavior:** this DSL accepts semicolon-separated statements and
++returns the results in source order.
++
++~~~text
++get(T-209) { status }; get(T-210) { status }; get(T-211) { status }
++~~~
++
++The parser and executor implement this multi-statement behavior, and the test
++suite covers three batched statements and compact rendering. This shows a
++capability of this Go DSL. It does not supply a per-call token total, prove a
++particular host framing cost, or establish anything about an MCP server's
++batching behavior.
++
++## Discussion: choose the structural optimization first
++
++The historical fixtures support a narrow structural insight: a schema-once
++header removes repeated field names from the rows. Aliases can only shorten
++that one declaration. The simulator then models whether learning the aliases
++pays for that fixed saving under its stated assumptions.
++
++| Priority | Optimization | Evidence in this repository | Boundary |
++| ---: | --- | --- | --- |
++| 1 | Field projection | Implementation selects requested fields | No percentage is claimed here |
++| 2 | Compact schema-once output | Historical fixtures report 44.5% to 46.6% versus JSON | Fixture and tokenizer specific |
++| 3 | Semicolon batching | Verified implementation behavior | External call savings depend on host and transport |
++| 4 | Presets | Implementation feature for common selections | No token saving is asserted here |
++| 5 | Field aliases | Historical fixtures show a fixed 5-token compact-header delta | Dictionary discovery is modeled, not newly measured |
++
++### MCP comparison: scoped conclusion
++
++The accepted evidence map separates implementation facts from transport
++economics:
++
++| Question | What the evidence supports | What remains unknown |
++| --- | --- | --- |
++| Can this DSL batch requests? | Yes. The [parser](../agentquery/parser.go#L318-L369) accepts semicolon-separated statements and [QueryAST](../agentquery/query.go#L30-L60) executes a batch. | The token saving for a particular host or transport. |
++| Is compact output schema-once? | Yes. [FormatCompact](../agentquery/format.go#L9-L62) writes a field header before its rows. | A universal percentage across tokenizers and payloads. |
++| Is MCP more or less token-efficient here? | No repository-local result answers this. | There is no MCP adapter, tool-definition fixture, prompt snapshot, host trace, or aligned workload. |
++
++MCP batching and discovery costs must be bounded by protocol version, SDK,
++server design, and host behavior. The official
++[Ruby SDK protocol-version reference](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/)
++records that protocol version 2025-06-18 removed JSON-RPC batching, while the
++official [TypeScript SDK request-body reference](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html)
++documents a current maximum of 100 messages in a JSON-RPC batch array. Neither
++source guarantees that an agent host exposes or sends a batch, and neither
++measures prompt-token cost for this repository.
++
++**Reasoning: MCP can still be the better interface when interoperability is the
++requirement rather than a proven local token minimum.** A remote service that
++must expose model-controlled tools to several MCP-capable hosts, or an existing
++MCP deployment that already meets the integration requirement, can justify MCP.
++The [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index)
++supports that tool-interoperability rationale. It is not evidence of a token
++win. The failure mode is treating any of those integration benefits as a
++measured break-even point; a real comparison needs a server/host pair, protocol
++and SDK version, discovery transcript, tokenizer, and aligned workload.
++
++## Reproducing and extending the evidence
++
++The checked-in artifacts make the historical alias result inspectable:
++
++| Artifact | Purpose |
++| --- | --- |
++| [Synthetic payload generator](../.research/synthetic-payloads/generate.py) | Generates the four fixed payload scales and three formats |
++| [Tokenizer measurement script](../.research/synthetic-payloads/measure.py) | Counts the fixtures with <code>tiktoken</code> and <code>cl100k_base</code> |
++| [Comprehension materials](../.research/comprehension-tests/) | Holds the three alias/full test levels |
++| [Session simulator](../.research/session-simulator/simulate.py) | Evaluates the documented 16 model scenarios |
++
++Run the tokenizer measurement only in an isolated environment where
++<code>tiktoken</code> is installed:
++
++~~~bash
++python3 .research/synthetic-payloads/generate.py
++python3 .research/synthetic-payloads/measure.py
++~~~
++
++Run the model separately so its output is not presented as a measurement:
++
++~~~bash
++python3 .research/session-simulator/simulate.py
++~~~
++
++To make an MCP token claim, add a distinct, reproducible benchmark with the
++exact server, host, protocol/SDK version, tool definitions, prompt snapshot,
++tokenizer, and workload. Do not reuse the historical 346-element comparison as
++if those artifacts were present here.
++
++## Conclusion: the decision for this formatter
++
++**Do not add field aliases to this compact formatter on the current evidence.**
++The checked-in fixtures show that aliases are a one-header optimization, and
++the session model turns that small fixed gain into a benefit only under its
++explicit retention assumptions. For this formatter, aliases are a one-header
++optimization; no repository-local MCP benchmark establishes a transport-wide
++token winner.
++
++The concrete next action is therefore conditional: prioritize field projection,
++compact schema-once output, and the existing DSL batching capability for this
++formatter; choose MCP when interoperability requires it; and measure an aligned
++host/server workload before making any transport-token claim.
+ 
+ ## References
+ 
+-1. Columbo: Expanding Abbreviated Column Names for Tabular Data. EMNLP 2025 Findings. [arxiv.org/html/2508.09403](https://arxiv.org/html/2508.09403)
+-
+-2. TOON: Token-Oriented Object Notation. [github.com/toon-format/toon](https://github.com/toon-format/toon)
+-
+-3. Better Think with Tables: Tabular Structures Enhance LLM Comprehension. 2024. [arxiv.org/html/2412.17189v3](https://arxiv.org/html/2412.17189v3)
+-
+-4. LLMLingua: Compressing Prompts for Accelerated Inference. 2023. [arxiv.org/html/2310.05736v2](https://arxiv.org/html/2310.05736v2)
+-
+-5. TOON vs JSON — The New Format Designed for AI. dev.to, 2025. [dev.to/akki907/toon-vs-json-the-new-format-designed-for-ai-nk5](https://dev.to/akki907/toon-vs-json-the-new-format-designed-for-ai-nk5)
+-
+----
+-
+-## Appendix: Reproducibility
+-
+-All experimental artifacts are available in the repository:
+-
+-| Artifact | Description |
+-|----------|-------------|
+-| `generate.py` | Synthetic payload generator (4 scales x 3 variants, seeded) |
+-| `measure.py` | Token measurement script using tiktoken cl100k_base |
+-| Comprehension tests | 3 levels x 12 items x 10 questions with ground truth |
+-| `simulate.py` | Session simulator with configurable eviction rates |
+-
+-To reproduce the token measurements:
+-
+-```bash
+-pip3 install tiktoken
+-python3 generate.py    # generates 12 payload files
+-python3 measure.py     # tokenizes, computes savings, writes report
+-```
+-
+-To run the session simulator:
+-
+-```bash
+-python3 simulate.py    # models 16 session scenarios, outputs results
+-```
++1. [MCP Token-Economics Evidence Map](../.research/260923_mcp-token-economics-evidence.md), repository research note, September 2026.
++2. [MCP Ruby SDK protocol versions](https://ruby.sdk.modelcontextprotocol.io/protocol-versions/), official protocol-version reference.
++3. [MCP TypeScript SDK request body](https://ts.sdk.modelcontextprotocol.io/v2/api/@modelcontextprotocol/server/server/requestBody.html), official request-body reference.
++4. [MCP server overview](https://modelcontextprotocol.io/specification/draft/server/index), official specification.
+
+exec
+/bin/zsh -lc "task-board q 'schema(operation=list)'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc "task-board q 'schema(operation=get)'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 229ms:
+{"description":"Get a single element by ID","examples":["get(TASK-XX) { overview }"],"kind":"operation","name":"get","parameters":[{"name":"id","type":"string","optional":false,"description":"Element ID"}],"signature":"get(id:string)","syntax":"OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: \\\" \\\\ \\n \\t"}
+
+ succeeded in 230ms:
+{"description":"List elements with optional filters and pagination","examples":["list(type=task, status=development) { overview }","list(take=5) { minimal }","list(type=story, skip=10, take=5) { overview }"],"kind":"operation","name":"list","parameters":[{"name":"type","type":"string","optional":true,"description":"Filter by element type (epic, story, task, bug)"},{"name":"status","type":"string","optional":true,"description":"Filter by status"},{"name":"parent","type":"string","optional":true,"description":"Filter by parent ID"},{"name":"assignee","type":"string","optional":true,"description":"Filter by assignee"},{"name":"blocked","type":"bool","optional":true,"description":"Filter by hard or advisory blocked scheduling state"},{"name":"skip","type":"int","optional":true,"default":0,"description":"Number of items to skip"},{"name":"take","type":"int","optional":true,"description":"Maximum number of items to return"}],"signature":"list(type?:string, status?:string, parent?:string, assignee?:string, blocked?:bool, skip?:int, take?:int)","syntax":"OPERATION(element-or-identifier, key=value, key=\"quoted string\") { field preset }; statements separated by ';'; the first bare positional value is the element/identifier argument; remaining arguments use key=value (no operators or lists); string escapes: \\\" \\\\ \\n \\t"}
+
+exec
+/bin/zsh -lc 'git diff --check' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+ succeeded in 0ms:
+exec
+/bin/zsh -lc "task-board q 'get(STORY-260923-371o14) { overview }'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260923-hyh12u) { overview }'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+ succeeded in 319ms:
+{"assignee":"","id":"STORY-260923-371o14","name":"refresh-token-economics-article-with-mcp-comparison","parent":"EPIC-260212-1wmy5b","status":"integrating"}
+
+ succeeded in 382ms:
+{"assignee":"[implementer] doc-writer (codex)","id":"TASK-260923-hyh12u","name":"revise-token-economics-article-with-developer-writer","parent":"STORY-260923-371o14","status":"integrating"}
+
+codex
+Проверка подтвердила принятый article blob `e08d229d9c35449576b0fbad32a38c94310e7de5`, `git diff --check` зелёный. Board пока корректно остаётся `integrating` для task и story; интеграцию и запись `done` не запускаю, поскольку это явно оставлено bound runner’у. Сейчас прикреплю квитанцию с этим evidence и ограничениями проверки.
+apply patch
+patch: completed
+/tmp/TASK-260923-hyh12u_integration-results.md
+diff --git a//tmp/TASK-260923-hyh12u_integration-results.md b//tmp/TASK-260923-hyh12u_integration-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..50109562c142af8b43748635a15a4991f43311a8
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-results.md
+@@ -0,0 +1,38 @@
++# TASK-260923-hyh12u integration results
++
++## Scope
++
++Post-review integration verification for accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2. No new change request or producer
++revision was created.
++
++## Evidence
++
++- Worktree: `/Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree`
++- Accepted article: `articles/field-alias-compression-study.md`
++- `git hash-object articles/field-alias-compression-study.md` returned
++  `e08d229d9c35449576b0fbad32a38c94310e7de5`, matching the accepted candidate
++  blob.
++- `git diff --check` exited `0`.
++- The worktree contains the accepted uncommitted revision and its adjacent
++  documentation updates; no additional edits were made in this integration
++  run.
++
++## Board state
++
++- `task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'` exited
++  `0`; the task was already `integrating`.
++- Scoped board reads show both `TASK-260923-hyh12u` and
++  `STORY-260923-371o14` at `integrating`.
++- The bound integration runner must perform the landing transaction and then
++  attest the signed source and board-state commits. Those post-transaction
++  facts are not claimed here because this run did not execute the integration
++  transaction.
++
++## Publication caveat
++
++The accepted article keeps MCP economics conditional: DSL batching and
++schema-once output are repository-local implementation facts, while MCP token
++economics require an aligned host/server/protocol/SDK workload. The README
++article index carries the same boundary; broader stale MCP wording remains
++outside this article-focused slice.
+
+diff --git a//tmp/TASK-260923-hyh12u_integration-results.md b//tmp/TASK-260923-hyh12u_integration-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..50109562c142af8b43748635a15a4991f43311a8
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-results.md
+@@ -0,0 +1,38 @@
++# TASK-260923-hyh12u integration results
++
++## Scope
++
++Post-review integration verification for accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2. No new change request or producer
++revision was created.
++
++## Evidence
++
++- Worktree: `/Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree`
++- Accepted article: `articles/field-alias-compression-study.md`
++- `git hash-object articles/field-alias-compression-study.md` returned
++  `e08d229d9c35449576b0fbad32a38c94310e7de5`, matching the accepted candidate
++  blob.
++- `git diff --check` exited `0`.
++- The worktree contains the accepted uncommitted revision and its adjacent
++  documentation updates; no additional edits were made in this integration
++  run.
++
++## Board state
++
++- `task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'` exited
++  `0`; the task was already `integrating`.
++- Scoped board reads show both `TASK-260923-hyh12u` and
++  `STORY-260923-371o14` at `integrating`.
++- The bound integration runner must perform the landing transaction and then
++  attest the signed source and board-state commits. Those post-transaction
++  facts are not claimed here because this run did not execute the integration
++  transaction.
++
++## Publication caveat
++
++The accepted article keeps MCP economics conditional: DSL batching and
++schema-once output are repository-local implementation facts, while MCP token
++economics require an aligned host/server/protocol/SDK workload. The README
++article index carries the same boundary; broader stale MCP wording remains
++outside this article-focused slice.
+
+exec
+/bin/zsh -lc 'task-board resource add TASK-260923-hyh12u /tmp/TASK-260923-hyh12u_integration-results.md --type outcome --name TASK-260923-hyh12u_integration-results.md -d "Integration verification receipt for accepted revision 2, including article blob, validation, board state, and publication caveat."' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+diff --git a//tmp/TASK-260923-hyh12u_integration-results.md b//tmp/TASK-260923-hyh12u_integration-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..50109562c142af8b43748635a15a4991f43311a8
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-results.md
+@@ -0,0 +1,38 @@
++# TASK-260923-hyh12u integration results
++
++## Scope
++
++Post-review integration verification for accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2. No new change request or producer
++revision was created.
++
++## Evidence
++
++- Worktree: `/Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree`
++- Accepted article: `articles/field-alias-compression-study.md`
++- `git hash-object articles/field-alias-compression-study.md` returned
++  `e08d229d9c35449576b0fbad32a38c94310e7de5`, matching the accepted candidate
++  blob.
++- `git diff --check` exited `0`.
++- The worktree contains the accepted uncommitted revision and its adjacent
++  documentation updates; no additional edits were made in this integration
++  run.
++
++## Board state
++
++- `task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'` exited
++  `0`; the task was already `integrating`.
++- Scoped board reads show both `TASK-260923-hyh12u` and
++  `STORY-260923-371o14` at `integrating`.
++- The bound integration runner must perform the landing transaction and then
++  attest the signed source and board-state commits. Those post-transaction
++  facts are not claimed here because this run did not execute the integration
++  transaction.
++
++## Publication caveat
++
++The accepted article keeps MCP economics conditional: DSL batching and
++schema-once output are repository-local implementation facts, while MCP token
++economics require an aligned host/server/protocol/SDK workload. The README
++article index carries the same boundary; broader stale MCP wording remains
++outside this article-focused slice.
+
+ succeeded in 623ms:
+Attached TASK-260923-hyh12u_integration-results.md on TASK-260923-hyh12u as outcome
+
+2026-09-23T12:50:53.602497Z ERROR codex_core::tools::router: error=exec_command failed: CreateProcess { message: "Rejected(\"Failed to create unified exec process: No such file or directory (os error 2)\")" }
+diff --git a//tmp/TASK-260923-hyh12u_integration-results.md b//tmp/TASK-260923-hyh12u_integration-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..50109562c142af8b43748635a15a4991f43311a8
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-results.md
+@@ -0,0 +1,38 @@
++# TASK-260923-hyh12u integration results
++
++## Scope
++
++Post-review integration verification for accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2. No new change request or producer
++revision was created.
++
++## Evidence
++
++- Worktree: `/Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree`
++- Accepted article: `articles/field-alias-compression-study.md`
++- `git hash-object articles/field-alias-compression-study.md` returned
++  `e08d229d9c35449576b0fbad32a38c94310e7de5`, matching the accepted candidate
++  blob.
++- `git diff --check` exited `0`.
++- The worktree contains the accepted uncommitted revision and its adjacent
++  documentation updates; no additional edits were made in this integration
++  run.
++
++## Board state
++
++- `task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'` exited
++  `0`; the task was already `integrating`.
++- Scoped board reads show both `TASK-260923-hyh12u` and
++  `STORY-260923-371o14` at `integrating`.
++- The bound integration runner must perform the landing transaction and then
++  attest the signed source and board-state commits. Those post-transaction
++  facts are not claimed here because this run did not execute the integration
++  transaction.
++
++## Publication caveat
++
++The accepted article keeps MCP economics conditional: DSL batching and
++schema-once output are repository-local implementation facts, while MCP token
++economics require an aligned host/server/protocol/SDK workload. The README
++article index carries the same boundary; broader stale MCP wording remains
++outside this article-focused slice.
+
+exec
+/bin/zsh -lc 'git status --short' in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree
+ succeeded in 0ms:
+ M .research/260923_mcp-token-economics-evidence.md
+ M LOGBOOK.md
+ M README.md
+ M articles/field-alias-compression-study.md
+
+exec
+/bin/zsh -lc "task-board q 'get(TASK-260923-hyh12u) { minimal }'" in /Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14
+diff --git a//tmp/TASK-260923-hyh12u_integration-results.md b//tmp/TASK-260923-hyh12u_integration-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..50109562c142af8b43748635a15a4991f43311a8
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-results.md
+@@ -0,0 +1,38 @@
++# TASK-260923-hyh12u integration results
++
++## Scope
++
++Post-review integration verification for accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2. No new change request or producer
++revision was created.
++
++## Evidence
++
++- Worktree: `/Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree`
++- Accepted article: `articles/field-alias-compression-study.md`
++- `git hash-object articles/field-alias-compression-study.md` returned
++  `e08d229d9c35449576b0fbad32a38c94310e7de5`, matching the accepted candidate
++  blob.
++- `git diff --check` exited `0`.
++- The worktree contains the accepted uncommitted revision and its adjacent
++  documentation updates; no additional edits were made in this integration
++  run.
++
++## Board state
++
++- `task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'` exited
++  `0`; the task was already `integrating`.
++- Scoped board reads show both `TASK-260923-hyh12u` and
++  `STORY-260923-371o14` at `integrating`.
++- The bound integration runner must perform the landing transaction and then
++  attest the signed source and board-state commits. Those post-transaction
++  facts are not claimed here because this run did not execute the integration
++  transaction.
++
++## Publication caveat
++
++The accepted article keeps MCP economics conditional: DSL batching and
++schema-once output are repository-local implementation facts, while MCP token
++economics require an aligned host/server/protocol/SDK workload. The README
++article index carries the same boundary; broader stale MCP wording remains
++outside this article-focused slice.
+
+ succeeded in 277ms:
+{"id":"TASK-260923-hyh12u","status":"integrating"}
+
+codex
+Интеграционная квитанция прикреплена:
+
+`TASK-260923-hyh12u_integration-results.md`
+
+Проверено:
+
+- статья совпадает с accepted blob `e08d229d...`;
+- `git diff --check` — exit `0`;
+- task и story остаются в `integrating`;
+- интеграционная транзакция не запускалась — её выполняет bound runner согласно инструкции.
+
+
+diff --git a//tmp/TASK-260923-hyh12u_integration-results.md b//tmp/TASK-260923-hyh12u_integration-results.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..50109562c142af8b43748635a15a4991f43311a8
+--- /dev/null
++++ b//tmp/TASK-260923-hyh12u_integration-results.md
+@@ -0,0 +1,38 @@
++# TASK-260923-hyh12u integration results
++
++## Scope
++
++Post-review integration verification for accepted Change Request
++`CR-TASK-260923-hyh12u-2`, revision 2. No new change request or producer
++revision was created.
++
++## Evidence
++
++- Worktree: `/Users/alexis/src/relux-works/skill-agent-facing-api/.temp/STORY-260923-371o14/worktree`
++- Accepted article: `articles/field-alias-compression-study.md`
++- `git hash-object articles/field-alias-compression-study.md` returned
++  `e08d229d9c35449576b0fbad32a38c94310e7de5`, matching the accepted candidate
++  blob.
++- `git diff --check` exited `0`.
++- The worktree contains the accepted uncommitted revision and its adjacent
++  documentation updates; no additional edits were made in this integration
++  run.
++
++## Board state
++
++- `task-board m 'set_status(TASK-260923-hyh12u, status=integrating)'` exited
++  `0`; the task was already `integrating`.
++- Scoped board reads show both `TASK-260923-hyh12u` and
++  `STORY-260923-371o14` at `integrating`.
++- The bound integration runner must perform the landing transaction and then
++  attest the signed source and board-state commits. Those post-transaction
++  facts are not claimed here because this run did not execute the integration
++  transaction.
++
++## Publication caveat
++
++The accepted article keeps MCP economics conditional: DSL batching and
++schema-once output are repository-local implementation facts, while MCP token
++economics require an aligned host/server/protocol/SDK workload. The README
++article index carries the same boundary; broader stale MCP wording remains
++outside this article-focused slice.
+
+tokens used
+55,942
+Интеграционная квитанция прикреплена:
+
+`TASK-260923-hyh12u_integration-results.md`
+
+Проверено:
+
+- статья совпадает с accepted blob `e08d229d...`;
+- `git diff --check` — exit `0`;
+- task и story остаются в `integrating`;
+- интеграционная транзакция не запускалась — её выполняет bound runner согласно инструкции.
+
+
+
+[runner integration landing]
+commit_time_policy_unconfigured: runner integrate refused: commit_time_policy_unconfigured: version_control.confirm is enabled with no explicit --commit-time and no version_control.commit_time_policy configured; the tool never asks and never guesses
+  config_key: version_control.commit_time_policy
+  desired_commit_time: backdated to previous day, after 20:00 MSK (evening) per owner policy

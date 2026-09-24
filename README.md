@@ -239,7 +239,7 @@ Research on agent-facing output optimization:
 
 | Article | Summary |
 |---------|---------|
-| [Field Name Aliases in Schema-Once Output: Do They Save Tokens?](articles/field-alias-compression-study.md) | Fixture-backed historical measurements show a fixed 5-token alias-header saving at the tested scales. A separate session model is conditional on its hard-coded discovery cost, query mix, and eviction assumptions. The article rejects aliases for this formatter on that bounded evidence; no repository-local MCP benchmark establishes a transport-wide token winner. |
+| [How Far to Optimize an Agent's Context](articles/field-alias-compression-study.md) | One scenario walked up a six-rung layer ladder over identical rows at four scales: field selection (69-70% of a minified full record, 62-63% of a pretty one), compact header-plus-rows representation at the same four fields (39-45% of the projected JSON), the whole stack (87-88%), the same two choices over a synthetic MCP contract, and one-character aliases (exactly 2 tokens at every scale). The article rejects aliases for this formatter, shows why a percentage without its denominator is meaningless, and separates what a wrapper can save in agent context from what only a native field pushdown saves in backend work. |
 
 ## References
 

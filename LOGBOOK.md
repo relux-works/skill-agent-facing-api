@@ -5,6 +5,15 @@
 
 ## 2026-09-24
 
+### 2320 — the Confluence adapter pushes down one bit of the projection, not none of it
+- FINDING: `TASK-260924-11465n`'s adapter evidence reports `skill-confluence-management` as projection-local-only, on the grounds that `getPageV1` sends a fixed expand list `version,space,ancestors,metadata.labels` "regardless of what the agent projected" and `getPageV2` "sends only `body-format`". Re-read of the primary source at the cited commit `10e342b1` shows one exception both the producer and the reviewer passed over: `opGet` (`internal/query/schema.go#L247-L256`) computes `includeBody := containsField(ctx.Statement.Fields, "body")` from the projection and passes it into `GetPage`, where `getPageV2` sends `body-format=storage` only when it is set and `getPageV1` appends `,body.storage` to the expand list only when it is set. One bit of the selection — the single most expensive field on a page — does reach the API.
+- DECISION: the article states the partial pushdown explicitly instead of inheriting the flat "local only" phrasing. The accepted conclusion is unaffected: projection always saves agent context, and saves backend work only where the adapter pushes the selection upstream. Jira pushes the whole selection; Confluence pushes one boolean on `get` and nothing on `list`.
+- SCOPE: `articles/field-alias-compression-study.md` and both blog posts. The measurement artifacts in `.research/layer-ladder/` are not edited by this task; the discrepancy is in prose framing, not in any measured number.
+
+### 2315 — SKILL.md still carries the dead-weight figure the layer ladder rules out
+- FINDING: `SKILL.md:37` ("Why not MCP?") claims "~2,000-3,000 tokens of dead weight per session" for a 10-15 operation tool surface, and asserts the DSL "costs zero". The layer-ladder MCP section measures 1,490 and 1,774 tokens for a 9-tool contract in the minimal and structured profiles, against 1,154 for the equivalent `schema()` response — so the figure is unsupported on every profile measured, and `schema()` is not zero either. The same section shows the scenario-contract margin inverting between profiles, so no single-direction claim survives.
+- STATUS: pending, out of scope for `TASK-260924-jlzkva`, whose scope is the three article texts. The article does not repeat the claim and names it as ruled out. `SKILL.md` needs its own tracked edit.
+
 ### 2110 — layer-ladder measurement: a percentage is only as good as the gate on its denominator
 - FINDING: `reconcile_ladder` closed the *token* arithmetic of every ladder exactly and still admitted a wrong published percentage. Substituting the ladder base for the previous rung in `.research/layer-ladder/measure.py:build_ladder` left all token counts correct, the ladder closing, and `measure.py --check` at exit 0 — while the "% of previous rung" column silently read 49.28% instead of 69.08% (L1→L3) and 8.66% instead of 39.25% (L3→L4) at scale 5. The whole 32-test suite stayed green.
 - ROOT CAUSE: `pct()` was unit-tested in isolation. The production composition deciding *what gets passed to it* had no gate. A helper proven correct on its own promises nothing about its call site.

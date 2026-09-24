@@ -1,14 +1,6 @@
 ---
 name: agent-facing-api
 description: Design pattern for building agent-optimized CLI query layers. Two-layer approach — mini-query DSL for structured reads (field projection, batching) + scoped grep for full-text search. Minimizes token overhead, eliminates MCP session cost.
-triggers:
-  - agent API design
-  - query layer for agents
-  - agent-facing CLI
-  - DSL for agent reads
-  - building tools for agents
-  - agent query interface
-  - token-efficient API
 ---
 
 # Agent-Facing API Pattern
@@ -93,45 +85,14 @@ When adding a DSL to an existing CLI:
 ### Example: Task Board DSL
 
 ```bash
-# Single element
 mytool q 'get(TASK-42) { status assignee }'
-# → {"id":"TASK-42","status":"development","assignee":"agent-auth"}
-
-# Filtered list with preset
 mytool q 'list(type=task, status=development) { overview }'
-# → [{"id":"TASK-42","name":"jwt-tokens","status":"development","assignee":"agent-auth"}, ...]
-
-# Batch — three lookups in one call
 mytool q 'get(T1) { status }; get(T2) { status }; get(T3) { status }'
-# → [{"id":"T1","status":"done"}, {"id":"T2","status":"development"}, {"id":"T3","status":"blocked"}]
-
-# Paginated list — skip first 10, return next 5
 mytool q 'list(type=task, skip=10, take=5) { overview }'
-# → [{"id":"TASK-53","name":"...","status":"todo","assignee":"agent-ui"}, ...]
-
-# Pagination with filters
-mytool q 'list(status=done, skip=0, take=3) { minimal }'
-# → [{"id":"TASK-03","status":"done"}, {"id":"TASK-07","status":"done"}, {"id":"TASK-12","status":"done"}]
-
-# Count (no field projection needed)
-mytool q 'count()'
-# → {"count": 48}
-
-# Count with filter
 mytool q 'count(status=done)'
-# → {"count": 31}
-
-# Sorted list — multi-field sort
 mytool q 'list(sort_priority=desc, sort_name=asc) { overview }'
-# → [{...priority:high, name:"A"...}, {priority:high, name:"B"...}, {priority:low, ...}]
-
-# Distinct values for a filterable field
 mytool q 'distinct(status)'
-# → ["todo", "in-progress", "done", "blocked"]
-
-# Summary (no field projection needed)
 mytool q 'summary()'
-# → {"epics":5,"stories":12,"tasks":48,"done":31,"in_progress":10,"blocked":2}
 ```
 
 ### Schema Introspection
@@ -225,22 +186,6 @@ README.md
 other.md
   12: another match
 ```
-
-### Token Budget
-
-Typical per-query costs (input + output + ~80 tok framing):
-
-| Query type | Tokens | Notes |
-|------------|--------|-------|
-| Element lookup (minimal) | ~110 | ID + 2-3 fields |
-| Element lookup (full) | ~380 | All fields |
-| Filtered list (overview) | ~150-300 | Scales with result count |
-| Paginated list (take=5) | ~150-200 | Bounded by take param |
-| Count | ~90 | Fixed size: `{"count": N}` |
-| Summary | ~450 | Fixed size, scales with board |
-| Batch of 3 (status only) | ~140 | Single call, 3 results |
-
-Compare to CLI text output for the same data: 1.5-5x more tokens (ANSI codes, formatting, verbose labels).
 
 ---
 
@@ -450,21 +395,65 @@ then execute that same AST with `QueryAST()`, `QueryJSONAST()`, or
 a text transport. Confirm guards and dry-run rewriting must inspect AST
 statements, never split raw input on semicolons or commas.
 
-### Parser Tips
+### Composable Query Expressions
 
-The DSL grammar is trivial — don't over-engineer it:
+Use the additive query-model API when an operation needs nested typed
+predicates or canonical sorting, grouping, and paging. Register typed fields,
+an explicit operation capability, caller visibility policy, and a bounded
+snapshot loader. Parse with the schema's effective limits, then execute the
+same model through the required output mode:
 
+```go
+model, err := agentquery.ParseQueryModel(input, schema.QueryLimits())
+if err != nil {
+    return err
+}
+out, err := schema.QueryModelJSONASTWithMode(
+    ctx, model, access, agentquery.LLMReadable,
+)
 ```
-query     = operation "(" params ")" [ "{" fields "}" ]
-params    = param ("," param)*
-param     = key "=" value | value   (positional for IDs, key=value for filters/pagination)
-fields    = field+ | preset
-batch     = query (";" query)*
+
+```text
+list() where satisfiesAll(
+  equals(type, "task"),
+  satisfiesAny(
+    contains(name, "predicate"),
+    matchesRegex(description, "(?i)group(?:ing|by)")
+  ),
+  not(equals(status, "done"))
+) sortOrder(updated descending)
+  groupBy(status) skip 0 take 3 { id name }
 ```
 
-Pagination uses `skip`/`take` keyword params: `list(skip=10, take=5) { overview }`. Count is a separate operation: `count(status=done)`. Sorting uses `sort_<field>=asc|desc` params: `list(sort_name=asc, sort_priority=desc) { overview }`. No grammar changes needed — `key=value` params handle filters, pagination, and sorting.
+The canonical order is authorize and compile, bounded load, typed
+materialization, predicate evaluation, sort with an identity tie-breaker,
+optional grouping, top-level pagination, projection, then rendering. Grouped
+`skip`/`take` selects groups, never members. JSON returns typed group records;
+compact output emits deterministic `@group` blocks.
 
-A hand-written parser in 100-200 lines of Go handles this. No need for yacc, ANTLR, or parser combinators.
+Call `QueryModelSchema(ctx, access)` for visibility-filtered capability,
+operator, limit, modifier, result-shape, and stable-error discovery. Treat a
+missing, failed, or malformed capability read as an error. Never fetch all rows
+and post-filter when canonical syntax or capability admission fails.
+
+#### Migration from legacy queries
+
+- Existing `Parse`, `Render`, `Schema.Query`, `FilterableField`, `SortSlice`,
+  and `PaginateSlice` behavior remains available for operations that do not opt
+  in.
+- Opt in one operation at a time with `RegisterQueryOperationCapability`,
+  `RegisterQueryField`, `SetQuerySnapshotLoader`, and a real `QueryAccess`.
+- Legacy flat filters, `sort_FIELD`, `skip`, and `take` aliases lower into the
+  canonical compiler/evaluator. Conflicts with canonical clauses refuse.
+- Parse using `Schema.QueryLimits()`. Limit-digest mismatch refuses before load;
+  limits seal on first compile/execution/discovery call.
+- Plan for deterministic identity ordering, typed refusals, bounded snapshots
+  and responses, and group-level pagination. These are intentional additive
+  migration constraints for the reviewed `agentquery/v1.7.0` release.
+
+The frozen identifiers, grammar, limits, result shapes, and conformance vectors
+live in [`.spec/composable-query-expressions.md`](.spec/composable-query-expressions.md)
+and [`.spec/composable-query-expression-vectors.json`](.spec/composable-query-expression-vectors.json).
 
 ---
 

@@ -25,6 +25,12 @@ type Schema[T any] struct {
 	sortFieldNames    []string                       // sort field names in registration order
 	mutations         map[string]MutationHandler[T]  // registered mutation handlers
 	mutationMetadata  map[string]MutationMetadata    // optional metadata for mutations
+	queryLimits       QueryLimits
+	querySealed       bool
+	queryFields       map[string]QueryFieldSpec[T]
+	queryFieldOrder   []string
+	queryCapabilities map[string]QueryOperationCapability
+	queryLoader       BoundedSnapshotLoader[T]
 }
 
 // schemaConfig holds configuration set via functional options.
@@ -92,6 +98,9 @@ func NewSchema[T any](opts ...Option) *Schema[T] {
 		searchProvider:    sp,
 		mutations:         make(map[string]MutationHandler[T]),
 		mutationMetadata:  make(map[string]MutationMetadata),
+		queryLimits:       DefaultQueryLimits(),
+		queryFields:       make(map[string]QueryFieldSpec[T]),
+		queryCapabilities: make(map[string]QueryOperationCapability),
 	}
 
 	// Register built-in "schema" introspection operation.

@@ -12,8 +12,9 @@ Thumbs.db
 # Temp
 .temp/
 
-# Task board logs
-.task-board/logs/
+# Local task board state and runtime policy
+/.task-board/
+/task-board.config.json
 
 # Go
 coverage.out

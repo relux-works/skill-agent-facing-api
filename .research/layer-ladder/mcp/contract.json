@@ -1,0 +1,66 @@
+{
+  "evidence_class": "synthetic-contract",
+  "protocol_version": "2026-07-28",
+  "protocol_source": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+  "host_measured": false,
+  "sdk_reference": "shape matches the MCP specification revision 2026-07-28 (Tool interface read from schema/2026-07-28/schema.ts); no SDK was executed and no host transcript was captured",
+  "spec_probe": "mcp/spec-probe.json",
+  "projection_supported": [
+    "get",
+    "list"
+  ],
+  "profiles": [
+    "minimal",
+    "structured"
+  ],
+  "profile_notes": {
+    "minimal": "Required Tool fields plus what agentquery schema() already publishes. A floor, identical under 2025-06-18 and 2026-07-28.",
+    "structured": "The same tools plus the outputSchema a current-revision server publishes for structured content, derived from the same schema() field list."
+  },
+  "limitations": [
+    "tools/list is constructed here, not captured from a running server.",
+    "No host was measured: real hosts add their own framing, tool-use scaffolding and system text around tool definitions, none of which is counted.",
+    "Token counts are of the wire JSON only, under cl100k_base.",
+    "The tool result payload is byte-identical to the DSL layer it carries, so payload cost is not a differentiator; only session-constant definition cost and per-call envelope differ.",
+    "The minimal profile carries only the fields the Tool interface requires plus those agentquery already publishes. It is a floor. Both 2025-06-18 and 2026-07-28 require only name and inputSchema, so the minimal figure does not move with the revision pin - and for the same reason it does not represent what a current-revision server typically publishes.",
+    "The structured profile adds the outputSchema the current revision's structured-content surface expects, derived from the same schema() field list. Real servers may also carry icons, _meta and richer annotations, none of which are counted, so the structured figure is itself a lower bound on a fully-populated current-revision contract."
+  ],
+  "contracts": {
+    "scenario": {
+      "tools_list_result": "mcp/tools-list-result-scenario-minimal.json",
+      "tools_list_result_profiles": {
+        "minimal": "mcp/tools-list-result-scenario-minimal.json",
+        "structured": "mcp/tools-list-result-scenario-structured.json"
+      },
+      "derived_from": "fixtures/schema-response.json",
+      "tool_count": 3,
+      "tool_names": [
+        "tasks_distinct",
+        "tasks_list",
+        "tasks_schema"
+      ],
+      "note": "The exact operation surface this measurement's scenario registers."
+    },
+    "example-cli": {
+      "tools_list_result": "mcp/tools-list-result-example-cli-minimal.json",
+      "tools_list_result_profiles": {
+        "minimal": "mcp/tools-list-result-example-cli-minimal.json",
+        "structured": "mcp/tools-list-result-example-cli-structured.json"
+      },
+      "derived_from": "fixtures/example-schema-response.json",
+      "tool_count": 9,
+      "tool_names": [
+        "taskdemo_count",
+        "taskdemo_distinct",
+        "taskdemo_get",
+        "taskdemo_list",
+        "taskdemo_schema",
+        "taskdemo_summary",
+        "taskdemo_create",
+        "taskdemo_delete",
+        "taskdemo_update"
+      ],
+      "note": "The shipped example CLI's operation surface: 6 read operations plus 3 mutations."
+    }
+  }
+}

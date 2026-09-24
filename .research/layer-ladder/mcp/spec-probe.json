@@ -1,0 +1,72 @@
+{
+  "control_absent_revision": "2099-01-01",
+  "control_absent_revision_status": 404,
+  "control_note": "A revision that cannot exist must return 404. If this control returns 200 the probe cannot tell a real revision from a soft-404 catch-all; if it returns anything other than 404 the read failed and no absence may be inferred from any other 404 here.",
+  "latest_alias": {
+    "redirects_to": "https://modelcontextprotocol.io/specification/2026-07-28",
+    "resolved_status": 200,
+    "resolved_url": "https://modelcontextprotocol.io/specification/2026-07-28",
+    "status": 307,
+    "url": "https://modelcontextprotocol.io/specification/latest"
+  },
+  "latest_revision": "2026-07-28",
+  "latest_revision_status": 200,
+  "probe_method": "curl -sSL against the published specification site; statuses are after redirects",
+  "probed_at": "2026-09-24",
+  "published_revisions": {
+    "2024-11-05": 200,
+    "2025-03-26": 200,
+    "2025-06-18": 200,
+    "2025-11-25": 200,
+    "2026-07-28": 200
+  },
+  "required_tool_fields": {
+    "2025-06-18": [
+      "name",
+      "inputSchema"
+    ],
+    "2026-07-28": [
+      "name",
+      "inputSchema"
+    ],
+    "note": "Read from schema.ts at each revision: Tool extends BaseMetadata (name required, title optional); description, outputSchema, annotations, _meta and (2026-07-28) icons are all optional. A minimal derived contract is therefore structurally valid under both revisions and its token count does not move with the pin."
+  },
+  "tool_definition_surface_growth": {
+    "counts": {
+      "_meta": {
+        "2025-06-18": 0,
+        "2026-07-28": 9
+      },
+      "annotations": {
+        "2025-06-18": 22,
+        "2026-07-28": 33
+      },
+      "icons": {
+        "2025-06-18": 22,
+        "2026-07-28": 31
+      },
+      "outputSchema": {
+        "2025-06-18": 4,
+        "2026-07-28": 15
+      },
+      "structuredContent": {
+        "2025-06-18": 6,
+        "2026-07-28": 15
+      }
+    },
+    "measured_on": "the rendered server/tools page of each revision",
+    "note": "Occurrences of each optional Tool field on the revision's own server/tools page. The newer revision documents a materially larger optional surface, which is why a minimal derived contract is a floor and not a typical figure."
+  },
+  "tool_shape_source": {
+    "2025-06-18": {
+      "bytes": 42430,
+      "sha256": "7d7f4cc6f3adb76e3fd5e1eee6bab8b1e183cfaf719da66d2aa5661737ca9539",
+      "url": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/schema/2025-06-18/schema.ts"
+    },
+    "2026-07-28": {
+      "bytes": 98426,
+      "sha256": "742750af0bb8c716e7030c4977c992b55d1adc4407e9e66997db5846baedc2cd",
+      "url": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/schema/2026-07-28/schema.ts"
+    }
+  }
+}

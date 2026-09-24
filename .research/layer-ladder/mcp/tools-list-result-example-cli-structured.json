@@ -1,0 +1,332 @@
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tools": [
+      {
+        "name": "taskdemo_count",
+        "title": "Count tasks matching optional filters",
+        "description": "Count tasks matching optional filters",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Filter by status"
+            },
+            "assignee": {
+              "type": "string",
+              "description": "Filter by assignee"
+            }
+          }
+        }
+      },
+      {
+        "name": "taskdemo_distinct",
+        "title": "Returns unique values for a filterable field.",
+        "description": "Returns unique values for a filterable field.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string",
+              "description": "Name of a registered filterable field."
+            }
+          },
+          "required": [
+            "field"
+          ]
+        }
+      },
+      {
+        "name": "taskdemo_get",
+        "title": "Find a single task by ID",
+        "description": "Find a single task by ID",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Task ID (positional)"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "id",
+                  "name",
+                  "status",
+                  "assignee",
+                  "priority",
+                  "description",
+                  "default",
+                  "full",
+                  "minimal",
+                  "overview"
+                ]
+              },
+              "description": "Field projection: return only these fields or presets. Omit for the default field set."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "assignee": {
+              "type": "string"
+            },
+            "priority": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "taskdemo_list",
+        "title": "List tasks with optional filters, sorting, and pagination",
+        "description": "List tasks with optional filters, sorting, and pagination",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Filter by status"
+            },
+            "assignee": {
+              "type": "string",
+              "description": "Filter by assignee"
+            },
+            "priority": {
+              "type": "string",
+              "description": "Filter by priority"
+            },
+            "sort_<field>": {
+              "type": "string",
+              "description": "Sort by field (id, name, status, assignee, priority)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Skip first N items",
+              "default": 0
+            },
+            "take": {
+              "type": "integer",
+              "description": "Return at most N items"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "id",
+                  "name",
+                  "status",
+                  "assignee",
+                  "priority",
+                  "description",
+                  "default",
+                  "full",
+                  "minimal",
+                  "overview"
+                ]
+              },
+              "description": "Field projection: return only these fields or presets. Omit for the default field set."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "records": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "assignee": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "integer",
+              "description": "Number of matching records."
+            }
+          },
+          "required": [
+            "records"
+          ]
+        }
+      },
+      {
+        "name": "taskdemo_schema",
+        "title": "schema",
+        "description": "",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "taskdemo_summary",
+        "title": "Return counts grouped by status",
+        "description": "Return counts grouped by status",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "taskdemo_create",
+        "title": "Create a new task",
+        "description": "Create a new task",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Task title"
+            },
+            "status": {
+              "type": "string",
+              "description": "Task status",
+              "default": "todo",
+              "enum": [
+                "todo",
+                "in-progress",
+                "done"
+              ]
+            },
+            "assignee": {
+              "type": "string",
+              "description": "Assignee username"
+            },
+            "priority": {
+              "type": "string",
+              "description": "Task priority",
+              "default": "medium",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          "required": [
+            "assignee",
+            "priority",
+            "status",
+            "title"
+          ]
+        },
+        "annotations": {
+          "destructiveHint": false,
+          "idempotentHint": false
+        }
+      },
+      {
+        "name": "taskdemo_delete",
+        "title": "Delete a task by ID",
+        "description": "Delete a task by ID",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Task ID (positional)"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "annotations": {
+          "destructiveHint": true,
+          "idempotentHint": true
+        }
+      },
+      {
+        "name": "taskdemo_update",
+        "title": "Update task fields by ID",
+        "description": "Update task fields by ID",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Task ID (positional)"
+            },
+            "title": {
+              "type": "string",
+              "description": "New title"
+            },
+            "status": {
+              "type": "string",
+              "description": "New status",
+              "enum": [
+                "todo",
+                "in-progress",
+                "done"
+              ]
+            },
+            "assignee": {
+              "type": "string",
+              "description": "New assignee"
+            },
+            "priority": {
+              "type": "string",
+              "description": "New priority",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          "required": [
+            "assignee",
+            "id",
+            "priority",
+            "status",
+            "title"
+          ]
+        },
+        "annotations": {
+          "destructiveHint": false,
+          "idempotentHint": true
+        }
+      }
+    ]
+  }
+}

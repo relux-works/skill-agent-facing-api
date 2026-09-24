@@ -1,0 +1,281 @@
+{
+  "generator": "research/layer-ladder/cmd/genfixtures",
+  "scenario": "Sprint stand-up roll-call: the agent needs id, status, assignee and priority for every task on the sprint page. Name, description, created and updated are carried by the record but not needed.",
+  "scenario_query": "list() { id status assignee priority }",
+  "full_query": "list() { full }",
+  "full_fields": [
+    "id",
+    "name",
+    "status",
+    "assignee",
+    "description",
+    "priority",
+    "created",
+    "updated"
+  ],
+  "scenario_fields": [
+    "id",
+    "status",
+    "assignee",
+    "priority"
+  ],
+  "source_payloads": "../synthetic-payloads",
+  "scales": [
+    5,
+    20,
+    100,
+    500
+  ],
+  "layers": [
+    {
+      "id": "L0",
+      "name": "json-pretty-full",
+      "fields": "full",
+      "production_path": "encoding/json.MarshalIndent over Schema.QueryAST result",
+      "evidence_class": "measurement-constructed baseline"
+    },
+    {
+      "id": "L1",
+      "name": "json-min-full",
+      "fields": "full",
+      "production_path": "Schema.QueryJSONWithMode(HumanReadable)",
+      "evidence_class": "production output"
+    },
+    {
+      "id": "L2",
+      "name": "json-pretty-projected",
+      "fields": "scenario",
+      "production_path": "encoding/json.MarshalIndent over Schema.QueryAST result",
+      "evidence_class": "measurement-constructed baseline"
+    },
+    {
+      "id": "L3",
+      "name": "json-min-projected",
+      "fields": "scenario",
+      "production_path": "Schema.QueryJSONWithMode(HumanReadable)",
+      "evidence_class": "production output"
+    },
+    {
+      "id": "L4",
+      "name": "compact-projected",
+      "fields": "scenario",
+      "production_path": "Schema.QueryJSONWithMode(LLMReadable) -\u003e FormatCompact",
+      "evidence_class": "production output"
+    },
+    {
+      "id": "L5",
+      "name": "compact-alias-projected",
+      "fields": "scenario",
+      "production_path": "ApplyAliasHeader over L4 (no production equivalent)",
+      "evidence_class": "research overlay"
+    }
+  ],
+  "fixtures": [
+    {
+      "scale": 5,
+      "layer": "L0",
+      "name": "json-pretty-full",
+      "path": "fixtures/5/L0-json-pretty-full.txt",
+      "bytes": 1732,
+      "scenario_digest": "5fa0ad26f26bc45069726dec2f0273498b6572b05cb18f1aed541fba1d155472"
+    },
+    {
+      "scale": 5,
+      "layer": "L1",
+      "name": "json-min-full",
+      "path": "fixtures/5/L1-json-min-full.txt",
+      "bytes": 1461,
+      "scenario_digest": "5fa0ad26f26bc45069726dec2f0273498b6572b05cb18f1aed541fba1d155472"
+    },
+    {
+      "scale": 5,
+      "layer": "L2",
+      "name": "json-pretty-projected",
+      "path": "fixtures/5/L2-json-pretty-projected.txt",
+      "bytes": 532,
+      "scenario_digest": "5fa0ad26f26bc45069726dec2f0273498b6572b05cb18f1aed541fba1d155472"
+    },
+    {
+      "scale": 5,
+      "layer": "L3",
+      "name": "json-min-projected",
+      "path": "fixtures/5/L3-json-min-projected.txt",
+      "bytes": 381,
+      "scenario_digest": "5fa0ad26f26bc45069726dec2f0273498b6572b05cb18f1aed541fba1d155472"
+    },
+    {
+      "scale": 5,
+      "layer": "L4",
+      "name": "compact-projected",
+      "path": "fixtures/5/L4-compact-projected.txt",
+      "bytes": 178,
+      "scenario_digest": "5fa0ad26f26bc45069726dec2f0273498b6572b05cb18f1aed541fba1d155472"
+    },
+    {
+      "scale": 5,
+      "layer": "L5",
+      "name": "compact-alias-projected",
+      "path": "fixtures/5/L5-compact-alias-projected.txt",
+      "bytes": 158,
+      "scenario_digest": "5fa0ad26f26bc45069726dec2f0273498b6572b05cb18f1aed541fba1d155472"
+    },
+    {
+      "scale": 20,
+      "layer": "L0",
+      "name": "json-pretty-full",
+      "path": "fixtures/20/L0-json-pretty-full.txt",
+      "bytes": 6912,
+      "scenario_digest": "ebf83ade299b8a6d222643e6d03f6e9533aceba69fecd6c88bc6d3c6cc6e43a9"
+    },
+    {
+      "scale": 20,
+      "layer": "L1",
+      "name": "json-min-full",
+      "path": "fixtures/20/L1-json-min-full.txt",
+      "bytes": 5831,
+      "scenario_digest": "ebf83ade299b8a6d222643e6d03f6e9533aceba69fecd6c88bc6d3c6cc6e43a9"
+    },
+    {
+      "scale": 20,
+      "layer": "L2",
+      "name": "json-pretty-projected",
+      "path": "fixtures/20/L2-json-pretty-projected.txt",
+      "bytes": 2119,
+      "scenario_digest": "ebf83ade299b8a6d222643e6d03f6e9533aceba69fecd6c88bc6d3c6cc6e43a9"
+    },
+    {
+      "scale": 20,
+      "layer": "L3",
+      "name": "json-min-projected",
+      "path": "fixtures/20/L3-json-min-projected.txt",
+      "bytes": 1518,
+      "scenario_digest": "ebf83ade299b8a6d222643e6d03f6e9533aceba69fecd6c88bc6d3c6cc6e43a9"
+    },
+    {
+      "scale": 20,
+      "layer": "L4",
+      "name": "compact-projected",
+      "path": "fixtures/20/L4-compact-projected.txt",
+      "bytes": 625,
+      "scenario_digest": "ebf83ade299b8a6d222643e6d03f6e9533aceba69fecd6c88bc6d3c6cc6e43a9"
+    },
+    {
+      "scale": 20,
+      "layer": "L5",
+      "name": "compact-alias-projected",
+      "path": "fixtures/20/L5-compact-alias-projected.txt",
+      "bytes": 605,
+      "scenario_digest": "ebf83ade299b8a6d222643e6d03f6e9533aceba69fecd6c88bc6d3c6cc6e43a9"
+    },
+    {
+      "scale": 100,
+      "layer": "L0",
+      "name": "json-pretty-full",
+      "path": "fixtures/100/L0-json-pretty-full.txt",
+      "bytes": 34740,
+      "scenario_digest": "e7bbb6d75f47d23208ad176d8d5d23472137b6eb0a4790320faf9db90a5002ff"
+    },
+    {
+      "scale": 100,
+      "layer": "L1",
+      "name": "json-min-full",
+      "path": "fixtures/100/L1-json-min-full.txt",
+      "bytes": 29339,
+      "scenario_digest": "e7bbb6d75f47d23208ad176d8d5d23472137b6eb0a4790320faf9db90a5002ff"
+    },
+    {
+      "scale": 100,
+      "layer": "L2",
+      "name": "json-pretty-projected",
+      "path": "fixtures/100/L2-json-pretty-projected.txt",
+      "bytes": 10531,
+      "scenario_digest": "e7bbb6d75f47d23208ad176d8d5d23472137b6eb0a4790320faf9db90a5002ff"
+    },
+    {
+      "scale": 100,
+      "layer": "L3",
+      "name": "json-min-projected",
+      "path": "fixtures/100/L3-json-min-projected.txt",
+      "bytes": 7530,
+      "scenario_digest": "e7bbb6d75f47d23208ad176d8d5d23472137b6eb0a4790320faf9db90a5002ff"
+    },
+    {
+      "scale": 100,
+      "layer": "L4",
+      "name": "compact-projected",
+      "path": "fixtures/100/L4-compact-projected.txt",
+      "bytes": 2957,
+      "scenario_digest": "e7bbb6d75f47d23208ad176d8d5d23472137b6eb0a4790320faf9db90a5002ff"
+    },
+    {
+      "scale": 100,
+      "layer": "L5",
+      "name": "compact-alias-projected",
+      "path": "fixtures/100/L5-compact-alias-projected.txt",
+      "bytes": 2937,
+      "scenario_digest": "e7bbb6d75f47d23208ad176d8d5d23472137b6eb0a4790320faf9db90a5002ff"
+    },
+    {
+      "scale": 500,
+      "layer": "L0",
+      "name": "json-pretty-full",
+      "path": "fixtures/500/L0-json-pretty-full.txt",
+      "bytes": 172962,
+      "scenario_digest": "e2d84d3c34d7a68165e606aea54752b248808c17dc18b79f0fb775878b68b887"
+    },
+    {
+      "scale": 500,
+      "layer": "L1",
+      "name": "json-min-full",
+      "path": "fixtures/500/L1-json-min-full.txt",
+      "bytes": 145961,
+      "scenario_digest": "e2d84d3c34d7a68165e606aea54752b248808c17dc18b79f0fb775878b68b887"
+    },
+    {
+      "scale": 500,
+      "layer": "L2",
+      "name": "json-pretty-projected",
+      "path": "fixtures/500/L2-json-pretty-projected.txt",
+      "bytes": 52471,
+      "scenario_digest": "e2d84d3c34d7a68165e606aea54752b248808c17dc18b79f0fb775878b68b887"
+    },
+    {
+      "scale": 500,
+      "layer": "L3",
+      "name": "json-min-projected",
+      "path": "fixtures/500/L3-json-min-projected.txt",
+      "bytes": 37470,
+      "scenario_digest": "e2d84d3c34d7a68165e606aea54752b248808c17dc18b79f0fb775878b68b887"
+    },
+    {
+      "scale": 500,
+      "layer": "L4",
+      "name": "compact-projected",
+      "path": "fixtures/500/L4-compact-projected.txt",
+      "bytes": 14497,
+      "scenario_digest": "e2d84d3c34d7a68165e606aea54752b248808c17dc18b79f0fb775878b68b887"
+    },
+    {
+      "scale": 500,
+      "layer": "L5",
+      "name": "compact-alias-projected",
+      "path": "fixtures/500/L5-compact-alias-projected.txt",
+      "bytes": 14477,
+      "scenario_digest": "e2d84d3c34d7a68165e606aea54752b248808c17dc18b79f0fb775878b68b887"
+    }
+  ],
+  "schema_artifacts": [
+    {
+      "name": "agentquery-schema-response",
+      "path": "fixtures/schema-response.json",
+      "bytes": 2338,
+      "note": "Real Schema.QueryJSON(\"schema()\") output for this scenario's contract. Paid once per session if the agent introspects at all."
+    },
+    {
+      "name": "alias-legend",
+      "path": "fixtures/alias-legend.txt",
+      "bytes": 68,
+      "note": "Research overlay only. The one-time legend an agent would need to read L5. agentquery ships no alias support."
+    }
+  ]
+}

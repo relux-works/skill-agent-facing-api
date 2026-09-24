@@ -1,0 +1,129 @@
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tools": [
+      {
+        "name": "tasks_distinct",
+        "title": "Returns unique values for a filterable field.",
+        "description": "Returns unique values for a filterable field.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string",
+              "description": "Name of a registered filterable field."
+            }
+          },
+          "required": [
+            "field"
+          ]
+        }
+      },
+      {
+        "name": "tasks_list",
+        "title": "List sprint tasks with optional filters and pagination",
+        "description": "List sprint tasks with optional filters and pagination",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Filter by status"
+            },
+            "assignee": {
+              "type": "string",
+              "description": "Filter by assignee"
+            },
+            "priority": {
+              "type": "string",
+              "description": "Filter by priority"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Skip first N items",
+              "default": 0
+            },
+            "take": {
+              "type": "integer",
+              "description": "Return at most N items"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "id",
+                  "name",
+                  "status",
+                  "assignee",
+                  "description",
+                  "priority",
+                  "created",
+                  "updated",
+                  "full",
+                  "minimal",
+                  "standup"
+                ]
+              },
+              "description": "Field projection: return only these fields or presets. Omit for the default field set."
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "records": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "assignee": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string"
+                  },
+                  "created": {
+                    "type": "string"
+                  },
+                  "updated": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "integer",
+              "description": "Number of matching records."
+            }
+          },
+          "required": [
+            "records"
+          ]
+        }
+      },
+      {
+        "name": "tasks_schema",
+        "title": "schema",
+        "description": "",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ]
+  }
+}

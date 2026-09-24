@@ -1,0 +1,5 @@
+compact header aliases:
+i = id
+s = status
+a = assignee
+p = priority

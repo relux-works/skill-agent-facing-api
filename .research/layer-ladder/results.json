@@ -1,0 +1,1096 @@
+{
+  "amortization": {
+    "100": {
+      "alias_vs_compact": {
+        "break_even_queries": 11,
+        "from_layer": "L4",
+        "label": "L4->L5: paid against the alias legend, which L4 does not need",
+        "net_tokens_after_n_queries": {
+          "1": -19,
+          "10": -1,
+          "100": 179,
+          "20": 19,
+          "5": -11,
+          "50": 79
+        },
+        "one_time_cost_artifacts": [
+          "alias-legend"
+        ],
+        "one_time_cost_tokens": 21,
+        "per_query_saving_tokens": 2,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L5"
+      },
+      "compact_vs_min_projected_json": {
+        "break_even_queries": 1,
+        "from_layer": "L3",
+        "label": "L3->L4: same agentquery session, same schema() already read; selecting the compact format adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 935,
+          "10": 9350,
+          "100": 93500,
+          "20": 18700,
+          "5": 4675,
+          "50": 46750
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 935,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L4"
+      },
+      "projection_vs_full_minified_json": {
+        "break_even_queries": 1,
+        "from_layer": "L1",
+        "label": "L1->L3: same agentquery session, same schema() already read; writing a projected query adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 4948,
+          "10": 49480,
+          "100": 494800,
+          "20": 98960,
+          "5": 24740,
+          "50": 247400
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 4948,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L3"
+      }
+    },
+    "20": {
+      "alias_vs_compact": {
+        "break_even_queries": 11,
+        "from_layer": "L4",
+        "label": "L4->L5: paid against the alias legend, which L4 does not need",
+        "net_tokens_after_n_queries": {
+          "1": -19,
+          "10": -1,
+          "100": 179,
+          "20": 19,
+          "5": -11,
+          "50": 79
+        },
+        "one_time_cost_artifacts": [
+          "alias-legend"
+        ],
+        "one_time_cost_tokens": 21,
+        "per_query_saving_tokens": 2,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L5"
+      },
+      "compact_vs_min_projected_json": {
+        "break_even_queries": 1,
+        "from_layer": "L3",
+        "label": "L3->L4: same agentquery session, same schema() already read; selecting the compact format adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 184,
+          "10": 1840,
+          "100": 18400,
+          "20": 3680,
+          "5": 920,
+          "50": 9200
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 184,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L4"
+      },
+      "projection_vs_full_minified_json": {
+        "break_even_queries": 1,
+        "from_layer": "L1",
+        "label": "L1->L3: same agentquery session, same schema() already read; writing a projected query adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 975,
+          "10": 9750,
+          "100": 97500,
+          "20": 19500,
+          "5": 4875,
+          "50": 48750
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 975,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L3"
+      }
+    },
+    "5": {
+      "alias_vs_compact": {
+        "break_even_queries": 11,
+        "from_layer": "L4",
+        "label": "L4->L5: paid against the alias legend, which L4 does not need",
+        "net_tokens_after_n_queries": {
+          "1": -19,
+          "10": -1,
+          "100": 179,
+          "20": 19,
+          "5": -11,
+          "50": 79
+        },
+        "one_time_cost_artifacts": [
+          "alias-legend"
+        ],
+        "one_time_cost_tokens": 21,
+        "per_query_saving_tokens": 2,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L5"
+      },
+      "compact_vs_min_projected_json": {
+        "break_even_queries": 1,
+        "from_layer": "L3",
+        "label": "L3->L4: same agentquery session, same schema() already read; selecting the compact format adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 42,
+          "10": 420,
+          "100": 4200,
+          "20": 840,
+          "5": 210,
+          "50": 2100
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 42,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L4"
+      },
+      "projection_vs_full_minified_json": {
+        "break_even_queries": 1,
+        "from_layer": "L1",
+        "label": "L1->L3: same agentquery session, same schema() already read; writing a projected query adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 239,
+          "10": 2390,
+          "100": 23900,
+          "20": 4780,
+          "5": 1195,
+          "50": 11950
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 239,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L3"
+      }
+    },
+    "500": {
+      "alias_vs_compact": {
+        "break_even_queries": 11,
+        "from_layer": "L4",
+        "label": "L4->L5: paid against the alias legend, which L4 does not need",
+        "net_tokens_after_n_queries": {
+          "1": -19,
+          "10": -1,
+          "100": 179,
+          "20": 19,
+          "5": -11,
+          "50": 79
+        },
+        "one_time_cost_artifacts": [
+          "alias-legend"
+        ],
+        "one_time_cost_tokens": 21,
+        "per_query_saving_tokens": 2,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L5"
+      },
+      "compact_vs_min_projected_json": {
+        "break_even_queries": 1,
+        "from_layer": "L3",
+        "label": "L3->L4: same agentquery session, same schema() already read; selecting the compact format adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 4686,
+          "10": 46860,
+          "100": 468600,
+          "20": 93720,
+          "5": 23430,
+          "50": 234300
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 4686,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L4"
+      },
+      "projection_vs_full_minified_json": {
+        "break_even_queries": 1,
+        "from_layer": "L1",
+        "label": "L1->L3: same agentquery session, same schema() already read; writing a projected query adds no one-time cost",
+        "net_tokens_after_n_queries": {
+          "1": 24500,
+          "10": 245000,
+          "100": 2450000,
+          "20": 490000,
+          "5": 122500,
+          "50": 1225000
+        },
+        "one_time_cost_artifacts": [],
+        "one_time_cost_tokens": 0,
+        "per_query_saving_tokens": 24500,
+        "sunk_on_both_sides": [
+          "agentquery-schema-response"
+        ],
+        "to_layer": "L3"
+      }
+    }
+  },
+  "full_fields": [
+    "id",
+    "name",
+    "status",
+    "assignee",
+    "description",
+    "priority",
+    "created",
+    "updated"
+  ],
+  "full_query": "list() { full }",
+  "ladders": {
+    "100": {
+      "A_minify_then_project": {
+        "base_tokens": 9836,
+        "final_tokens": 1152,
+        "layers": [
+          "L0",
+          "L1",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "A_minify_then_project",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 28.4567,
+            "cumulative_saved_tokens": 2799,
+            "denominator_tokens": 9836,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 28.4567,
+            "incremental_saved_tokens": 2799,
+            "result_tokens": 7037,
+            "step": "L0->L1",
+            "to": "L1"
+          },
+          {
+            "cumulative_saved_pct_of_base": 78.7617,
+            "cumulative_saved_tokens": 7747,
+            "denominator_tokens": 7037,
+            "from": "L1",
+            "incremental_saved_pct_of_previous": 70.3141,
+            "incremental_saved_tokens": 4948,
+            "result_tokens": 2089,
+            "step": "L1->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2676,
+            "cumulative_saved_tokens": 8682,
+            "denominator_tokens": 2089,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 44.7583,
+            "incremental_saved_tokens": 935,
+            "result_tokens": 1154,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2879,
+            "cumulative_saved_tokens": 8684,
+            "denominator_tokens": 1154,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 0.1733,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 1152,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      },
+      "B_project_then_minify": {
+        "base_tokens": 9836,
+        "final_tokens": 1152,
+        "layers": [
+          "L0",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "B_project_then_minify",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 62.5051,
+            "cumulative_saved_tokens": 6148,
+            "denominator_tokens": 9836,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 62.5051,
+            "incremental_saved_tokens": 6148,
+            "result_tokens": 3688,
+            "step": "L0->L2",
+            "to": "L2"
+          },
+          {
+            "cumulative_saved_pct_of_base": 78.7617,
+            "cumulative_saved_tokens": 7747,
+            "denominator_tokens": 3688,
+            "from": "L2",
+            "incremental_saved_pct_of_previous": 43.3568,
+            "incremental_saved_tokens": 1599,
+            "result_tokens": 2089,
+            "step": "L2->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2676,
+            "cumulative_saved_tokens": 8682,
+            "denominator_tokens": 2089,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 44.7583,
+            "incremental_saved_tokens": 935,
+            "result_tokens": 1154,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2879,
+            "cumulative_saved_tokens": 8684,
+            "denominator_tokens": 1154,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 0.1733,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 1152,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      }
+    },
+    "20": {
+      "A_minify_then_project": {
+        "base_tokens": 1957,
+        "final_tokens": 237,
+        "layers": [
+          "L0",
+          "L1",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "A_minify_then_project",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 28.5641,
+            "cumulative_saved_tokens": 559,
+            "denominator_tokens": 1957,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 28.5641,
+            "incremental_saved_tokens": 559,
+            "result_tokens": 1398,
+            "step": "L0->L1",
+            "to": "L1"
+          },
+          {
+            "cumulative_saved_pct_of_base": 78.3853,
+            "cumulative_saved_tokens": 1534,
+            "denominator_tokens": 1398,
+            "from": "L1",
+            "incremental_saved_pct_of_previous": 69.7425,
+            "incremental_saved_tokens": 975,
+            "result_tokens": 423,
+            "step": "L1->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 87.7874,
+            "cumulative_saved_tokens": 1718,
+            "denominator_tokens": 423,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 43.4988,
+            "incremental_saved_tokens": 184,
+            "result_tokens": 239,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 87.8896,
+            "cumulative_saved_tokens": 1720,
+            "denominator_tokens": 239,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 0.8368,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 237,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      },
+      "B_project_then_minify": {
+        "base_tokens": 1957,
+        "final_tokens": 237,
+        "layers": [
+          "L0",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "B_project_then_minify",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 62.0848,
+            "cumulative_saved_tokens": 1215,
+            "denominator_tokens": 1957,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 62.0848,
+            "incremental_saved_tokens": 1215,
+            "result_tokens": 742,
+            "step": "L0->L2",
+            "to": "L2"
+          },
+          {
+            "cumulative_saved_pct_of_base": 78.3853,
+            "cumulative_saved_tokens": 1534,
+            "denominator_tokens": 742,
+            "from": "L2",
+            "incremental_saved_pct_of_previous": 42.9919,
+            "incremental_saved_tokens": 319,
+            "result_tokens": 423,
+            "step": "L2->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 87.7874,
+            "cumulative_saved_tokens": 1718,
+            "denominator_tokens": 423,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 43.4988,
+            "incremental_saved_tokens": 184,
+            "result_tokens": 239,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 87.8896,
+            "cumulative_saved_tokens": 1720,
+            "denominator_tokens": 239,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 0.8368,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 237,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      }
+    },
+    "5": {
+      "A_minify_then_project": {
+        "base_tokens": 485,
+        "final_tokens": 63,
+        "layers": [
+          "L0",
+          "L1",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "A_minify_then_project",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 28.6598,
+            "cumulative_saved_tokens": 139,
+            "denominator_tokens": 485,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 28.6598,
+            "incremental_saved_tokens": 139,
+            "result_tokens": 346,
+            "step": "L0->L1",
+            "to": "L1"
+          },
+          {
+            "cumulative_saved_pct_of_base": 77.9381,
+            "cumulative_saved_tokens": 378,
+            "denominator_tokens": 346,
+            "from": "L1",
+            "incremental_saved_pct_of_previous": 69.0751,
+            "incremental_saved_tokens": 239,
+            "result_tokens": 107,
+            "step": "L1->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 86.5979,
+            "cumulative_saved_tokens": 420,
+            "denominator_tokens": 107,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 39.2523,
+            "incremental_saved_tokens": 42,
+            "result_tokens": 65,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 87.0103,
+            "cumulative_saved_tokens": 422,
+            "denominator_tokens": 65,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 3.0769,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 63,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      },
+      "B_project_then_minify": {
+        "base_tokens": 485,
+        "final_tokens": 63,
+        "layers": [
+          "L0",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "B_project_then_minify",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 61.6495,
+            "cumulative_saved_tokens": 299,
+            "denominator_tokens": 485,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 61.6495,
+            "incremental_saved_tokens": 299,
+            "result_tokens": 186,
+            "step": "L0->L2",
+            "to": "L2"
+          },
+          {
+            "cumulative_saved_pct_of_base": 77.9381,
+            "cumulative_saved_tokens": 378,
+            "denominator_tokens": 186,
+            "from": "L2",
+            "incremental_saved_pct_of_previous": 42.4731,
+            "incremental_saved_tokens": 79,
+            "result_tokens": 107,
+            "step": "L2->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 86.5979,
+            "cumulative_saved_tokens": 420,
+            "denominator_tokens": 107,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 39.2523,
+            "incremental_saved_tokens": 42,
+            "result_tokens": 65,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 87.0103,
+            "cumulative_saved_tokens": 422,
+            "denominator_tokens": 65,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 3.0769,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 63,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      }
+    },
+    "500": {
+      "A_minify_then_project": {
+        "base_tokens": 48933,
+        "final_tokens": 5746,
+        "layers": [
+          "L0",
+          "L1",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "A_minify_then_project",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 28.6085,
+            "cumulative_saved_tokens": 13999,
+            "denominator_tokens": 48933,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 28.6085,
+            "incremental_saved_tokens": 13999,
+            "result_tokens": 34934,
+            "step": "L0->L1",
+            "to": "L1"
+          },
+          {
+            "cumulative_saved_pct_of_base": 78.677,
+            "cumulative_saved_tokens": 38499,
+            "denominator_tokens": 34934,
+            "from": "L1",
+            "incremental_saved_pct_of_previous": 70.1322,
+            "incremental_saved_tokens": 24500,
+            "result_tokens": 10434,
+            "step": "L1->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2533,
+            "cumulative_saved_tokens": 43185,
+            "denominator_tokens": 10434,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 44.9109,
+            "incremental_saved_tokens": 4686,
+            "result_tokens": 5748,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2574,
+            "cumulative_saved_tokens": 43187,
+            "denominator_tokens": 5748,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 0.0348,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 5746,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      },
+      "B_project_then_minify": {
+        "base_tokens": 48933,
+        "final_tokens": 5746,
+        "layers": [
+          "L0",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "name": "B_project_then_minify",
+        "steps": [
+          {
+            "cumulative_saved_pct_of_base": 62.3301,
+            "cumulative_saved_tokens": 30500,
+            "denominator_tokens": 48933,
+            "from": "L0",
+            "incremental_saved_pct_of_previous": 62.3301,
+            "incremental_saved_tokens": 30500,
+            "result_tokens": 18433,
+            "step": "L0->L2",
+            "to": "L2"
+          },
+          {
+            "cumulative_saved_pct_of_base": 78.677,
+            "cumulative_saved_tokens": 38499,
+            "denominator_tokens": 18433,
+            "from": "L2",
+            "incremental_saved_pct_of_previous": 43.395,
+            "incremental_saved_tokens": 7999,
+            "result_tokens": 10434,
+            "step": "L2->L3",
+            "to": "L3"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2533,
+            "cumulative_saved_tokens": 43185,
+            "denominator_tokens": 10434,
+            "from": "L3",
+            "incremental_saved_pct_of_previous": 44.9109,
+            "incremental_saved_tokens": 4686,
+            "result_tokens": 5748,
+            "step": "L3->L4",
+            "to": "L4"
+          },
+          {
+            "cumulative_saved_pct_of_base": 88.2574,
+            "cumulative_saved_tokens": 43187,
+            "denominator_tokens": 5748,
+            "from": "L4",
+            "incremental_saved_pct_of_previous": 0.0348,
+            "incremental_saved_tokens": 2,
+            "result_tokens": 5746,
+            "step": "L4->L5",
+            "to": "L5"
+          }
+        ]
+      }
+    }
+  },
+  "layers": [
+    {
+      "evidence_class": "measurement-constructed baseline",
+      "fields": "full",
+      "id": "L0",
+      "name": "json-pretty-full",
+      "production_path": "encoding/json.MarshalIndent over Schema.QueryAST result"
+    },
+    {
+      "evidence_class": "production output",
+      "fields": "full",
+      "id": "L1",
+      "name": "json-min-full",
+      "production_path": "Schema.QueryJSONWithMode(HumanReadable)"
+    },
+    {
+      "evidence_class": "measurement-constructed baseline",
+      "fields": "scenario",
+      "id": "L2",
+      "name": "json-pretty-projected",
+      "production_path": "encoding/json.MarshalIndent over Schema.QueryAST result"
+    },
+    {
+      "evidence_class": "production output",
+      "fields": "scenario",
+      "id": "L3",
+      "name": "json-min-projected",
+      "production_path": "Schema.QueryJSONWithMode(HumanReadable)"
+    },
+    {
+      "evidence_class": "production output",
+      "fields": "scenario",
+      "id": "L4",
+      "name": "compact-projected",
+      "production_path": "Schema.QueryJSONWithMode(LLMReadable) -> FormatCompact"
+    },
+    {
+      "evidence_class": "research overlay",
+      "fields": "scenario",
+      "id": "L5",
+      "name": "compact-alias-projected",
+      "production_path": "ApplyAliasHeader over L4 (no production equivalent)"
+    }
+  ],
+  "mcp": {
+    "evidence_class": "synthetic-contract",
+    "host_measured": false,
+    "limitations": [
+      "tools/list is constructed here, not captured from a running server.",
+      "No host was measured: real hosts add their own framing, tool-use scaffolding and system text around tool definitions, none of which is counted.",
+      "Token counts are of the wire JSON only, under cl100k_base.",
+      "The tool result payload is byte-identical to the DSL layer it carries, so payload cost is not a differentiator; only session-constant definition cost and per-call envelope differ.",
+      "The minimal profile carries only the fields the Tool interface requires plus those agentquery already publishes. It is a floor. Both 2025-06-18 and 2026-07-28 require only name and inputSchema, so the minimal figure does not move with the revision pin - and for the same reason it does not represent what a current-revision server typically publishes.",
+      "The structured profile adds the outputSchema the current revision's structured-content surface expects, derived from the same schema() field list. Real servers may also carry icons, _meta and richer annotations, none of which are counted, so the structured figure is itself a lower bound on a fully-populated current-revision contract."
+    ],
+    "per_call": {
+      "100/L1": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 7054,
+        "layer": "L1",
+        "mcp_minus_dsl_tokens": 449,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 7464,
+        "mcp_total_tokens": 7503,
+        "payload_double_quotes": 3200,
+        "payload_tokens": 7037,
+        "scale": 100
+      },
+      "100/L3": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 2106,
+        "layer": "L3",
+        "mcp_minus_dsl_tokens": 249,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 2316,
+        "mcp_total_tokens": 2355,
+        "payload_double_quotes": 1600,
+        "payload_tokens": 2089,
+        "scale": 100
+      },
+      "100/L4": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 1171,
+        "layer": "L4",
+        "mcp_minus_dsl_tokens": 51,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 1183,
+        "mcp_total_tokens": 1222,
+        "payload_double_quotes": 0,
+        "payload_tokens": 1154,
+        "scale": 100
+      },
+      "20/L1": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 1415,
+        "layer": "L1",
+        "mcp_minus_dsl_tokens": 129,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 1505,
+        "mcp_total_tokens": 1544,
+        "payload_double_quotes": 640,
+        "payload_tokens": 1398,
+        "scale": 20
+      },
+      "20/L3": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 440,
+        "layer": "L3",
+        "mcp_minus_dsl_tokens": 89,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 490,
+        "mcp_total_tokens": 529,
+        "payload_double_quotes": 320,
+        "payload_tokens": 423,
+        "scale": 20
+      },
+      "20/L4": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 256,
+        "layer": "L4",
+        "mcp_minus_dsl_tokens": 51,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 268,
+        "mcp_total_tokens": 307,
+        "payload_double_quotes": 0,
+        "payload_tokens": 239,
+        "scale": 20
+      },
+      "5/L1": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 363,
+        "layer": "L1",
+        "mcp_minus_dsl_tokens": 69,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 393,
+        "mcp_total_tokens": 432,
+        "payload_double_quotes": 160,
+        "payload_tokens": 346,
+        "scale": 5
+      },
+      "5/L3": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 124,
+        "layer": "L3",
+        "mcp_minus_dsl_tokens": 59,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 144,
+        "mcp_total_tokens": 183,
+        "payload_double_quotes": 80,
+        "payload_tokens": 107,
+        "scale": 5
+      },
+      "5/L4": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 82,
+        "layer": "L4",
+        "mcp_minus_dsl_tokens": 51,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 94,
+        "mcp_total_tokens": 133,
+        "payload_double_quotes": 0,
+        "payload_tokens": 65,
+        "scale": 5
+      },
+      "500/L1": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 34951,
+        "layer": "L1",
+        "mcp_minus_dsl_tokens": 2049,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 36961,
+        "mcp_total_tokens": 37000,
+        "payload_double_quotes": 16000,
+        "payload_tokens": 34934,
+        "scale": 500
+      },
+      "500/L3": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 10451,
+        "layer": "L3",
+        "mcp_minus_dsl_tokens": 1049,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 11461,
+        "mcp_total_tokens": 11500,
+        "payload_double_quotes": 8000,
+        "payload_tokens": 10434,
+        "scale": 500
+      },
+      "500/L4": {
+        "dsl_call_string_tokens": 17,
+        "dsl_total_tokens": 5765,
+        "layer": "L4",
+        "mcp_minus_dsl_tokens": 51,
+        "mcp_request_tokens": 39,
+        "mcp_result_envelope_and_payload_tokens": 5777,
+        "mcp_total_tokens": 5816,
+        "payload_double_quotes": 0,
+        "payload_tokens": 5748,
+        "scale": 500
+      }
+    },
+    "per_call_overhead_tokens": {
+      "constant_across_measured_payloads": false,
+      "max": 2049,
+      "min": 51
+    },
+    "profile_notes": {
+      "minimal": "Required Tool fields plus what agentquery schema() already publishes. A floor, identical under 2025-06-18 and 2026-07-28.",
+      "structured": "The same tools plus the outputSchema a current-revision server publishes for structured content, derived from the same schema() field list."
+    },
+    "profiles": [
+      "minimal",
+      "structured"
+    ],
+    "projection_supported_by_contract": [
+      "get",
+      "list"
+    ],
+    "protocol_source": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+    "protocol_version": "2026-07-28",
+    "sdk_reference": "shape matches the MCP specification revision 2026-07-28 (Tool interface read from schema/2026-07-28/schema.ts); no SDK was executed and no host transcript was captured",
+    "session_constant_dsl_schema_response": {
+      "example-cli": 1154,
+      "scenario": 535
+    },
+    "session_constant_margin": {
+      "example-cli": {
+        "minimal": {
+          "dsl_schema_tokens": 1154,
+          "mcp_cheaper": false,
+          "mcp_minus_dsl_tokens": 336,
+          "mcp_tools_list_tokens": 1490
+        },
+        "structured": {
+          "dsl_schema_tokens": 1154,
+          "mcp_cheaper": false,
+          "mcp_minus_dsl_tokens": 620,
+          "mcp_tools_list_tokens": 1774
+        }
+      },
+      "scenario": {
+        "minimal": {
+          "dsl_schema_tokens": 535,
+          "mcp_cheaper": true,
+          "mcp_minus_dsl_tokens": -64,
+          "mcp_tools_list_tokens": 471
+        },
+        "structured": {
+          "dsl_schema_tokens": 535,
+          "mcp_cheaper": false,
+          "mcp_minus_dsl_tokens": 141,
+          "mcp_tools_list_tokens": 676
+        }
+      }
+    },
+    "session_constant_mcp_tools_list": {
+      "example-cli": {
+        "derived_from": "fixtures/example-schema-response.json",
+        "note": "The shipped example CLI's operation surface: 6 read operations plus 3 mutations.",
+        "tool_count": 9,
+        "tools_list_result_tokens": 1490,
+        "tools_list_result_tokens_by_profile": {
+          "minimal": 1490,
+          "structured": 1774
+        }
+      },
+      "scenario": {
+        "derived_from": "fixtures/schema-response.json",
+        "note": "The exact operation surface this measurement's scenario registers.",
+        "tool_count": 3,
+        "tools_list_result_tokens": 471,
+        "tools_list_result_tokens_by_profile": {
+          "minimal": 471,
+          "structured": 676
+        }
+      }
+    },
+    "spec_probe": {
+      "control_absent_revision": "2099-01-01",
+      "control_absent_revision_status": 404,
+      "latest_revision": "2026-07-28",
+      "path": "mcp/spec-probe.json",
+      "probed_at": "2026-09-24"
+    }
+  },
+  "scales": [
+    5,
+    20,
+    100,
+    500
+  ],
+  "scenario": "Sprint stand-up roll-call: the agent needs id, status, assignee and priority for every task on the sprint page. Name, description, created and updated are carried by the record but not needed.",
+  "scenario_fields": [
+    "id",
+    "status",
+    "assignee",
+    "priority"
+  ],
+  "scenario_query": "list() { id status assignee priority }",
+  "session_artifacts": {
+    "agentquery-schema-response": {
+      "bytes": 2338,
+      "note": "Real Schema.QueryJSON(\"schema()\") output for this scenario's contract. Paid once per session if the agent introspects at all.",
+      "tokens": 535
+    },
+    "alias-legend": {
+      "bytes": 68,
+      "note": "Research overlay only. The one-time legend an agent would need to read L5. agentquery ships no alias support.",
+      "tokens": 21
+    }
+  },
+  "source_payloads": "../synthetic-payloads",
+  "tokenizer": {
+    "encoding": "cl100k_base",
+    "python": "3.9.6",
+    "tiktoken_version": "0.14.0"
+  },
+  "tokens_by_scale": {
+    "100": {
+      "L0": 9836,
+      "L1": 7037,
+      "L2": 3688,
+      "L3": 2089,
+      "L4": 1154,
+      "L5": 1152
+    },
+    "20": {
+      "L0": 1957,
+      "L1": 1398,
+      "L2": 742,
+      "L3": 423,
+      "L4": 239,
+      "L5": 237
+    },
+    "5": {
+      "L0": 485,
+      "L1": 346,
+      "L2": 186,
+      "L3": 107,
+      "L4": 65,
+      "L5": 63
+    },
+    "500": {
+      "L0": 48933,
+      "L1": 34934,
+      "L2": 18433,
+      "L3": 10434,
+      "L4": 5748,
+      "L5": 5746
+    }
+  }
+}

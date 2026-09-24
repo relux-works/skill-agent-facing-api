@@ -1,0 +1,52 @@
+[
+  {
+    "assignee": "heidi",
+    "created": "2025-11-24",
+    "description": "The our caching layer has issues when token expiration. We should rewrite it to improve reliability.",
+    "id": "TASK-0001",
+    "name": "Implement metrics dashboard endpoint",
+    "priority": "critical",
+    "status": "in-progress",
+    "updated": "2025-11-27"
+  },
+  {
+    "assignee": "rosa",
+    "created": "2025-04-22",
+    "description": "The the worker pool has issues when failover events. We should decouple it to support horizontal scaling.",
+    "id": "TASK-0002",
+    "name": "Extract input sanitization filters",
+    "priority": "critical",
+    "status": "open",
+    "updated": "2025-04-29"
+  },
+  {
+    "assignee": "ivan",
+    "created": "2026-01-24",
+    "description": "The the ORM layer has issues when concurrent writes. We should extend it to meet SLA requirements.",
+    "id": "TASK-0003",
+    "name": "Remove background job scheduler",
+    "priority": "critical",
+    "status": "review",
+    "updated": "2026-02-12"
+  },
+  {
+    "assignee": "bob",
+    "created": "2025-07-03",
+    "description": "As discussed in standup, rewrite the config loader. concurrent writes is blocking support horizontal scaling.",
+    "id": "TASK-0004",
+    "name": "Review input sanitization filters",
+    "priority": "medium",
+    "status": "review",
+    "updated": "2025-07-30"
+  },
+  {
+    "assignee": "heidi",
+    "created": "2025-10-23",
+    "description": "the worker pool needs attention: concurrent writes causes times out under load. Plan: rewrite and support horizontal scaling.",
+    "id": "TASK-0005",
+    "name": "Restructure notification service integration",
+    "priority": "low",
+    "status": "open",
+    "updated": "2025-10-29"
+  }
+]

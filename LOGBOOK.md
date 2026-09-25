@@ -3,6 +3,13 @@
 > Institutional memory. Concise, factual, high-signal.
 > Newest entries first. One block per insight.
 
+## 2026-09-25
+
+### 1704 — the layer-ladder article was numerically right and unreadable in the same paragraph
+- FINDING: the per-transition cost section of `articles/field-alias-compression-study.md` and of both blog posts stated its accounting with abstractions as grammatical subjects ("a per-response saving is not a session saving until it has paid off whatever the agent had to read"), placeholder objects ("what the destination needs and the source did not") and a balance asserted without its two sides. Every figure was correct and independently accepted; a developer outside this research still could not tell from the prose what the agent reads, which response changes, what is paid once and what repeats. The Russian text, translated sentence by sentence, was worse. Diagnosis and the two resulting core invariants (named actor and action; stated comparison and accounting) are in `relux-works/semantic-cores`, `docs/research/comprehension-failures.md`.
+- DECISION: editorial revision of all three texts under the accepted `developer-writer` core, prose only. Tables, code blocks, links, headings, list items, paragraph count, front matter, authors and slugs are byte-identical to the published revision, except two table header cells in the Russian post reworded in the review pass (`Утоплено с двух сторон` to `Читается на обеих ступенях`, `Накопленно` to `Итого`); no table value changed. The only figures added are arithmetic over values already in the article's own tables, placed where the claim that needs them is made: per-response savings at five rows (239 = 346 - 107 for projection, 42 = 107 - 65 for the compact view) inside the correction paragraph, and the two scenario-contract margins (64 and 141) inside the sentence that says the MCP comparison flips sign. Both retraction paragraphs keep their retracting clause and withdrawn figures verbatim, so the article number gate from the previous delivery still anchors to them.
+- BOUND: no measurement, fixture or gate under `.research/layer-ladder/` changed. `SKILL.md:37` still carries the dead-weight figure the ladder rules out (entry 2315 below); untouched here.
+
 ## 2026-09-24
 
 ### 2320 — the Confluence adapter pushes down one bit of the projection, not none of it

@@ -1320,7 +1320,7 @@ func TestQueryModelFrozenTypeOperatorMatrix(t *testing.T) {
 	var contract struct {
 		FieldKinds map[string][]string `json:"fieldKinds"`
 	}
-	data, err := os.ReadFile(filepath.Join("..", ".spec", "composable-query-expression-vectors.json"))
+	data, err := os.ReadFile(filepath.Join("..", "references", "composable-query-expression-vectors.json"))
 	if err != nil {
 		t.Fatal(err)
 	}

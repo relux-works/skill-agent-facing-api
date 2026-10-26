@@ -89,9 +89,9 @@ Read `SKILL.md` for the full pattern specification:
 `agentquery` includes one canonical pipeline for nested typed predicates,
 bounded regular expressions, deterministic sorting, grouping, top-level
 pagination, projection, and JSON/compact rendering. The frozen contract lives in
-[`composable-query-expressions.md`](.spec/composable-query-expressions.md).
+[`composable-query-expressions.md`](references/composable-query-expressions.md).
 Its machine-checkable grammar and behavior precondition is
-[`composable-query-expression-vectors.json`](.spec/composable-query-expression-vectors.json).
+[`composable-query-expression-vectors.json`](references/composable-query-expression-vectors.json).
 
 ```go
 limits := schema.QueryLimits()
@@ -156,8 +156,8 @@ the next unused minor and is never moved.
 | Go toolchain | Run focused composable-query contract and behavior tests | `(cd agentquery && go test -run 'TestQueryModel' ./...)` | Frozen-surface, parser, compiler, evaluator, refusal, and bound results on stdout |
 | `gofmt` | Format additive Go source and tests | `(cd agentquery && gofmt -w query_model_*.go schema.go)` | Rewrites the named Go files in place |
 | Go toolchain | Run the example CLI during local development | `(cd example && go run . --help)` | Human-readable CLI help on stdout |
-| `jq` | Validate the frozen query-model vector document | `jq empty .spec/composable-query-expression-vectors.json` | No output on success; validation errors on stderr |
-| `rg` | Search source and specifications without scanning generated artifacts | `rg '<pattern>' agentquery .spec README.md` | Matches on stdout; task-scoped captures belong under `.temp/` |
+| `jq` | Validate the frozen query-model vector document | `jq empty references/composable-query-expression-vectors.json` | No output on success; validation errors on stderr |
+| `rg` | Search source and specifications without scanning generated artifacts | `rg '<pattern>' agentquery references README.md` | Matches on stdout; task-scoped captures belong under `.temp/` |
 | `task-board` | Read and update tracked Story/Task lifecycle and attach outcomes | `task-board q --format compact 'get(TASK-ID) { status outcomeResources }'` | Board state and resources under the configured external board; never edit its files directly |
 
 ## Mutations (Write Operations)
@@ -251,8 +251,8 @@ Research on agent-facing output optimization:
 | `assets/scoped-grep.go` | Reference implementation: scoped regex search with context lines |
 | `assets/query-patterns.md` | Query catalog: inputs, expected JSON, anti-patterns |
 | `references/comparison-example.md` | Real-world token measurement: MCP vs DSL vs Grep on a 346-element task board |
-| `.spec/composable-query-expressions.md` | Normative architecture for composable predicates and query modifiers |
-| `.spec/composable-query-expression-vectors.json` | Machine-checkable public identifiers, limits, shapes, and conformance vectors |
+| `references/composable-query-expressions.md` | Normative architecture for composable predicates and query modifiers |
+| `references/composable-query-expression-vectors.json` | Machine-checkable public identifiers, limits, shapes, and conformance vectors |
 
 <!-- relux-ecosystem:start -->
 

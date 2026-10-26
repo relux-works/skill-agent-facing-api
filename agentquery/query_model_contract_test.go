@@ -84,7 +84,7 @@ type frozenQueryModelContract struct {
 
 func loadFrozenQueryModelContract(t *testing.T) frozenQueryModelContract {
 	t.Helper()
-	data, err := os.ReadFile(filepath.Join("..", ".spec", "composable-query-expression-vectors.json"))
+	data, err := os.ReadFile(filepath.Join("..", "references", "composable-query-expression-vectors.json"))
 	if err != nil {
 		t.Fatal(err)
 	}

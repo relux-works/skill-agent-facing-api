@@ -696,7 +696,7 @@ func bytesContainPadding(b []byte, n int) bool {
 
 func readTransportContract(t *testing.T, dst any) {
 	t.Helper()
-	b, err := os.ReadFile(filepath.Join("..", ".spec", "composable-query-expression-vectors.json"))
+	b, err := os.ReadFile(filepath.Join("..", "references", "composable-query-expression-vectors.json"))
 	if err != nil {
 		t.Fatal(err)
 	}

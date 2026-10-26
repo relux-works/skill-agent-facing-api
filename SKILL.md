@@ -452,8 +452,8 @@ and post-filter when canonical syntax or capability admission fails.
   migration constraints for the reviewed `agentquery/v1.7.0` release.
 
 The frozen identifiers, grammar, limits, result shapes, and conformance vectors
-live in [`.spec/composable-query-expressions.md`](.spec/composable-query-expressions.md)
-and [`.spec/composable-query-expression-vectors.json`](.spec/composable-query-expression-vectors.json).
+live in [`references/composable-query-expressions.md`](references/composable-query-expressions.md)
+and [`references/composable-query-expression-vectors.json`](references/composable-query-expression-vectors.json).
 
 ---
 
